@@ -1,3 +1,73 @@
 # keystone_ui-preferences
 
 Per-user saved choices for Keystone UI components, such as a data table's hidden columns.
+
+A page gives a `ui_data_table` a `key:`. This gem saves each signed-in person's layout for that key and hands it back to keystone_ui, so the table renders from it and shows a Columns menu that saves to it. A person with nothing saved sees the hidden columns the table's own call names.
+
+## Installation
+
+Add the gem and run its install generator, which copies a migration for its table:
+
+```ruby
+gem "keystone_ui-preferences"
+```
+
+```bash
+bundle install
+bin/rails generate keystone_ui:preferences:install
+bin/rails db:migrate
+```
+
+Mount the engine in `config/routes.rb`. A table's Columns menu saves to it:
+
+```ruby
+mount KeystoneUi::Preferences::Engine => "/keystone_ui_preferences"
+```
+
+Include the concern in `ApplicationController`. It gives views the lookup keystone_ui calls for a table's key:
+
+```ruby
+class ApplicationController < ActionController::Base
+  include KeystoneUi::Preferences::ComponentPreferences
+end
+```
+
+## Configuration
+
+The gem asks the host for the signed-in person and for its sign-in check. Both default to Devise's names:
+
+```ruby
+KeystoneUi::Preferences.configure do |config|
+  config.current_owner_method = :current_user        # returns the person a value is saved for
+  config.authentication_method = :authenticate_user! # runs before every save
+end
+```
+
+## Using it
+
+Give a table a key, and the hidden columns it shows a person with nothing saved:
+
+```erb
+<%= ui_data_table(
+  items: @months,
+  columns: [
+    Keystone::Ui::Column.new(:month, "Month"),
+    Keystone::Ui::Column.new(:pipeline, "Pipeline", hideable: true)
+  ],
+  key: :revenue_projection_months,
+  hidden_columns: [ :pipeline ]
+) %>
+```
+
+A signed-in person sees a Columns menu above the table. Ticking or unticking a column saves `{ "hidden_columns": [...] }` for that person and key, replacing what they saved before, and reloads the page. Another person viewing the same table sees only their own saved layout. With nobody signed in, the table renders from its own call and shows no menu.
+
+## What is stored
+
+One row per owner and component key, in `keystone_ui_preferences_component_preferences`:
+
+| Column | Holds |
+|--------|-------|
+| `owner` | the person the value belongs to (polymorphic) |
+| `component_key` | the key the page gave the component |
+| `value` | the JSON object last saved |
+| `members_choose` | whether an account's members may keep their own value, on by default |

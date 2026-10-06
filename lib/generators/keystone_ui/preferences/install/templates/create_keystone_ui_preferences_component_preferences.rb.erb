@@ -1,0 +1,14 @@
+class CreateKeystoneUiPreferencesComponentPreferences < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    create_table :keystone_ui_preferences_component_preferences do |t|
+      t.references :owner, polymorphic: true, null: false
+      t.string :component_key, null: false
+      t.json :value, null: false, default: {}
+      t.boolean :members_choose, default: true, null: false
+      t.timestamps
+    end
+
+    add_index :keystone_ui_preferences_component_preferences, %i[owner_type owner_id component_key], unique: true,
+      name: "index_keystone_ui_prefs_on_owner_and_key"
+  end
+end
