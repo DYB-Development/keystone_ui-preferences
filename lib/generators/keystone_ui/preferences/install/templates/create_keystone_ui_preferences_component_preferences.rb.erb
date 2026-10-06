@@ -4,6 +4,7 @@ class CreateKeystoneUiPreferencesComponentPreferences < ActiveRecord::Migration[
       t.references :owner, polymorphic: true, null: false
       t.string :component_key, null: false
       t.json :value, null: false, default: {}
+      t.boolean :members_choose, default: true, null: false
       t.timestamps
     end
   end

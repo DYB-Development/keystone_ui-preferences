@@ -34,6 +34,10 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_includes migration, "t.json :value, null: false, default: {}"
   end
 
+  test "the migration lets an account decide whether its members choose their own" do
+    assert_includes migration, "t.boolean :members_choose, default: true, null: false"
+  end
+
   private
 
   def migration
