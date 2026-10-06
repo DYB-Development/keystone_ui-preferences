@@ -26,6 +26,10 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_includes migration, "t.references :owner, polymorphic: true, null: false"
   end
 
+  test "the migration gives each preference a component key" do
+    assert_includes migration, "t.string :component_key, null: false"
+  end
+
   private
 
   def migration

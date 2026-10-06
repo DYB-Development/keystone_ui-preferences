@@ -2,6 +2,7 @@ class CreateKeystoneUiPreferencesComponentPreferences < ActiveRecord::Migration[
   def change
     create_table :keystone_ui_preferences_component_preferences do |t|
       t.references :owner, polymorphic: true, null: false
+      t.string :component_key, null: false
       t.timestamps
     end
   end
