@@ -23,4 +23,10 @@ class TableFromSavedPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month" ], css_select("thead th").map { |header| header.text.strip }
   end
+
+  test "a person with nothing saved gets a Columns menu that saves to their save address" do
+    get "/months"
+
+    assert_equal [ "/keystone_ui_preferences/months" ], css_select("[data-controller=column-picker]").map { |picker| picker["data-column-picker-save-url-value"] }
+  end
 end
