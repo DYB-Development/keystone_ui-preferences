@@ -49,4 +49,15 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
   ensure
     ApplicationController.remove_method(:current_member)
   end
+
+  test "checks sign-in with the method the host names" do
+    ApplicationController.define_method(:refuse_everyone) { head :forbidden }
+    KeystoneUi::Preferences.configure { |config| config.authentication_method = :refuse_everyone }
+
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+
+    assert_response :forbidden
+  ensure
+    ApplicationController.remove_method(:refuse_everyone)
+  end
 end
