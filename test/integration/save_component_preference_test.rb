@@ -14,6 +14,7 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
   def teardown
     ApplicationController.signed_in_user = nil
     KeystoneUi::Preferences::ComponentPreference.delete_all
+    KeystoneUi::Preferences.reset_configuration!
   end
 
   test "saves the JSON object a signed-in person sends as their value for the key" do
@@ -35,5 +36,17 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
     patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
 
     assert_response :unauthorized
+  end
+
+  test "saves for the person returned by the method the host names" do
+    member = User.create!(name: "Member")
+    ApplicationController.define_method(:current_member) { member }
+    KeystoneUi::Preferences.configure { |config| config.current_owner_method = :current_member }
+
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+
+    assert_equal [ member ], KeystoneUi::Preferences::ComponentPreference.where(component_key: "months").map(&:owner)
+  ensure
+    ApplicationController.remove_method(:current_member)
   end
 end
