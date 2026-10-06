@@ -1,0 +1,5 @@
+<%= ui_data_table(
+  items: [ { month: "Jan", pipeline: "$10" } ],
+  columns: [ Keystone::Ui::Column.new(:month, "Month"), Keystone::Ui::Column.new(:pipeline, "Pipeline", hideable: true) ],
+  key: :months
+) %>
