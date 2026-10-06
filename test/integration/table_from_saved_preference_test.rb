@@ -38,4 +38,12 @@ class TableFromSavedPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month", "Pipeline" ], css_select("thead th").map { |header| header.text.strip }
   end
+
+  test "a table viewed with nobody signed in shows no Columns menu" do
+    ApplicationController.signed_in_user = nil
+
+    get "/months"
+
+    assert_empty css_select("[data-controller=column-picker]")
+  end
 end
