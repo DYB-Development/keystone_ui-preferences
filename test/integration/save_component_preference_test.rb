@@ -28,4 +28,12 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_equal [ { "hidden_columns" => [ "outreach" ] } ], KeystoneUi::Preferences::ComponentPreference.where(owner: person, component_key: "months").map(&:value)
   end
+
+  test "a save with nobody signed in is refused by the host's sign-in check" do
+    ApplicationController.signed_in_user = nil
+
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+
+    assert_response :unauthorized
+  end
 end
