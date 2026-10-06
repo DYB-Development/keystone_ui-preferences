@@ -30,6 +30,10 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_includes migration, "t.string :component_key, null: false"
   end
 
+  test "the migration gives each preference a JSON value" do
+    assert_includes migration, "t.json :value, null: false, default: {}"
+  end
+
   private
 
   def migration
