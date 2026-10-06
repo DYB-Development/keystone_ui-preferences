@@ -29,4 +29,13 @@ class TableFromSavedPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "/keystone_ui_preferences/months" ], css_select("[data-controller=column-picker]").map { |picker| picker["data-column-picker-save-url-value"] }
   end
+
+  test "another person viewing a table with the same key gets nothing from the first person's save" do
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+    ApplicationController.signed_in_user = User.create!(name: "Teammate")
+
+    get "/months"
+
+    assert_equal [ "Month", "Pipeline" ], css_select("thead th").map { |header| header.text.strip }
+  end
 end
