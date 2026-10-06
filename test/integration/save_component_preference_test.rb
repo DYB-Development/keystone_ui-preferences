@@ -21,4 +21,11 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_equal({ "hidden_columns" => [ "pipeline" ] }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "months").value)
   end
+
+  test "a second save for the same person and key replaces the first value" do
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "outreach" ] }, as: :json
+
+    assert_equal [ { "hidden_columns" => [ "outreach" ] } ], KeystoneUi::Preferences::ComponentPreference.where(owner: person, component_key: "months").map(&:value)
+  end
 end
