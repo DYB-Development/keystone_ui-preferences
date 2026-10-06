@@ -38,6 +38,10 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_includes migration, "t.boolean :members_choose, default: true, null: false"
   end
 
+  test "the migration keeps one preference per owner and component key" do
+    assert_includes migration, "%i[owner_type owner_id component_key], unique: true"
+  end
+
   private
 
   def migration
