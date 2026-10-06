@@ -22,6 +22,10 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_includes migration, "create_table :keystone_ui_preferences_component_preferences"
   end
 
+  test "the migration gives each preference a polymorphic owner" do
+    assert_includes migration, "t.references :owner, polymorphic: true, null: false"
+  end
+
   private
 
   def migration
