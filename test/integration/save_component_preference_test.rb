@@ -60,4 +60,10 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
   ensure
     ApplicationController.remove_method(:refuse_everyone)
   end
+
+  test "a save whose body is not a JSON object is answered with an error" do
+    patch "/keystone_ui_preferences/months", params: [ "pipeline" ].to_json, headers: { "CONTENT_TYPE" => "application/json" }
+
+    assert_response 422
+  end
 end

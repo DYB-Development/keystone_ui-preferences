@@ -6,8 +6,11 @@ module KeystoneUi
       def update
         return head :forbidden unless keystone_layout_choice(params[:component_key]).members_choose?
 
+        value = JSON.parse(request.raw_post)
+        return head 422 unless value.is_a?(Hash)
+
         preference = ComponentPreference.find_or_initialize_by(owner: current_owner, component_key: params[:component_key])
-        preference.update!(value: JSON.parse(request.raw_post))
+        preference.update!(value: value)
         head :no_content
       end
     end
