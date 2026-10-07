@@ -3,6 +3,8 @@
 module KeystoneUi
   module Preferences
     class LayoutChoice
+      NOTHING_SAVED = "nothing saved"
+
       def initialize(person:, account:, component_key:)
         @person = person
         @account = account
@@ -34,18 +36,20 @@ module KeystoneUi
       def preferences
         @preferences ||= begin
           owners = [ @person, @account ].compact
-          cached = owners.map { |owner| Rails.cache.read(cache_key(owner)) }.compact
-          missing = owners.reject { |owner| cached.any? { |preference| preference.owned_by?(owner) } }
-          cached + read_and_cache(missing)
+          cached = owners.index_with { |owner| Rails.cache.read(cache_key(owner)) }
+          missing = cached.select { |_owner, entry| entry.nil? }.keys
+          cached.values.grep(ComponentPreference) + read_and_cache(missing)
         end
       end
 
       def read_and_cache(owners)
         return [] if owners.empty?
 
-        ComponentPreference.where(owner: owners, component_key: @component_key).to_a.each do |preference|
-          Rails.cache.write(cache_key(preference.owner_type, preference.owner_id), preference)
+        found = ComponentPreference.where(owner: owners, component_key: @component_key).to_a
+        owners.each do |owner|
+          Rails.cache.write(cache_key(owner), found.find { |preference| preference.owned_by?(owner) } || NOTHING_SAVED)
         end
+        found
       end
 
       def cache_key(owner_or_type, id = nil)

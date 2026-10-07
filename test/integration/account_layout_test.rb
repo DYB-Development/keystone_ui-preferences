@@ -115,4 +115,10 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_empty preference_queries_while { get "/months" }
   end
+
+  test "a second view of a page whose table has no saved layout makes no query for it" do
+    get "/months"
+
+    assert_empty preference_queries_while { get "/months" }
+  end
 end

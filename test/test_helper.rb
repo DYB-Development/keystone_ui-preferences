@@ -24,3 +24,11 @@ ActiveRecord::Schema.define do
 end
 
 Rails.application.config.action_dispatch.show_exceptions = :none
+
+class ActiveSupport::TestCase
+  setup { Rails.cache.clear }
+end
+
+class ActionDispatch::IntegrationTest
+  setup { Rails.cache.clear }
+end
