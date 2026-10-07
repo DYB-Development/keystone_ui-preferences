@@ -1,0 +1,5 @@
+class RemoveExtraOwnerIndexFromKeystoneUiPreferencesComponentPreferences < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    remove_index :keystone_ui_preferences_component_preferences, %i[owner_type owner_id], name: "index_keystone_ui_preferences_component_preferences_on_owner", if_exists: true
+  end
+end
