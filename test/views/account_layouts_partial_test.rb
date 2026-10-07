@@ -51,4 +51,12 @@ class AccountLayoutsPartialTest < ActionView::TestCase
 
     assert_equal [ "months" ], css_select("form:has(input[name=use_mine])").map { |form| form.at_css("input[name=component_key]")["value"] }
   end
+
+  test "a key the admin has no saved layout for has no button to make it the account's" do
+    saved(account, "jobs")
+
+    render_section
+
+    assert_empty css_select("input[name=use_mine]")
+  end
 end
