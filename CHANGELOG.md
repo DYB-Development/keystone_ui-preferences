@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-07
+
 ### Added
 - With `current_account_method` set, an account can keep its own layout for a component key and a members-choose switch, and a table shows the person's own layout when the account lets members choose, otherwise the account's, otherwise its default.
 - A person whose account does not let members choose sees no Columns menu, and their saves are refused.
