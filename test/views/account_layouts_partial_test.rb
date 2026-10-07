@@ -15,6 +15,7 @@ class AccountLayoutsPartialTest < ActionView::TestCase
 
   def teardown
     KeystoneUi::Preferences::ComponentPreference.delete_all
+    KeystoneUi::Preferences.reset_configuration!
   end
 
   def saved(owner, key, value = { "hidden_columns" => [] }, members_choose: true)
@@ -69,5 +70,14 @@ class AccountLayoutsPartialTest < ActionView::TestCase
     ActiveSupport::Notifications.subscribed(counting, "sql.active_record") { render_section }
 
     assert_equal 1, queries.size
+  end
+
+  test "the account section names a key by the name the host gives it" do
+    KeystoneUi::Preferences.configure { |config| config.name_component(:months, "Revenue projection by month") }
+    saved(admin, "months")
+
+    render_section
+
+    assert_equal [ "Revenue projection by month" ], css_select("[data-component-key] .ks-section-title").map { |title| title.text.strip }
   end
 end
