@@ -73,4 +73,14 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month", "Pipeline" ], headers
   end
+
+  test "reading the layout that applies makes one query whether or not either row exists" do
+    saved(account, [ "pipeline" ])
+    queries = []
+    counting = ->(*, payload) { queries << payload[:sql] if payload[:sql].include?("keystone_ui_preferences_component_preferences") }
+
+    ActiveSupport::Notifications.subscribed(counting, "sql.active_record") { get "/months" }
+
+    assert_equal 1, queries.size
+  end
 end
