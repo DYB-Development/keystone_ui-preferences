@@ -79,4 +79,10 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_equal({ "hidden_columns" => [ "pipeline" ] }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "months").value)
   end
+
+  test "a save whose value is larger than the limit is answered with an error" do
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "x" * 10_001 ] }, as: :json
+
+    assert_response 422
+  end
 end
