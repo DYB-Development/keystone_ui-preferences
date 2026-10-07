@@ -17,6 +17,10 @@ ActiveRecord::Schema.define do
   create_table :users, force: true do |t|
     t.string :name
   end
+
+  create_table :accounts, force: true do |t|
+    t.string :name
+  end
 end
 
 Rails.application.config.action_dispatch.show_exceptions = :none

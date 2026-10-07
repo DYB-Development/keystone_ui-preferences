@@ -3,7 +3,7 @@
 module KeystoneUi
   module Preferences
     class Configuration
-      attr_accessor :current_owner_method, :authentication_method
+      attr_accessor :current_owner_method, :authentication_method, :current_account_method
 
       def initialize
         @current_owner_method = :current_user
