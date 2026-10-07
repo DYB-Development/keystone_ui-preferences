@@ -93,4 +93,10 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_response 422
   end
+
+  test "a save to a component key holding other than letters, digits and underscores is answered with an error" do
+    patch "/keystone_ui_preferences/bad-key", params: { hidden_columns: [] }, as: :json
+
+    assert_response 422
+  end
 end
