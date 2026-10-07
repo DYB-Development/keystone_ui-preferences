@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- The save address refuses a body that is not a JSON object, a body larger than `max_value_bytes` (10,000 by default), and a component key that is not 1 to 64 letters, digits and underscores, answering 422 and saving nothing.
+
 ## [0.3.0] - 2026-10-07
 
 ### Added

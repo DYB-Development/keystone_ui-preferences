@@ -41,8 +41,11 @@ KeystoneUi::Preferences.configure do |config|
   config.current_owner_method = :current_user        # returns the person a value is saved for
   config.authentication_method = :authenticate_user! # runs before every save
   config.current_account_method = :current_account   # returns the account; nil (the default) skips the account level
+  config.max_value_bytes = 10_000                    # the largest saved value accepted, in bytes
 end
 ```
+
+The save address refuses, with a 422 and nothing saved, a body that is not a JSON object, a body larger than `max_value_bytes`, and a component key that is not 1 to 64 letters, digits and underscores.
 
 ## Using it
 
