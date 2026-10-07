@@ -16,6 +16,7 @@ module KeystoneUi
         else
           preference.update!(members_choose: @values[:members_choose] == "1")
         end
+        Kept.new
       end
     end
   end

@@ -45,4 +45,8 @@ class PickAccountLayoutsTest < ActiveSupport::TestCase
 
     assert_equal false, account_preference.members_choose
   end
+
+  test "a saved change answers that it was kept" do
+    assert_equal true, pick(component_key: "months", members_choose: "1").ok?
+  end
 end
