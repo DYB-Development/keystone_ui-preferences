@@ -140,4 +140,15 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month" ], headers
   end
+
+  test "a page with no cache configured still shows the layout that applies" do
+    Rails.cache = ActiveSupport::Cache::NullStore.new
+    saved(person, [ "pipeline" ])
+
+    get "/months"
+
+    assert_equal [ "Month" ], headers
+  ensure
+    Rails.cache = ActiveSupport::Cache::MemoryStore.new
+  end
 end
