@@ -28,4 +28,12 @@ class PickAccountLayoutsTest < ActiveSupport::TestCase
 
     assert_equal false, account_preference.members_choose
   end
+
+  test "using my layout for everyone copies the admin's saved layout to the account" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: admin, component_key: "months", value: { "hidden_columns" => [ "pipeline" ] })
+
+    pick(component_key: "months", use_mine: "1")
+
+    assert_equal({ "hidden_columns" => [ "pipeline" ] }, account_preference.value)
+  end
 end

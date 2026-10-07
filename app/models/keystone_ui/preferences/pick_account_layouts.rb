@@ -11,7 +11,11 @@ module KeystoneUi
 
       def call
         preference = ComponentPreference.find_or_initialize_by(owner: @account, component_key: @values[:component_key])
-        preference.update!(members_choose: @values[:members_choose] == "1")
+        if @values[:use_mine] == "1"
+          preference.update!(value: ComponentPreference.find_by!(owner: @person, component_key: @values[:component_key]).value)
+        else
+          preference.update!(members_choose: @values[:members_choose] == "1")
+        end
       end
     end
   end
