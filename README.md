@@ -81,7 +81,15 @@ SettingsHub.section :account_layouts, area: :account, title: "Table layouts",
   runs: "KeystoneUi::Preferences::PickAccountLayouts"
 ```
 
-The section lists each component key the admin or the account has a saved layout for. Each key has the members-choose switch and, when the admin has a saved layout of their own, a button that makes it the account's layout.
+The section lists each component key the admin or the account has a saved layout for, by the name the app gives it, or by the key in words when it has none:
+
+```ruby
+KeystoneUi::Preferences.configure do |config|
+  config.name_component :revenue_projection_months, "Revenue projection – By month"
+end
+```
+
+Each key has the members-choose switch and, when the admin has a saved layout of their own, a button that makes it the account's layout.
 
 ## What is stored
 
