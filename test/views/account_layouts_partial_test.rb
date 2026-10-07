@@ -80,4 +80,12 @@ class AccountLayoutsPartialTest < ActionView::TestCase
 
     assert_equal [ "Revenue projection by month" ], css_select("[data-component-key] .ks-section-title").map { |title| title.text.strip }
   end
+
+  test "the account section names a key the host has not named by the key in words" do
+    saved(admin, "revenue_projection_months")
+
+    render_section
+
+    assert_equal [ "Revenue projection months" ], css_select("[data-component-key] .ks-section-title").map { |title| title.text.strip }
+  end
 end
