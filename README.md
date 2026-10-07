@@ -18,6 +18,13 @@ bin/rails generate keystone_ui:preferences:install
 bin/rails db:migrate
 ```
 
+After updating the gem, run its update generator to copy any migrations added since it was installed:
+
+```bash
+bin/rails generate keystone_ui:preferences:update
+bin/rails db:migrate
+```
+
 Mount the engine in `config/routes.rb`. A table's Columns menu saves to it:
 
 ```ruby
