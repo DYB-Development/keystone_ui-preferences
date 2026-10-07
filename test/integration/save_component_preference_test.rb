@@ -85,4 +85,12 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_response 422
   end
+
+  test "a host can lower the size a saved value may be" do
+    KeystoneUi::Preferences.configure { |config| config.max_value_bytes = 20 }
+
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline", "outreach" ] }, as: :json
+
+    assert_response 422
+  end
 end

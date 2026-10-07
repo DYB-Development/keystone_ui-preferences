@@ -6,7 +6,7 @@ module KeystoneUi
       def update
         return head :forbidden unless keystone_layout_choice(params[:component_key]).members_choose?
 
-        return head 422 if request.raw_post.bytesize > 10_000
+        return head 422 if request.raw_post.bytesize > KeystoneUi::Preferences.configuration.max_value_bytes
 
         value = JSON.parse(request.raw_post)
         return head 422 unless value.is_a?(Hash)
