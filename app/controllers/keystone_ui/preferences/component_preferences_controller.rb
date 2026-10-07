@@ -12,6 +12,8 @@ module KeystoneUi
         preference = ComponentPreference.find_or_initialize_by(owner: current_owner, component_key: params[:component_key])
         preference.update!(value: value)
         head :no_content
+      rescue ActionDispatch::Http::Parameters::ParseError
+        head 422
       end
     end
   end

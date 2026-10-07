@@ -66,4 +66,10 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_response 422
   end
+
+  test "a save whose body is not JSON at all is answered with an error" do
+    patch "/keystone_ui_preferences/months", params: "hidden_columns=pipeline", headers: { "CONTENT_TYPE" => "application/json" }
+
+    assert_response 422
+  end
 end
