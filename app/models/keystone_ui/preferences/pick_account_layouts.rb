@@ -12,16 +12,30 @@ module KeystoneUi
       def call
         return Refusal.new("There is no account to save this layout on.") unless @account
 
-        preference = ComponentPreference.find_or_initialize_by(owner: @account, component_key: @values[:component_key])
-        if @values[:use_mine] == "1"
-          mine = ComponentPreference.find_by(owner: @person, component_key: @values[:component_key])
-          return Refusal.new("You have no saved layout for this table to share.") unless mine
+        @values[:use_mine] == "1" ? share_mine : set_members_choose
+      end
 
-          preference.update!(value: mine.value)
-        else
-          preference.update!(members_choose: @values[:members_choose] == "1")
-        end
+      private
+
+      def share_mine
+        mine = ComponentPreference.find_by(owner: @person, component_key: component_key)
+        return Refusal.new("You have no saved layout for this table to share.") unless mine
+
+        account_preference.update!(value: mine.value)
         Kept.new
+      end
+
+      def set_members_choose
+        account_preference.update!(members_choose: @values[:members_choose] == "1")
+        Kept.new
+      end
+
+      def account_preference
+        @account_preference ||= ComponentPreference.find_or_initialize_by(owner: @account, component_key: component_key)
+      end
+
+      def component_key
+        @values[:component_key]
       end
     end
   end
