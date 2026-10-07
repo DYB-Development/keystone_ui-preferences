@@ -130,4 +130,14 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month" ], headers
   end
+
+  test "every member sees an account's new layout on their next page after it is saved" do
+    account_layout = saved(account, [])
+    get "/months"
+    account_layout.update!(value: { "hidden_columns" => [ "pipeline" ] })
+
+    get "/months"
+
+    assert_equal [ "Month" ], headers
+  end
 end
