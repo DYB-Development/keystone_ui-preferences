@@ -73,7 +73,7 @@ With `current_account_method` set, an account can keep its own layout for a key,
 2. Otherwise the account's layout, when it has one.
 3. Otherwise the table's default layout, from its own call.
 
-A person whose account does not let members choose sees no Columns menu, and a save they send is refused. Reading the layout that applies makes one query.
+A person whose account does not let members choose sees no Columns menu, and a save they send is refused. Reading the layout that applies makes one query, and each owner's row for a key, or the fact that there is none, is then kept in `Rails.cache` until that row is saved through the gem, so a later view makes no query. A row changed outside the gem keeps its old cache entry until it expires. With no cache configured, every view reads the rows.
 
 An admin sets an account's layouts in a settings_hub section. Who may open it is the app's decision, so register it behind a capability of the app's choosing:
 
