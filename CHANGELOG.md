@@ -8,8 +8,6 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - The layout lookup keeps each owner's row for a component key, or the fact that there is none, in `Rails.cache`, so a second view of a page makes no query for it, and a row clears its entry when it is saved.
-
-### Added
 - The save address refuses a body that is not a JSON object, a body larger than `max_value_bytes` (10,000 by default), and a component key that is not 1 to 64 letters, digits and underscores, answering 422 and saving nothing.
 
 ## [0.3.0] - 2026-10-07
