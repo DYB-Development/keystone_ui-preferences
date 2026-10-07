@@ -14,7 +14,10 @@ module KeystoneUi
 
         preference = ComponentPreference.find_or_initialize_by(owner: @account, component_key: @values[:component_key])
         if @values[:use_mine] == "1"
-          preference.update!(value: ComponentPreference.find_by!(owner: @person, component_key: @values[:component_key]).value)
+          mine = ComponentPreference.find_by(owner: @person, component_key: @values[:component_key])
+          return Refusal.new("You have no saved layout for this table to share.") unless mine
+
+          preference.update!(value: mine.value)
         else
           preference.update!(members_choose: @values[:members_choose] == "1")
         end

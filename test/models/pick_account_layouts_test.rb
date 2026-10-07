@@ -55,4 +55,8 @@ class PickAccountLayoutsTest < ActiveSupport::TestCase
 
     assert_equal "There is no account to save this layout on.", result.message
   end
+
+  test "using my layout for everyone with no saved layout of my own is refused with a reason" do
+    assert_equal "You have no saved layout for this table to share.", pick(component_key: "months", use_mine: "1").message
+  end
 end
