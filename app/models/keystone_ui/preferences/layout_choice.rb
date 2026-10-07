@@ -22,13 +22,13 @@ module KeystoneUi
       private
 
       def own_preference
-        preferences.find { |preference| preference.owner_type == @person.class.base_class.name && preference.owner_id == @person.id }
+        preferences.find { |preference| preference.owned_by?(@person) }
       end
 
       def account_preference
         return nil unless @account
 
-        preferences.find { |preference| preference.owner_type == @account.class.base_class.name && preference.owner_id == @account.id }
+        preferences.find { |preference| preference.owned_by?(@account) }
       end
 
       def preferences

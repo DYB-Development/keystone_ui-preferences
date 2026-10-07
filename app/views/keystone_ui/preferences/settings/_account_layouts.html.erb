@@ -1,16 +1,17 @@
-<% component_keys = KeystoneUi::Preferences::ComponentPreference.where(owner: [ person, account ]).distinct.order(:component_key).pluck(:component_key) %>
+<% preferences = KeystoneUi::Preferences::ComponentPreference.where(owner: [ person, account ]).to_a %>
+<% component_keys = preferences.map(&:component_key).uniq.sort %>
 
 <% component_keys.each do |component_key| %>
   <div data-component-key="<%= component_key %>">
-    <% account_preference = KeystoneUi::Preferences::ComponentPreference.find_or_initialize_by(owner: account, component_key: component_key) %>
+    <% account_preference = preferences.find { |preference| preference.component_key == component_key && preference.owned_by?(account) } %>
     <%= ui_section(title: component_key.humanize, spacing: :sm) do %>
       <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
         <%= hidden_field_tag "component_key", component_key, id: nil %>
         <%= hidden_field_tag "members_choose", "0", id: nil %>
-        <%= ui_checkbox_row(name: "members_choose", value: "1", label: "Members choose their own layout", checked: account_preference.members_choose) %>
+        <%= ui_checkbox_row(name: "members_choose", value: "1", label: "Members choose their own layout", checked: account_preference.nil? || account_preference.members_choose) %>
         <%= ui_button(label: "Save", type: :submit) %>
       <% end %>
-      <% if KeystoneUi::Preferences::ComponentPreference.exists?(owner: person, component_key: component_key) %>
+      <% if preferences.any? { |preference| preference.component_key == component_key && preference.owned_by?(person) } %>
         <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
           <%= hidden_field_tag "component_key", component_key, id: nil %>
           <%= hidden_field_tag "use_mine", "1", id: nil %>

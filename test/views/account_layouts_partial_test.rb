@@ -59,4 +59,15 @@ class AccountLayoutsPartialTest < ActionView::TestCase
 
     assert_empty css_select("input[name=use_mine]")
   end
+
+  test "the account section reads its saved layouts in one query however many keys it lists" do
+    saved(admin, "months")
+    saved(account, "jobs")
+    queries = []
+    counting = ->(*, payload) { queries << payload[:sql] if payload[:sql].include?("keystone_ui_preferences_component_preferences") }
+
+    ActiveSupport::Notifications.subscribed(counting, "sql.active_record") { render_section }
+
+    assert_equal 1, queries.size
+  end
 end
