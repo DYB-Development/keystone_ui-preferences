@@ -105,4 +105,10 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_response 422
   end
+
+  test "a save to a blank component key is answered with an error" do
+    patch "/keystone_ui_preferences/%20", params: { hidden_columns: [] }, as: :json
+
+    assert_response 422
+  end
 end
