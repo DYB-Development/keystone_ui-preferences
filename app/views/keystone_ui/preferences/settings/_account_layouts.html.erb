@@ -10,6 +10,11 @@
         <%= ui_checkbox_row(name: "members_choose", value: "1", label: "Members choose their own layout", checked: account_preference.members_choose) %>
         <%= ui_button(label: "Save", type: :submit) %>
       <% end %>
+      <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
+        <%= hidden_field_tag "component_key", component_key, id: nil %>
+        <%= hidden_field_tag "use_mine", "1", id: nil %>
+        <%= ui_button(label: "Use my layout for everyone", type: :submit, variant: :secondary) %>
+      <% end %>
     <% end %>
   </div>
 <% end %>

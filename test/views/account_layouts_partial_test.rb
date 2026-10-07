@@ -43,4 +43,12 @@ class AccountLayoutsPartialTest < ActionView::TestCase
 
     assert_equal({ "jobs" => false, "months" => true }, css_select("[data-component-key]").to_h { |section| [ section["data-component-key"], section.at_css("input[type=checkbox][name=members_choose][value=\"1\"]").key?("checked") ] })
   end
+
+  test "a key the admin has a saved layout for has a button that makes it the account's layout" do
+    saved(admin, "months")
+
+    render_section
+
+    assert_equal [ "months" ], css_select("form:has(input[name=use_mine])").map { |form| form.at_css("input[name=component_key]")["value"] }
+  end
 end
