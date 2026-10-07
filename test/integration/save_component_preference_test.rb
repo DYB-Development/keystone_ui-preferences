@@ -99,4 +99,10 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_response 422
   end
+
+  test "a save to a component key longer than 64 characters is answered with an error" do
+    patch "/keystone_ui_preferences/#{"k" * 65}", params: { hidden_columns: [] }, as: :json
+
+    assert_response 422
+  end
 end
