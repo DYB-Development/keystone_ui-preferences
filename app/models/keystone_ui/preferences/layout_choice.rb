@@ -52,9 +52,8 @@ module KeystoneUi
         found
       end
 
-      def cache_key(owner_or_type, id = nil)
-        type, id = id ? [ owner_or_type, id ] : [ owner_or_type.class.base_class.name, owner_or_type.id ]
-        [ "keystone_ui_preferences", type, id, @component_key ].join("/")
+      def cache_key(owner)
+        ComponentPreference.cache_key_for(owner.class.base_class.name, owner.id, @component_key)
       end
     end
   end

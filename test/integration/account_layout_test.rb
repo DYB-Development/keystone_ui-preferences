@@ -121,4 +121,13 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_empty preference_queries_while { get "/months" }
   end
+
+  test "a person who saves their layout sees it on the next page they open" do
+    get "/months"
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+
+    get "/months"
+
+    assert_equal [ "Month" ], headers
+  end
 end
