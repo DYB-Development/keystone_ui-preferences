@@ -12,6 +12,7 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
   end
 
   def setup
+    Rails.cache.clear
     ApplicationController.signed_in_user = person
     ApplicationController.signed_in_account = account
     KeystoneUi::Preferences.configure { |config| config.current_account_method = :current_account }
@@ -26,6 +27,13 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
   def saved(owner, hidden, members_choose: true)
     KeystoneUi::Preferences::ComponentPreference.create!(owner: owner, component_key: "months", value: { "hidden_columns" => hidden }, members_choose: members_choose)
+  end
+
+  def preference_queries_while
+    queries = []
+    counting = ->(*, payload) { queries << payload[:sql] if payload[:sql].include?("keystone_ui_preferences_component_preferences") }
+    ActiveSupport::Notifications.subscribed(counting, "sql.active_record") { yield }
+    queries
   end
 
   def headers
@@ -98,5 +106,13 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
     patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
 
     assert_response :forbidden
+  end
+
+  test "a second view of a page whose table has saved layouts makes no query for them" do
+    saved(person, [ "pipeline" ])
+    saved(account, [])
+    get "/months"
+
+    assert_empty preference_queries_while { get "/months" }
   end
 end
