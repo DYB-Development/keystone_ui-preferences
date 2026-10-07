@@ -40,4 +40,13 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month" ], headers
   end
+
+  test "a table shows the person's own layout when the account lets members choose" do
+    saved(person, [ "pipeline" ])
+    saved(account, [])
+
+    get "/months"
+
+    assert_equal [ "Month" ], headers
+  end
 end
