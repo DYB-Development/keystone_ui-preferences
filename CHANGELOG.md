@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-07
+
 ### Fixed
 - The install migration no longer adds an owner index that the owner and component key index already covers, and `keystone_ui:preferences:update` copies a migration that drops it from an app that installed an earlier version.
 
