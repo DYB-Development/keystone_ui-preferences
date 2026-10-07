@@ -42,6 +42,10 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_includes migration, "%i[owner_type owner_id component_key], unique: true"
   end
 
+  test "the migration indexes the owner only through its owner and component key index" do
+    assert_includes migration, "t.references :owner, polymorphic: true, null: false, index: false"
+  end
+
   private
 
   def migration
