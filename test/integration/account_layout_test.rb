@@ -91,4 +91,12 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_empty css_select("[data-controller=column-picker]")
   end
+
+  test "a save from a person whose account does not let members choose is refused" do
+    saved(account, [], members_choose: false)
+
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+
+    assert_response :forbidden
+  end
 end

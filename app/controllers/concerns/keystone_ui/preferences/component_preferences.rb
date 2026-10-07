@@ -15,11 +15,15 @@ module KeystoneUi
         owner = send(KeystoneUi::Preferences.configuration.current_owner_method)
         return unless owner
 
-        choice = LayoutChoice.new(person: owner, account: keystone_preferences_account, component_key: component_key)
+        choice = keystone_layout_choice(component_key)
         {
           value: choice.value,
           save_url: (keystone_ui_preferences.component_preference_path(component_key: component_key) if choice.members_choose?)
         }
+      end
+
+      def keystone_layout_choice(component_key)
+        LayoutChoice.new(person: send(KeystoneUi::Preferences.configuration.current_owner_method), account: keystone_preferences_account, component_key: component_key)
       end
 
       def keystone_preferences_account
