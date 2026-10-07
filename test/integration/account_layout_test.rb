@@ -63,4 +63,14 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month", "Pipeline" ], headers
   end
+
+  test "with no account method named the account's layout is skipped" do
+    KeystoneUi::Preferences.configure { |config| config.current_account_method = nil }
+    saved(person, [])
+    saved(account, [ "pipeline" ], members_choose: false)
+
+    get "/months"
+
+    assert_equal [ "Month", "Pipeline" ], headers
+  end
 end
