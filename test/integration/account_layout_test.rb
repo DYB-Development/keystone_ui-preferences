@@ -49,4 +49,12 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "Month" ], headers
   end
+
+  test "a table shows the person's own layout when the account has no saved layout" do
+    saved(person, [ "pipeline" ])
+
+    get "/months"
+
+    assert_equal [ "Month" ], headers
+  end
 end
