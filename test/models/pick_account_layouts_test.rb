@@ -36,4 +36,13 @@ class PickAccountLayoutsTest < ActiveSupport::TestCase
 
     assert_equal({ "hidden_columns" => [ "pipeline" ] }, account_preference.value)
   end
+
+  test "using my layout for everyone leaves the members-choose switch as it was" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: admin, component_key: "months", value: { "hidden_columns" => [] })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "months", members_choose: false)
+
+    pick(component_key: "months", use_mine: "1")
+
+    assert_equal false, account_preference.members_choose
+  end
 end
