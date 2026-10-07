@@ -1,0 +1,8 @@
+<% component_keys = KeystoneUi::Preferences::ComponentPreference.where(owner: [ person, account ]).distinct.order(:component_key).pluck(:component_key) %>
+
+<% component_keys.each do |component_key| %>
+  <div data-component-key="<%= component_key %>">
+    <%= ui_section(title: component_key.humanize, spacing: :sm) do %>
+    <% end %>
+  </div>
+<% end %>
