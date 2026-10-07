@@ -34,4 +34,13 @@ class AccountLayoutsPartialTest < ActionView::TestCase
 
     assert_equal %w[jobs months], css_select("[data-component-key]").map { |section| section["data-component-key"] }
   end
+
+  test "each key has a members-choose switch showing whether the account lets members choose" do
+    saved(admin, "months")
+    saved(account, "jobs", members_choose: false)
+
+    render_section
+
+    assert_equal({ "jobs" => false, "months" => true }, css_select("[data-component-key]").to_h { |section| [ section["data-component-key"], section.at_css("input[type=checkbox][name=members_choose][value=\"1\"]").key?("checked") ] })
+  end
 end
