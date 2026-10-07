@@ -10,6 +10,8 @@ module KeystoneUi
       end
 
       def call
+        return Refusal.new("There is no account to save this layout on.") unless @account
+
         preference = ComponentPreference.find_or_initialize_by(owner: @account, component_key: @values[:component_key])
         if @values[:use_mine] == "1"
           preference.update!(value: ComponentPreference.find_by!(owner: @person, component_key: @values[:component_key]).value)

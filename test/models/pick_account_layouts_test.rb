@@ -49,4 +49,10 @@ class PickAccountLayoutsTest < ActiveSupport::TestCase
   test "a saved change answers that it was kept" do
     assert_equal true, pick(component_key: "months", members_choose: "1").ok?
   end
+
+  test "a change with no account to save it on is refused with a reason" do
+    result = KeystoneUi::Preferences::PickAccountLayouts.new(person: admin, account: nil, values: { component_key: "months", members_choose: "0" }).call
+
+    assert_equal "There is no account to save this layout on.", result.message
+  end
 end
