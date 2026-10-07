@@ -18,7 +18,7 @@ module KeystoneUi
         choice = LayoutChoice.new(person: owner, account: keystone_preferences_account, component_key: component_key)
         {
           value: choice.value,
-          save_url: keystone_ui_preferences.component_preference_path(component_key: component_key)
+          save_url: (keystone_ui_preferences.component_preference_path(component_key: component_key) if choice.members_choose?)
         }
       end
 

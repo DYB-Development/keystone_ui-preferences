@@ -83,4 +83,12 @@ class AccountLayoutTest < ActionDispatch::IntegrationTest
 
     assert_equal 1, queries.size
   end
+
+  test "a person whose account does not let members choose sees no Columns menu" do
+    saved(account, [], members_choose: false)
+
+    get "/months"
+
+    assert_empty css_select("[data-controller=column-picker]")
+  end
 end
