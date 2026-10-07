@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-07
+
 ### Added
 - The layout lookup keeps each owner's row for a component key, or the fact that there is none, in `Rails.cache`, so a second view of a page makes no query for it, and a row clears its entry when it is saved.
 
