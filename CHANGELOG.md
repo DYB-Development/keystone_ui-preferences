@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- `config.name_component(key, name)` gives a component key the name the account layouts settings section shows for it, which otherwise shows the key in words.
+
 ## [0.2.0] - 2026-10-07
 
 ### Added
