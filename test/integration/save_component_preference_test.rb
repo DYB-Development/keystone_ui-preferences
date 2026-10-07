@@ -72,4 +72,11 @@ class SaveComponentPreferenceTest < ActionDispatch::IntegrationTest
 
     assert_response 422
   end
+
+  test "a refused save leaves the person's saved value as it was" do
+    patch "/keystone_ui_preferences/months", params: { hidden_columns: [ "pipeline" ] }, as: :json
+    patch "/keystone_ui_preferences/months", params: [ "outreach" ].to_json, headers: { "CONTENT_TYPE" => "application/json" }
+
+    assert_equal({ "hidden_columns" => [ "pipeline" ] }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "months").value)
+  end
 end
