@@ -36,4 +36,10 @@ class NavigationPlacementPartialTest < ActionView::TestCase
 
     assert_equal [ "top" ], css_select("input[type=radio][name=placement][checked]").map { |option| option["value"] }
   end
+
+  test "the navigation section stacks its options one per row at phone width" do
+    render_section
+
+    assert_equal 3, css_select(".grid.grid-cols-1 > label:has(input[type=radio][name=placement])").size
+  end
 end
