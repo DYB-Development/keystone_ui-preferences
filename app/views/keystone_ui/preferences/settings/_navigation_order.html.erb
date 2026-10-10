@@ -1,7 +1,7 @@
 <% KeystoneUi.configuration.navigation_groups.each do |group| %>
   <div data-navigation-group="<%= group.label %>">
     <p data-group-label><%= group.label %></p>
-    <% group.tabs.each do |tab| %>
+    <% group.tabs_permitted_for(self).each do |tab| %>
       <div data-navigation-tab="<%= tab.key %>">
         <span data-tab-label><%= tab.label %></span>
       </div>

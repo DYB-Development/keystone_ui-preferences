@@ -39,4 +39,12 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal [ [ "Sales", [ "Orders", "Quotes" ] ], [ "Admin", [ "Users" ] ] ], listed
   end
+
+  test "the tab order section leaves out a tab the person may not see" do
+    KeystoneUi.configuration.navigation_groups.first.tab :refunds, label: "Refunds", href: "/refunds", permitted: ->(_view) { false }
+
+    render_section
+
+    assert_equal [ [ "Sales", [ "Orders", "Quotes" ] ], [ "Admin", [ "Users" ] ] ], listed
+  end
 end
