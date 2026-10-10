@@ -1,0 +1,10 @@
+<% current = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation").value&.dig("placement") || "top" %>
+
+<%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
+  <%= ui_grid(cols: { default: 1, sm: 3 }, gap: :sm) do %>
+    <% { "top" => "Top", "left" => "Left", "right" => "Right" }.each do |placement, label| %>
+      <%= ui_radio_card(name: "placement", value: placement, label: label, checked: placement == current) %>
+    <% end %>
+  <% end %>
+  <%= ui_button(label: "Save", type: :submit) %>
+<% end %>
