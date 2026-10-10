@@ -33,4 +33,8 @@ class PickNavigationPlacementTest < ActiveSupport::TestCase
 
     assert_equal({ "placement" => "right" }, saved_value(teammate))
   end
+
+  test "a placement other than Top, Left or Right is refused with a reason" do
+    assert_equal "Choose Top, Left or Right for the navigation.", pick(placement: "bottom").message
+  end
 end
