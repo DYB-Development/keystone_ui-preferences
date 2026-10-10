@@ -22,4 +22,12 @@ class NavigationPlacementPartialTest < ActionView::TestCase
 
     assert_equal [ [ "top", "Top" ], [ "left", "Left" ], [ "right", "Right" ] ], css_select("label:has(input[type=radio][name=placement])").map { |option| [ option.at_css("input")["value"], option.text.strip ] }
   end
+
+  test "the navigation section selects the placement the person saved" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "navigation", value: { "placement" => "left" })
+
+    render_section
+
+    assert_equal [ "left" ], css_select("input[type=radio][name=placement][checked]").map { |option| option["value"] }
+  end
 end
