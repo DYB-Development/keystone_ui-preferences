@@ -69,4 +69,13 @@ class PickNavigationPlacementTest < ActiveSupport::TestCase
 
     assert_nil saved_value
   end
+
+  test "a placement is saved when the account lets members choose their own navigation" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "navigation", members_choose: true)
+
+    pick({ placement: "left" }, person, account)
+
+    assert_equal({ "placement" => "left" }, saved_value)
+  end
 end
