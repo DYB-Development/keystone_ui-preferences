@@ -78,4 +78,10 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal({ "Sales" => nil, "Admin" => [ { "group" => "Admin", "tabs" => [ "users" ] }, { "group" => "Sales", "tabs" => [ "orders", "quotes" ] } ] }, group_moves("up"))
   end
+
+  test "every group but the last has a Down button that saves the order with that group moved below the one after it" do
+    render_section
+
+    assert_equal({ "Sales" => [ { "group" => "Admin", "tabs" => [ "users" ] }, { "group" => "Sales", "tabs" => [ "orders", "quotes" ] } ], "Admin" => nil }, group_moves("down"))
+  end
 end

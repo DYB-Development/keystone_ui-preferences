@@ -13,6 +13,12 @@
           <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
         <% end %>
       <% end %>
+      <% if group_index < arranged.size - 1 %>
+        <%= form_with(url: submit_url, method: :patch, data: { turbo: false, group_move: "down" }) do %>
+          <%= hidden_field_tag "order", arrangement.group_moved(group_index, 1).to_json, id: nil %>
+          <%= ui_button(label: "Down", type: :submit, variant: :secondary, size: :sm) %>
+        <% end %>
+      <% end %>
     </div>
     <% tabs.each do |tab| %>
       <div data-navigation-tab="<%= tab.key %>">
