@@ -20,9 +20,15 @@
         <% end %>
       <% end %>
     </div>
-    <% tabs.each do |tab| %>
+    <% tabs.each_with_index do |tab, tab_index| %>
       <div data-navigation-tab="<%= tab.key %>">
         <span data-tab-label><%= tab.label %></span>
+        <% if tab_index.positive? %>
+          <%= form_with(url: submit_url, method: :patch, data: { turbo: false, tab_move: "up" }) do %>
+            <%= hidden_field_tag "order", arrangement.tab_moved(group_index, tab_index, -1).to_json, id: nil %>
+            <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
+          <% end %>
+        <% end %>
       </div>
     <% end %>
   </div>
