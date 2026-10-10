@@ -101,6 +101,20 @@ end
 
 Each key has the members-choose switch and, when the admin has a saved layout of their own, a button that makes it the account's layout.
 
+## Navigation placement
+
+A person chooses where keystone_ui draws the desktop navigation, at the top or as a sidebar on the left or the right, in a settings_hub section the app registers:
+
+```ruby
+SettingsHub.section :navigation_placement, area: :user, title: "Navigation",
+  renders: "keystone_ui/preferences/settings/navigation_placement",
+  runs: "KeystoneUi::Preferences::PickNavigationPlacement"
+```
+
+The section offers Top, Left and Right, with the placement that applies to the person selected, or Top when nothing is saved. Saving keeps `{ "placement": "left" }` for that person under the `navigation` key, and keystone_ui's navigation reads it on the next page they open. A placement other than `top`, `left` or `right` is refused with a message, and nothing is saved.
+
+The `navigation` key follows the account layouts above, so an account that turns off members-choose for it draws its own placement for every member.
+
 ## What is stored
 
 One row per owner and component key, in `keystone_ui_preferences_component_preferences`:
