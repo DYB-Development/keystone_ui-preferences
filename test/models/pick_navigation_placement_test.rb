@@ -63,4 +63,10 @@ class PickNavigationPlacementTest < ActiveSupport::TestCase
   test "a placement is refused with a reason when the account sets the navigation for everyone" do
     assert_equal "Your account sets the navigation for everyone, so this was not saved.", pick({ placement: "left" }, person, account_setting_navigation).message
   end
+
+  test "a placement refused because the account sets the navigation saves nothing for the person" do
+    pick({ placement: "left" }, person, account_setting_navigation)
+
+    assert_nil saved_value
+  end
 end
