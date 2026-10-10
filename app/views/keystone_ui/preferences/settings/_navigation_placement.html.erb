@@ -1,0 +1,6 @@
+<%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
+  <% { "top" => "Top", "left" => "Left", "right" => "Right" }.each do |placement, label| %>
+    <%= ui_radio_card(name: "placement", value: placement, label: label) %>
+  <% end %>
+  <%= ui_button(label: "Save", type: :submit) %>
+<% end %>
