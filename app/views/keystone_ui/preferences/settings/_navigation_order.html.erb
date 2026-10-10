@@ -1,52 +1,58 @@
-<% saved_order = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation").value&.dig("order") || [] %>
-<% permitted = KeystoneUi.configuration.navigation_groups.map { |group| [ group, group.tabs_permitted_for(self) ] }.reject { |_group, tabs| tabs.empty? } %>
-<% arranged = KeystoneUi::NavigationOrder.new(saved_order).arrange(permitted) %>
-<% arrangement = KeystoneUi::Preferences::NavigationArrangement.new(arranged) %>
+<% choice = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation") %>
+<% saved_order = choice.value&.dig("order") || [] %>
 
-<% arranged.each_with_index do |(group, tabs), group_index| %>
-  <div data-navigation-group="<%= group.label %>">
-    <%= ui_grid(cols: { default: 1, sm: 2 }, gap: :sm) do %>
-      <p data-group-label><strong><%= group.label %></strong></p>
-      <%= ui_grid(cols: { default: 2 }, gap: :sm) do %>
-        <% if group_index.positive? %>
-          <%= form_with(url: submit_url, method: :patch, data: { turbo: false, group_move: "up" }) do %>
-            <%= hidden_field_tag "order", arrangement.group_moved(group_index, -1).to_json, id: nil %>
-            <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
+<% if choice.members_choose? %>
+  <% permitted = KeystoneUi.configuration.navigation_groups.map { |group| [ group, group.tabs_permitted_for(self) ] }.reject { |_group, tabs| tabs.empty? } %>
+  <% arranged = KeystoneUi::NavigationOrder.new(saved_order).arrange(permitted) %>
+  <% arrangement = KeystoneUi::Preferences::NavigationArrangement.new(arranged) %>
+
+  <% arranged.each_with_index do |(group, tabs), group_index| %>
+    <div data-navigation-group="<%= group.label %>">
+      <%= ui_grid(cols: { default: 1, sm: 2 }, gap: :sm) do %>
+        <p data-group-label><strong><%= group.label %></strong></p>
+        <%= ui_grid(cols: { default: 2 }, gap: :sm) do %>
+          <% if group_index.positive? %>
+            <%= form_with(url: submit_url, method: :patch, data: { turbo: false, group_move: "up" }) do %>
+              <%= hidden_field_tag "order", arrangement.group_moved(group_index, -1).to_json, id: nil %>
+              <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
+            <% end %>
           <% end %>
-        <% end %>
-        <% if group_index < arranged.size - 1 %>
-          <%= form_with(url: submit_url, method: :patch, data: { turbo: false, group_move: "down" }) do %>
-            <%= hidden_field_tag "order", arrangement.group_moved(group_index, 1).to_json, id: nil %>
-            <%= ui_button(label: "Down", type: :submit, variant: :secondary, size: :sm) %>
+          <% if group_index < arranged.size - 1 %>
+            <%= form_with(url: submit_url, method: :patch, data: { turbo: false, group_move: "down" }) do %>
+              <%= hidden_field_tag "order", arrangement.group_moved(group_index, 1).to_json, id: nil %>
+              <%= ui_button(label: "Down", type: :submit, variant: :secondary, size: :sm) %>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
-    <% end %>
-    <% tabs.each_with_index do |tab, tab_index| %>
-      <div data-navigation-tab="<%= tab.key %>">
-        <%= ui_grid(cols: { default: 1, sm: 2 }, gap: :sm) do %>
-          <span data-tab-label><%= tab.label %></span>
-          <%= ui_grid(cols: { default: 2 }, gap: :sm) do %>
-            <% if tab_index.positive? %>
-              <%= form_with(url: submit_url, method: :patch, data: { turbo: false, tab_move: "up" }) do %>
-                <%= hidden_field_tag "order", arrangement.tab_moved(group_index, tab_index, -1).to_json, id: nil %>
-                <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
+      <% tabs.each_with_index do |tab, tab_index| %>
+        <div data-navigation-tab="<%= tab.key %>">
+          <%= ui_grid(cols: { default: 1, sm: 2 }, gap: :sm) do %>
+            <span data-tab-label><%= tab.label %></span>
+            <%= ui_grid(cols: { default: 2 }, gap: :sm) do %>
+              <% if tab_index.positive? %>
+                <%= form_with(url: submit_url, method: :patch, data: { turbo: false, tab_move: "up" }) do %>
+                  <%= hidden_field_tag "order", arrangement.tab_moved(group_index, tab_index, -1).to_json, id: nil %>
+                  <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
+                <% end %>
               <% end %>
-            <% end %>
-            <% if tab_index < tabs.size - 1 %>
-              <%= form_with(url: submit_url, method: :patch, data: { turbo: false, tab_move: "down" }) do %>
-                <%= hidden_field_tag "order", arrangement.tab_moved(group_index, tab_index, 1).to_json, id: nil %>
-                <%= ui_button(label: "Down", type: :submit, variant: :secondary, size: :sm) %>
+              <% if tab_index < tabs.size - 1 %>
+                <%= form_with(url: submit_url, method: :patch, data: { turbo: false, tab_move: "down" }) do %>
+                  <%= hidden_field_tag "order", arrangement.tab_moved(group_index, tab_index, 1).to_json, id: nil %>
+                  <%= ui_button(label: "Down", type: :submit, variant: :secondary, size: :sm) %>
+                <% end %>
               <% end %>
             <% end %>
           <% end %>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-<% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 
-<%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
-  <%= hidden_field_tag "reset", "1", id: nil %>
-  <%= ui_button(label: "Reset", type: :submit, variant: :secondary) %>
+  <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
+    <%= hidden_field_tag "reset", "1", id: nil %>
+    <%= ui_button(label: "Reset", type: :submit, variant: :secondary) %>
+  <% end %>
+<% else %>
+  <%= ui_alert(message: "Your account sets the navigation for everyone.") %>
 <% end %>

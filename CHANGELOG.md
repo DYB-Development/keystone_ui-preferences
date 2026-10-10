@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Requires keystone_ui 0.38.0 or later, the first release with navigation groups and a saved navigation order.
 - Saving a navigation placement keeps the person's saved tab order, and saving a tab order keeps their placement.
+- When the account turns off members-choose for the `navigation` key, the placement and tab order sections say the account sets the navigation and offer no save, and a placement, tab order or reset sent anyway is refused with a message and saves nothing.
 
 ## [0.4.1] - 2026-10-07
 
