@@ -1,4 +1,4 @@
-<% current = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation").value&.dig("placement") %>
+<% current = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation").value&.dig("placement") || "top" %>
 
 <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
   <% { "top" => "Top", "left" => "Left", "right" => "Right" }.each do |placement, label| %>

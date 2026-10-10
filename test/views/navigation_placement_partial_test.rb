@@ -30,4 +30,10 @@ class NavigationPlacementPartialTest < ActionView::TestCase
 
     assert_equal [ "left" ], css_select("input[type=radio][name=placement][checked]").map { |option| option["value"] }
   end
+
+  test "the navigation section selects Top for a person with nothing saved" do
+    render_section
+
+    assert_equal [ "top" ], css_select("input[type=radio][name=placement][checked]").map { |option| option["value"] }
+  end
 end
