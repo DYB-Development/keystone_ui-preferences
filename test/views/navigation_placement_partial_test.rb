@@ -42,4 +42,10 @@ class NavigationPlacementPartialTest < ActionView::TestCase
 
     assert_equal 3, css_select(".grid.grid-cols-1 > label:has(input[type=radio][name=placement])").size
   end
+
+  test "the navigation section saves without any script the web view has to run" do
+    render_section
+
+    assert_empty css_select("[data-controller]")
+  end
 end
