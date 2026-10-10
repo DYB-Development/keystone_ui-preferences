@@ -115,4 +115,10 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal 5, css_select(".grid.grid-cols-1:has(> [data-group-label]), .grid.grid-cols-1:has(> [data-tab-label])").size
   end
+
+  test "the tab order section moves groups and tabs without any script the web view has to run or anything to drag" do
+    render_section
+
+    assert_empty css_select("[data-controller], [draggable]")
+  end
 end
