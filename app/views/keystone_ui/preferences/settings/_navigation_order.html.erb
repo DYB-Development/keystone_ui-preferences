@@ -29,6 +29,12 @@
             <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
           <% end %>
         <% end %>
+        <% if tab_index < tabs.size - 1 %>
+          <%= form_with(url: submit_url, method: :patch, data: { turbo: false, tab_move: "down" }) do %>
+            <%= hidden_field_tag "order", arrangement.tab_moved(group_index, tab_index, 1).to_json, id: nil %>
+            <%= ui_button(label: "Down", type: :submit, variant: :secondary, size: :sm) %>
+          <% end %>
+        <% end %>
       </div>
     <% end %>
   </div>

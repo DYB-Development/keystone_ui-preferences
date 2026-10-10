@@ -97,4 +97,10 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal({ "orders" => nil, "quotes" => [ { "group" => "Sales", "tabs" => [ "quotes", "orders" ] }, { "group" => "Admin", "tabs" => [ "users" ] } ], "users" => nil }, tab_moves("up"))
   end
+
+  test "every tab but the last in its group has a Down button that saves the order with that tab moved below the one after it" do
+    render_section
+
+    assert_equal({ "orders" => [ { "group" => "Sales", "tabs" => [ "quotes", "orders" ] }, { "group" => "Admin", "tabs" => [ "users" ] } ], "quotes" => nil, "users" => nil }, tab_moves("down"))
+  end
 end
