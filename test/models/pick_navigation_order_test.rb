@@ -40,4 +40,12 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
 
     assert_equal "left", saved_value["placement"]
   end
+
+  test "resetting removes the person's saved order and keeps their placement" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "navigation", value: { "placement" => "left", "order" => order })
+
+    pick(reset: "1")
+
+    assert_equal({ "placement" => "left" }, saved_value)
+  end
 end
