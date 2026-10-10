@@ -66,4 +66,8 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
 
     assert_nil saved_value
   end
+
+  test "an order is refused with a reason when the account sets the navigation for everyone" do
+    assert_equal "Your account sets the navigation for everyone, so this was not saved.", pick({ order: order.to_json }, person, account_setting_navigation).message
+  end
 end
