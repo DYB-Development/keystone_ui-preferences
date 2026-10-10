@@ -11,8 +11,14 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
     KeystoneUi::Preferences::ComponentPreference.delete_all
   end
 
-  def pick(values, who = person)
-    KeystoneUi::Preferences::PickNavigationOrder.new(person: who, account: nil, values: values).call
+  def pick(values, who = person, account = nil)
+    KeystoneUi::Preferences::PickNavigationOrder.new(person: who, account: account, values: values).call
+  end
+
+  def account_setting_navigation
+    Account.create!(name: "Acme").tap do |account|
+      KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "navigation", members_choose: false)
+    end
   end
 
   def saved_value(who = person)
@@ -53,5 +59,11 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
     oversized = [ { "group" => "x" * KeystoneUi::Preferences.configuration.max_value_bytes } ].to_json
 
     assert_equal "That navigation order is too large to save.", pick(order: oversized).message
+  end
+
+  test "an order sent when the account sets the navigation for everyone saves nothing for the person" do
+    pick({ order: order.to_json }, person, account_setting_navigation)
+
+    assert_nil saved_value
   end
 end

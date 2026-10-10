@@ -12,6 +12,7 @@ module KeystoneUi
       end
 
       def call
+        return Refusal.new("Your account sets the navigation for everyone, so this was not saved.") unless members_choose?
         return reset if @values[:reset] == "1"
         return Refusal.new("That navigation order is too large to save.") if @values[:order].to_s.bytesize > KeystoneUi::Preferences.configuration.max_value_bytes
 
@@ -23,6 +24,10 @@ module KeystoneUi
       end
 
       private
+
+      def members_choose?
+        LayoutChoice.new(person: @person, account: @account, component_key: "navigation").members_choose?
+      end
 
       def reset
         preference.update!(value: preference.value.to_h.except("order"))
