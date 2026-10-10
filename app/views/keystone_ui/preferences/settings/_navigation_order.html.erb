@@ -1,7 +1,12 @@
-<% saved_order = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation").value&.dig("order") || [] %>
+<% choice = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation") %>
+<% saved_order = choice.value&.dig("order") || [] %>
 <% permitted = KeystoneUi.configuration.navigation_groups.map { |group| [ group, group.tabs_permitted_for(self) ] }.reject { |_group, tabs| tabs.empty? } %>
 <% arranged = KeystoneUi::NavigationOrder.new(saved_order).arrange(permitted) %>
 <% arrangement = KeystoneUi::Preferences::NavigationArrangement.new(arranged) %>
+
+<% unless choice.members_choose? %>
+  <%= ui_alert(message: "Your account sets the navigation for everyone.") %>
+<% end %>
 
 <% arranged.each_with_index do |(group, tabs), group_index| %>
   <div data-navigation-group="<%= group.label %>">

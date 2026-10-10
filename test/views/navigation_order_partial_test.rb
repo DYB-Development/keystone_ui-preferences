@@ -24,8 +24,14 @@ class NavigationOrderPartialTest < ActionView::TestCase
     @person ||= User.create!(name: "Rep")
   end
 
-  def render_section
-    render partial: "keystone_ui/preferences/settings/navigation_order", locals: { person: person, account: nil, submit_url: "/settings/navigation_order" }
+  def render_section(account: nil)
+    render partial: "keystone_ui/preferences/settings/navigation_order", locals: { person: person, account: account, submit_url: "/settings/navigation_order" }
+  end
+
+  def account_setting_navigation
+    Account.create!(name: "Acme").tap do |account|
+      KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "navigation", members_choose: false)
+    end
   end
 
   def listed
@@ -120,5 +126,11 @@ class NavigationOrderPartialTest < ActionView::TestCase
     render_section
 
     assert_empty css_select("[data-controller], [draggable]")
+  end
+
+  test "the tab order section says the account sets the navigation when members may not choose their own" do
+    render_section(account: account_setting_navigation)
+
+    assert_includes rendered, "Your account sets the navigation for everyone."
   end
 end
