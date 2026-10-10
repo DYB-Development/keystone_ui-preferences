@@ -70,4 +70,12 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
   test "an order is refused with a reason when the account sets the navigation for everyone" do
     assert_equal "Your account sets the navigation for everyone, so this was not saved.", pick({ order: order.to_json }, person, account_setting_navigation).message
   end
+
+  test "a reset sent when the account sets the navigation for everyone leaves the person's saved order as it was" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "navigation", value: { "order" => order })
+
+    pick({ reset: "1" }, person, account_setting_navigation)
+
+    assert_equal({ "order" => order }, saved_value)
+  end
 end
