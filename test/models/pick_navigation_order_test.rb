@@ -48,4 +48,10 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
 
     assert_equal({ "placement" => "left" }, saved_value)
   end
+
+  test "an order larger than the largest value the gem accepts is refused with a reason" do
+    oversized = [ { "group" => "x" * KeystoneUi::Preferences.configuration.max_value_bytes } ].to_json
+
+    assert_equal "That navigation order is too large to save.", pick(order: oversized).message
+  end
 end

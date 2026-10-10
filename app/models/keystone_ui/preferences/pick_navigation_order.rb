@@ -13,6 +13,7 @@ module KeystoneUi
 
       def call
         return reset if @values[:reset] == "1"
+        return Refusal.new("That navigation order is too large to save.") if @values[:order].to_s.bytesize > KeystoneUi::Preferences.configuration.max_value_bytes
 
         order = submitted_order
         return Refusal.new("Choose an order for the navigation's groups and tabs.") unless order.is_a?(Array)
