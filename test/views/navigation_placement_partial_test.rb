@@ -60,4 +60,10 @@ class NavigationPlacementPartialTest < ActionView::TestCase
 
     assert_includes rendered, "Your account sets the navigation for everyone."
   end
+
+  test "the navigation section offers no save when the account sets the navigation" do
+    render_section(account: account_setting_navigation)
+
+    assert_empty css_select("form")
+  end
 end
