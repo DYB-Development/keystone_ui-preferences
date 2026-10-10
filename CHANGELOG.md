@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- A settings_hub section, `keystone_ui/preferences/settings/navigation_placement` with `KeystoneUi::Preferences::PickNavigationPlacement`, lets a person choose Top, Left or Right for the desktop navigation, saved under the `navigation` key, and refuses any other placement with a message.
+
 ## [0.4.1] - 2026-10-07
 
 ### Fixed
