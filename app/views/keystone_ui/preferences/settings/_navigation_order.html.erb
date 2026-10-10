@@ -39,3 +39,8 @@
     <% end %>
   </div>
 <% end %>
+
+<%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
+  <%= hidden_field_tag "reset", "1", id: nil %>
+  <%= ui_button(label: "Reset", type: :submit, variant: :secondary) %>
+<% end %>

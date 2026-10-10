@@ -103,4 +103,10 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal({ "orders" => [ { "group" => "Sales", "tabs" => [ "quotes", "orders" ] }, { "group" => "Admin", "tabs" => [ "users" ] } ], "quotes" => nil, "users" => nil }, tab_moves("down"))
   end
+
+  test "the tab order section has a Reset button that asks to go back to the declared order" do
+    render_section
+
+    assert_equal [ "1" ], css_select("form:has(button) input[name=reset]").map { |field| field["value"] }
+  end
 end
