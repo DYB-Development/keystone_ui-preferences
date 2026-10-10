@@ -1,9 +1,19 @@
 <% saved_order = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation").value&.dig("order") || [] %>
 <% permitted = KeystoneUi.configuration.navigation_groups.map { |group| [ group, group.tabs_permitted_for(self) ] }.reject { |_group, tabs| tabs.empty? } %>
+<% arranged = KeystoneUi::NavigationOrder.new(saved_order).arrange(permitted) %>
+<% arrangement = KeystoneUi::Preferences::NavigationArrangement.new(arranged) %>
 
-<% KeystoneUi::NavigationOrder.new(saved_order).arrange(permitted).each do |group, tabs| %>
+<% arranged.each_with_index do |(group, tabs), group_index| %>
   <div data-navigation-group="<%= group.label %>">
-    <p data-group-label><%= group.label %></p>
+    <div>
+      <p data-group-label><%= group.label %></p>
+      <% if group_index.positive? %>
+        <%= form_with(url: submit_url, method: :patch, data: { turbo: false, group_move: "up" }) do %>
+          <%= hidden_field_tag "order", arrangement.group_moved(group_index, -1).to_json, id: nil %>
+          <%= ui_button(label: "Up", type: :submit, variant: :secondary, size: :sm) %>
+        <% end %>
+      <% end %>
+    </div>
     <% tabs.each do |tab| %>
       <div data-navigation-tab="<%= tab.key %>">
         <span data-tab-label><%= tab.label %></span>

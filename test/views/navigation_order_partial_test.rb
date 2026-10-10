@@ -34,6 +34,13 @@ class NavigationOrderPartialTest < ActionView::TestCase
     end
   end
 
+  def group_moves(direction)
+    css_select("[data-navigation-group]").to_h do |group|
+      order = group.at_css("form[data-group-move=#{direction}] input[name=order]")
+      [ group["data-navigation-group"], order && JSON.parse(order["value"]) ]
+    end
+  end
+
   test "the tab order section lists each group with its tabs in the declared order when nothing is saved" do
     render_section
 
@@ -64,5 +71,11 @@ class NavigationOrderPartialTest < ActionView::TestCase
     render_section
 
     assert_equal [ [ "Admin", [ "Users" ] ], [ "Sales", [ "Quotes", "Orders" ] ] ], listed
+  end
+
+  test "every group but the first has an Up button that saves the order with that group moved above the one before it" do
+    render_section
+
+    assert_equal({ "Sales" => nil, "Admin" => [ { "group" => "Admin", "tabs" => [ "users" ] }, { "group" => "Sales", "tabs" => [ "orders", "quotes" ] } ] }, group_moves("up"))
   end
 end
