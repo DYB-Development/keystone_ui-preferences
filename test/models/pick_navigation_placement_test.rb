@@ -11,8 +11,14 @@ class PickNavigationPlacementTest < ActiveSupport::TestCase
     KeystoneUi::Preferences::ComponentPreference.delete_all
   end
 
-  def pick(values, who = person)
-    KeystoneUi::Preferences::PickNavigationPlacement.new(person: who, account: nil, values: values).call
+  def pick(values, who = person, account = nil)
+    KeystoneUi::Preferences::PickNavigationPlacement.new(person: who, account: account, values: values).call
+  end
+
+  def account_setting_navigation
+    Account.create!(name: "Acme").tap do |account|
+      KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "navigation", members_choose: false)
+    end
   end
 
   def saved_value(who = person)
@@ -52,5 +58,9 @@ class PickNavigationPlacementTest < ActiveSupport::TestCase
     pick(placement: "left")
 
     assert_equal [ { "group" => "Admin" } ], saved_value["order"]
+  end
+
+  test "a placement is refused with a reason when the account sets the navigation for everyone" do
+    assert_equal "Your account sets the navigation for everyone, so this was not saved.", pick({ placement: "left" }, person, account_setting_navigation).message
   end
 end
