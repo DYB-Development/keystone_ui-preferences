@@ -45,4 +45,12 @@ class PickNavigationPlacementTest < ActiveSupport::TestCase
 
     assert_equal({ "placement" => "left" }, saved_value)
   end
+
+  test "saving a placement leaves the person's saved navigation order as it was" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "navigation", value: { "order" => [ { "group" => "Admin" } ] })
+
+    pick(placement: "left")
+
+    assert_equal [ { "group" => "Admin" } ], saved_value["order"]
+  end
 end

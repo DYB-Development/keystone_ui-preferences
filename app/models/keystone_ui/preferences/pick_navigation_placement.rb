@@ -15,7 +15,7 @@ module KeystoneUi
         return Refusal.new("Choose Top, Left or Right for the navigation.") unless PLACEMENTS.include?(@values[:placement])
 
         preference = ComponentPreference.find_or_initialize_by(owner: @person, component_key: "navigation")
-        preference.update!(value: { "placement" => @values[:placement] })
+        preference.update!(value: preference.value.to_h.merge("placement" => @values[:placement]))
         Kept.new
       end
     end
