@@ -78,4 +78,13 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
 
     assert_equal({ "order" => order }, saved_value)
   end
+
+  test "an order is saved when the account lets members choose their own navigation" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "navigation", members_choose: true)
+
+    pick({ order: order.to_json }, person, account)
+
+    assert_equal({ "order" => order }, saved_value)
+  end
 end
