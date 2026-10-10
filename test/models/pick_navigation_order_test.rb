@@ -28,4 +28,8 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
 
     assert_equal({ "order" => order }, saved_value)
   end
+
+  test "an order that is not a list of groups is refused with a reason" do
+    assert_equal "Choose an order for the navigation's groups and tabs.", pick(order: "Sales first").message
+  end
 end
