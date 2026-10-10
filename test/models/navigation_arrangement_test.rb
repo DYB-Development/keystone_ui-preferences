@@ -16,4 +16,8 @@ class NavigationArrangementTest < ActiveSupport::TestCase
   test "moving a group up puts it above the group before it" do
     assert_equal [ { "group" => "Admin", "tabs" => [ "users" ] }, { "group" => "Sales", "tabs" => [ "orders", "quotes" ] } ], arrangement.group_moved(1, -1)
   end
+
+  test "moving a tab down puts it below the tab after it in its group" do
+    assert_equal [ { "group" => "Sales", "tabs" => [ "quotes", "orders" ] }, { "group" => "Admin", "tabs" => [ "users" ] } ], arrangement.tab_moved(0, 0, 1)
+  end
 end

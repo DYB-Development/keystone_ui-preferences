@@ -11,6 +11,10 @@ module KeystoneUi
         moved(order, index, step)
       end
 
+      def tab_moved(group_index, tab_index, step)
+        order.tap { |groups| moved(groups[group_index]["tabs"], tab_index, step) }
+      end
+
       def order
         @arranged.map { |group, tabs| { "group" => group.label, "tabs" => tabs.map { |tab| tab.key.to_s } } }
       end
