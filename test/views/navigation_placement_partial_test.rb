@@ -66,4 +66,13 @@ class NavigationPlacementPartialTest < ActionView::TestCase
 
     assert_empty css_select("form")
   end
+
+  test "the navigation section offers its save when the account lets members choose their own navigation" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "navigation", members_choose: true)
+
+    render_section(account: account)
+
+    assert_not_empty css_select("form button[type=submit]")
+  end
 end
