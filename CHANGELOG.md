@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - A settings_hub section, `keystone_ui/preferences/settings/navigation_placement` with `KeystoneUi::Preferences::PickNavigationPlacement`, lets a person choose Top, Left or Right for the desktop navigation, saved under the `navigation` key, and refuses any other placement with a message.
+- A settings_hub section, `keystone_ui/preferences/settings/navigation_order` with `KeystoneUi::Preferences::PickNavigationOrder`, lists the navigation's groups and the tabs a person may see in their current order, moves a group or tab up or down with buttons that save at once, and resets to the declared order.
+
+### Changed
+- Requires keystone_ui 0.38.0 or later, the first release with navigation groups and a saved navigation order.
+- Saving a navigation placement keeps the person's saved tab order, and saving a tab order keeps their placement.
 
 ## [0.4.1] - 2026-10-07
 

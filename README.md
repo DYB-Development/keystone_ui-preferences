@@ -111,9 +111,23 @@ SettingsHub.section :navigation_placement, area: :user, title: "Navigation",
   runs: "KeystoneUi::Preferences::PickNavigationPlacement"
 ```
 
-The section offers Top, Left and Right, with the placement that applies to the person selected, or Top when nothing is saved. Saving keeps `{ "placement": "left" }` for that person under the `navigation` key, and keystone_ui's navigation reads it on the next page they open. A placement other than `top`, `left` or `right` is refused with a message, and nothing is saved.
+The section offers Top, Left and Right, with the placement that applies to the person selected, or Top when nothing is saved. Saving keeps `"placement": "left"` for that person under the `navigation` key, leaving any saved tab order as it was, and keystone_ui's navigation reads it on the next page they open. A placement other than `top`, `left` or `right` is refused with a message, and nothing is saved.
 
-The `navigation` key follows the account layouts above, so an account that turns off members-choose for it draws its own placement for every member.
+The `navigation` key follows the account layouts above, so an account that turns off members-choose for it draws its own placement and tab order for every member.
+
+## Tab order
+
+A person sets the order of the navigation's groups, and of the tabs in each group, in a settings_hub section the app registers:
+
+```ruby
+SettingsHub.section :navigation_order, area: :user, title: "Tab order",
+  renders: "keystone_ui/preferences/settings/navigation_order",
+  runs: "KeystoneUi::Preferences::PickNavigationOrder"
+```
+
+The section lists the groups declared with keystone_ui's `navigation_group`, each with the tabs the person may see, in the order that applies to them. A group with no tab they may see is left out. Each group and tab has an Up and a Down button, and pressing one saves the order with it moved one place, so the page works in a Hotwire Native web view with no script and nothing to drag. At phone width each row's buttons sit under its name.
+
+Saving keeps `"order": [{ "group": "Admin" }, { "group": "Sales", "tabs": ["orders", "quotes"] }]` for that person under the `navigation` key, naming groups by label and tabs by key, and leaves their saved placement as it was. keystone_ui draws the navigation in that order on the next page they open, with anything the order does not name after it in its declared order. Reset removes the saved order, so the navigation goes back to the declared order. An order that is not a list of groups is refused with a message, and nothing is saved.
 
 ## What is stored
 
