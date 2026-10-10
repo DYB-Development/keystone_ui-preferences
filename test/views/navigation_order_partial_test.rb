@@ -109,4 +109,10 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal [ "1" ], css_select("form:has(button) input[name=reset]").map { |field| field["value"] }
   end
+
+  test "each group and tab row puts its Up and Down buttons under its name at phone width" do
+    render_section
+
+    assert_equal 5, css_select(".grid.grid-cols-1:has(> [data-group-label]), .grid.grid-cols-1:has(> [data-tab-label])").size
+  end
 end
