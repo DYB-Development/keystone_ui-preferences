@@ -115,6 +115,8 @@ The section offers Top, Left and Right, with the placement that applies to the p
 
 The `navigation` key follows the account layouts above, so an account that turns off members-choose for it draws its own placement and tab order for every member.
 
+While it is off, the placement and tab order sections say the account sets the navigation for everyone and offer no save. A placement, tab order or reset sent anyway is refused with a message, and nothing is saved.
+
 ## Tab order
 
 A person sets the order of the navigation's groups, and of the tabs in each group, in a settings_hub section the app registers:
