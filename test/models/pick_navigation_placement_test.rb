@@ -24,4 +24,13 @@ class PickNavigationPlacementTest < ActiveSupport::TestCase
 
     assert_equal({ "placement" => "left" }, saved_value)
   end
+
+  test "saving a placement leaves another person's placement as it was" do
+    teammate = User.create!(name: "Teammate")
+    pick({ placement: "right" }, teammate)
+
+    pick(placement: "left")
+
+    assert_equal({ "placement" => "right" }, saved_value(teammate))
+  end
 end
