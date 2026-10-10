@@ -47,4 +47,14 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal [ [ "Sales", [ "Orders", "Quotes" ] ], [ "Admin", [ "Users" ] ] ], listed
   end
+
+  test "the tab order section leaves out a group with no tab the person may see" do
+    KeystoneUi.configuration.navigation_group("Billing") do |group|
+      group.tab :invoices, label: "Invoices", href: "/invoices", permitted: ->(_view) { false }
+    end
+
+    render_section
+
+    assert_equal [ "Sales", "Admin" ], listed.map(&:first)
+  end
 end

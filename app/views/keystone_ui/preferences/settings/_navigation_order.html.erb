@@ -1,7 +1,9 @@
-<% KeystoneUi.configuration.navigation_groups.each do |group| %>
+<% permitted = KeystoneUi.configuration.navigation_groups.map { |group| [ group, group.tabs_permitted_for(self) ] }.reject { |_group, tabs| tabs.empty? } %>
+
+<% permitted.each do |group, tabs| %>
   <div data-navigation-group="<%= group.label %>">
     <p data-group-label><%= group.label %></p>
-    <% group.tabs_permitted_for(self).each do |tab| %>
+    <% tabs.each do |tab| %>
       <div data-navigation-tab="<%= tab.key %>">
         <span data-tab-label><%= tab.label %></span>
       </div>
