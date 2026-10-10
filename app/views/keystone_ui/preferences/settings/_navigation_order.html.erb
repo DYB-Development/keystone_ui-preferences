@@ -1,6 +1,7 @@
+<% saved_order = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "navigation").value&.dig("order") || [] %>
 <% permitted = KeystoneUi.configuration.navigation_groups.map { |group| [ group, group.tabs_permitted_for(self) ] }.reject { |_group, tabs| tabs.empty? } %>
 
-<% permitted.each do |group, tabs| %>
+<% KeystoneUi::NavigationOrder.new(saved_order).arrange(permitted).each do |group, tabs| %>
   <div data-navigation-group="<%= group.label %>">
     <p data-group-label><%= group.label %></p>
     <% tabs.each do |tab| %>

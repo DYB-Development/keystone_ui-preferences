@@ -57,4 +57,12 @@ class NavigationOrderPartialTest < ActionView::TestCase
 
     assert_equal [ "Sales", "Admin" ], listed.map(&:first)
   end
+
+  test "the tab order section lists the groups and tabs in the order the person saved" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "navigation", value: { "order" => [ { "group" => "Admin" }, { "group" => "Sales", "tabs" => [ "quotes", "orders" ] } ] })
+
+    render_section
+
+    assert_equal [ [ "Admin", [ "Users" ] ], [ "Sales", [ "Quotes", "Orders" ] ] ], listed
+  end
 end
