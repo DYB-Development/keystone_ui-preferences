@@ -32,4 +32,12 @@ class PickNavigationOrderTest < ActiveSupport::TestCase
   test "an order that is not a list of groups is refused with a reason" do
     assert_equal "Choose an order for the navigation's groups and tabs.", pick(order: "Sales first").message
   end
+
+  test "saving an order leaves the person's saved placement as it was" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "navigation", value: { "placement" => "left" })
+
+    pick(order: order.to_json)
+
+    assert_equal "left", saved_value["placement"]
+  end
 end
