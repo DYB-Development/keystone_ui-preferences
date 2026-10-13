@@ -16,10 +16,16 @@ module KeystoneUi
       end
 
       def order
-        @arranged.map { |group, tabs| { "group" => group.label, "tabs" => tabs.map { |tab| tab.key.to_s } } }
+        @arranged.map { |group, tabs| entry(group, tabs) }
       end
 
       private
+
+      def entry(group, tabs)
+        return { "group" => group.label } if group.standalone?
+
+        { "group" => group.label, "tabs" => tabs.map { |tab| tab.key.to_s } }
+      end
 
       def moved(items, index, step)
         items.insert(index + step, items.delete_at(index))
