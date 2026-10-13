@@ -129,7 +129,9 @@ SettingsHub.section :navigation_order, area: :user, title: "Tab order",
 
 The section lists the groups declared with keystone_ui's `navigation_group`, each with the tabs the person may see, in the order that applies to them. A group with no tab they may see is left out. Each group and tab has an Up and a Down button, and pressing one saves the order with it moved one place, so the page works in a Hotwire Native web view with no script and nothing to drag. At phone width each row's buttons sit under its name.
 
-Saving keeps `"order": [{ "group": "Admin" }, { "group": "Sales", "tabs": ["orders", "quotes"] }]` for that person under the `navigation` key, naming groups by label and tabs by key, and leaves their saved placement as it was. keystone_ui draws the navigation in that order on the next page they open, with anything the order does not name after it in its declared order. Reset removes the saved order, so the navigation goes back to the declared order. An order that is not a list of groups is refused with a message, and nothing is saved.
+A tab declared outside any group with keystone_ui's `navigation_tab` is one row in the list of groups, named by its label, with the same Up and Down buttons as a group. It has no tab rows under it, and no button moves it into a group.
+
+Saving keeps `"order": [{ "group": "Admin" }, { "group": "Sales", "tabs": ["orders", "quotes"] }, { "group": "Console" }]` for that person under the `navigation` key, naming groups by label and tabs by key, and a tab declared outside any group by its label alone. It leaves their saved placement as it was. keystone_ui draws the navigation in that order on the next page they open, with anything the order does not name after it in its declared order. Reset removes the saved order, so the navigation goes back to the declared order. An order that is not a list of groups is refused with a message, and nothing is saved.
 
 ## What is stored
 
