@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- Requires keystone_ui 0.41.0 or later, the first release that can declare a tab outside any group.
+
+### Fixed
+- The tab order section lists a tab declared with keystone_ui's `navigation_tab` as one row among the groups, with the group Up and Down buttons, instead of as a group label with a single tab row under it.
+- Moving a tab declared outside any group saves it in the order by its label alone, with no list of tabs.
+
 ## [0.5.0] - 2026-10-10
 
 ### Added
