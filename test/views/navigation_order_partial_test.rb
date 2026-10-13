@@ -60,6 +60,14 @@ class NavigationOrderPartialTest < ActionView::TestCase
     assert_equal [ [ "Sales", [ "Orders", "Quotes" ] ], [ "Admin", [ "Users" ] ] ], listed
   end
 
+  test "a tab declared outside any group is listed as one row among the groups with no tab rows inside it" do
+    KeystoneUi.configuration.navigation_tab :console, label: "Console", href: "/console", permitted: ->(_view) { true }
+
+    render_section
+
+    assert_equal [ [ "Sales", [ "Orders", "Quotes" ] ], [ "Admin", [ "Users" ] ], [ "Console", [] ] ], listed
+  end
+
   test "the tab order section leaves out a tab the person may not see" do
     KeystoneUi.configuration.navigation_groups.first.tab :refunds, label: "Refunds", href: "/refunds", permitted: ->(_view) { false }
 
