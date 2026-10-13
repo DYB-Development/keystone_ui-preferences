@@ -76,6 +76,15 @@ class NavigationOrderPartialTest < ActionView::TestCase
     assert_equal [ { "group" => "Sales", "tabs" => [ "orders", "quotes" ] }, { "group" => "Console" }, { "group" => "Admin", "tabs" => [ "users" ] } ], group_moves("up")["Console"]
   end
 
+  test "a tab declared outside any group has a Down button that saves the order with it moved below the group after it" do
+    KeystoneUi.configuration.navigation_tab :console, label: "Console", href: "/console", permitted: ->(_view) { true }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "navigation", value: { "order" => [ { "group" => "Console" } ] })
+
+    render_section
+
+    assert_equal [ { "group" => "Sales", "tabs" => [ "orders", "quotes" ] }, { "group" => "Console" }, { "group" => "Admin", "tabs" => [ "users" ] } ], group_moves("down")["Console"]
+  end
+
   test "the tab order section leaves out a tab the person may not see" do
     KeystoneUi.configuration.navigation_groups.first.tab :refunds, label: "Refunds", href: "/refunds", permitted: ->(_view) { false }
 
