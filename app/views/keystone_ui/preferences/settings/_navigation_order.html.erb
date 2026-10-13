@@ -26,6 +26,7 @@
         <% end %>
       <% end %>
       <% tabs.each_with_index do |tab, tab_index| %>
+        <% next if group.standalone? %>
         <div data-navigation-tab="<%= tab.key %>">
           <%= ui_grid(cols: { default: 1, sm: 2 }, gap: :sm) do %>
             <span data-tab-label><%= tab.label %></span>
