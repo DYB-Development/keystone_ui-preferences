@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-13
+
 ### Changed
 - Requires keystone_ui 0.41.0 or later, the first release that can declare a tab outside any group.
 
