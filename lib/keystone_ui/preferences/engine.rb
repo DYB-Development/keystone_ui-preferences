@@ -20,6 +20,12 @@ module KeystoneUi
           end
         end
       end
+
+      initializer "keystone_ui.preferences.look" do
+        KeystoneUi.configure do |config|
+          config.look_supplier = ->(view) { view.keystone_look if view.respond_to?(:keystone_look) }
+        end
+      end
     end
   end
 end
