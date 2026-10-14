@@ -51,4 +51,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal false, account_preference("colours").members_choose
   end
+
+  test "saving a look keeps it as the account's look" do
+    pick(template_name: "forest", look: "rounded")
+
+    assert_equal({ "look" => "rounded" }, account_preference("look").value)
+  end
 end

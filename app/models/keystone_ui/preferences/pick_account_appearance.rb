@@ -16,10 +16,17 @@ module KeystoneUi
         return chosen.refusal if chosen.refusal
 
         ComponentPreference.find_or_initialize_by(owner: @account, component_key: "colours").update!(value: chosen.value, **switch(:members_choose))
+        keep_look
         Kept.new
       end
 
       private
+
+      def keep_look
+        return unless @values.key?(:look)
+
+        ComponentPreference.find_or_initialize_by(owner: @account, component_key: "look").update!(value: { "look" => @values[:look] })
+      end
 
       def switch(name)
         @values.key?(name) ? { members_choose: @values[name] == "1" } : {}
