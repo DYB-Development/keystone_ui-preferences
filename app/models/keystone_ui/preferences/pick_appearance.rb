@@ -10,6 +10,7 @@ module KeystoneUi
       end
 
       def call
+        return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
         return Refusal.new("Choose Default, one of the colour templates or Custom.") unless template_offered?
@@ -21,6 +22,10 @@ module KeystoneUi
       end
 
       private
+
+      def mode_offered?
+        !@values.key?(:mode) || KeystoneUi::ThemeChoice::MODES.include?(@values[:mode])
+      end
 
       def members_choose?
         LayoutChoice.new(person: @person, account: @account, component_key: "colours").members_choose?
