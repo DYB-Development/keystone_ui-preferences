@@ -8,4 +8,8 @@ class ConfigurationTest < ActiveSupport::TestCase
 
     assert_equal [ "blue", "zinc", "#ffffff", "#18181b" ], [ configuration.default_accent, configuration.default_surface, configuration.default_background, configuration.default_text ]
   end
+
+  test "an app that configures no mode gets Light, keystone_ui-colors' default mode" do
+    assert_equal "light", KeystoneUi::Preferences::Configuration.new.default_mode
+  end
 end
