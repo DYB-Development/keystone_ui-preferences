@@ -33,6 +33,12 @@
         </div>
       <% end %>
 
+      <%= ui_section(title: "Surface", spacing: :sm) do %>
+        <div>
+          <%= ui_color_picker(name: "surface", value: palette_hex.call(drawn[:surface], KeystoneUi::Looks::Palettes.method(:surface))) %>
+        </div>
+      <% end %>
+
       <div>
         <%= ui_button(label: "Save", type: :submit) %>
       </div>

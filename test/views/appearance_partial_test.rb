@@ -68,4 +68,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "#10b981" ], picker_value("accent")
   end
+
+  test "the appearance section's surface picker shows the surface drawn for the person" do
+    save_colours("template_name" => "forest")
+
+    render_section
+
+    assert_equal [ "#78716c" ], picker_value("surface")
+  end
 end
