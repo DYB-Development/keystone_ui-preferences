@@ -16,6 +16,7 @@ module KeystoneUi
         return Refusal.new("Choose each colour as a six-digit hex value, such as #1d4ed8.") unless colours_offered?
 
         preference.update!(value: chosen_colours)
+        keep_mode
         Kept.new
       end
 
@@ -48,6 +49,10 @@ module KeystoneUi
         return { "template_name" => @values[:template_name] } if @values[:template_name].present?
 
         { "accent" => @values[:accent], "surface" => @values[:surface], "text" => @values[:text] }
+      end
+
+      def keep_mode
+        ComponentPreference.find_or_initialize_by(owner: @person, component_key: "mode").update!(value: { "mode" => @values[:mode] })
       end
 
       def preference

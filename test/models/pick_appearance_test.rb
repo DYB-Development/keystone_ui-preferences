@@ -96,4 +96,14 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "accent" => "emerald", "surface" => "stone", "text" => "#3b2f1e" }, saved_value)
   end
+
+  def saved_mode
+    KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "mode")&.value
+  end
+
+  test "saving a mode keeps it as the person's mode" do
+    pick(template_name: "forest", mode: "dark")
+
+    assert_equal({ "mode" => "dark" }, saved_mode)
+  end
 end
