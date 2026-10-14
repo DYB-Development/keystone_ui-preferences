@@ -74,4 +74,8 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a Custom accent that is neither a six-digit hex nor a catalogue accent is refused with a reason" do
     assert_equal "Choose each colour as a six-digit hex value, such as #1d4ed8.", custom(accent: "red; } body { display: none").message
   end
+
+  test "a Custom surface that is neither a six-digit hex nor a catalogue surface is refused with a reason" do
+    assert_equal "Choose each colour as a six-digit hex value, such as #1d4ed8.", custom(surface: "blue").message
+  end
 end
