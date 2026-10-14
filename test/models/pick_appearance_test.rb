@@ -48,4 +48,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a save is refused with a reason when the account sets the colours for everyone" do
     assert_equal "Your account sets the colours for everyone, so this was not saved.", pick({ template_name: "forest" }, account_setting_colours).message
   end
+
+  test "a save refused because the account sets the colours saves nothing for the person" do
+    pick({ template_name: "forest" }, account_setting_colours)
+
+    assert_nil saved_value
+  end
 end
