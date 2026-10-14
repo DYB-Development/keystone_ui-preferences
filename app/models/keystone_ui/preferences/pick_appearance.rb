@@ -11,6 +11,7 @@ module KeystoneUi
 
       def call
         return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
+        return keep_mode_only unless @values.key?(:template_name)
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
         return Refusal.new("Choose Default, one of the colour templates or Custom.") unless template_offered?
@@ -55,6 +56,11 @@ module KeystoneUi
         return { "template_name" => @values[:template_name] } if @values[:template_name].present?
 
         { "accent" => @values[:accent], "surface" => @values[:surface], "text" => @values[:text] }
+      end
+
+      def keep_mode_only
+        keep_mode
+        Kept.new
       end
 
       def keep_mode

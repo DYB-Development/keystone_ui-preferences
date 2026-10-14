@@ -132,4 +132,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "mode" => "dark" }, saved_mode)
   end
+
+  test "a mode saves while the account sets the colours for everyone" do
+    pick({ mode: "dark" }, account_setting_colours)
+
+    assert_equal({ "mode" => "dark" }, saved_mode)
+  end
 end
