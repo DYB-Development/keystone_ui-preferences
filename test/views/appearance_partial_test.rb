@@ -48,4 +48,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "default" ], selected_template
   end
+
+  test "the appearance section selects Custom for a person who saved their own colours" do
+    save_colours("accent" => "#e11d48", "surface" => "#f5e6c8", "text" => "#3b2f1e")
+
+    render_section
+
+    assert_equal [ "" ], selected_template
+  end
 end
