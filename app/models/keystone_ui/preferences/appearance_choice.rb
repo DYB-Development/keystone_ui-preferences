@@ -63,9 +63,14 @@ module KeystoneUi
       end
 
       def fallback_colours
+        warn_missing("template", saved["template_name"])
         return default_colours unless @account
 
         AppearanceChoice.new(person: @account, account: nil).colours
+      end
+
+      def warn_missing(kind, name)
+        Rails.logger.warn("keystone_ui-preferences: #{@person.class.name} #{@person.id} saved the #{kind} \"#{name}\", which keystone_ui-looks does not have")
       end
 
       def template_offered?

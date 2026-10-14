@@ -100,6 +100,22 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     assert_equal "zinc", colours_for(person, account)[:surface]
   end
 
+  def warnings_from
+    log = StringIO.new
+    original = Rails.logger
+    Rails.logger = ActiveSupport::Logger.new(log, level: :warn)
+    yield
+    log.string.lines.map(&:chomp)
+  ensure
+    Rails.logger = original
+  end
+
+  test "a person's saved template the catalogue no longer has writes one warning naming the person and the template" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "retired" })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved the template \"retired\", which keystone_ui-looks does not have" ], warnings_from { colours_for(person) }
+  end
+
   def mode_for(person, account = nil)
     KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).mode
   end
