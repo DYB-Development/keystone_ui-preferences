@@ -74,10 +74,14 @@ module KeystoneUi
       end
 
       def keep_look
-        return unless @values.key?(:look)
+        return unless look_sent?
         return look_preference.update!(value: { "look" => @values[:look] }) if @values[:look].present?
 
         look_preference.destroy! if look_preference.persisted?
+      end
+
+      def look_sent?
+        @values.key?(:look) && KeystoneUi::Preferences.configuration.user_looks
       end
 
       def look_preference

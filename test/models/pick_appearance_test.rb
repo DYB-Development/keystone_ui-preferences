@@ -8,6 +8,7 @@ class PickAppearanceTest < ActiveSupport::TestCase
   end
 
   def teardown
+    KeystoneUi::Preferences.reset_configuration!
     KeystoneUi::Preferences::ComponentPreference.delete_all
   end
 
@@ -167,5 +168,13 @@ class PickAppearanceTest < ActiveSupport::TestCase
     pick(template_name: "ocean", mode: "light", look: "retired")
 
     assert_equal [ { "template_name" => "forest" }, { "mode" => "dark" }, { "look" => "rounded" } ], [ saved_value, saved_mode, saved_look ]
+  end
+
+  test "a look sent with a save is ignored when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+
+    pick(template_name: "forest", look: "rounded")
+
+    assert_nil saved_look
   end
 end
