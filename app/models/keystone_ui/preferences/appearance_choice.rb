@@ -34,7 +34,11 @@ module KeystoneUi
       def look
         return nil unless @person
 
-        [ (saved_look(@person, @account) if configuration.user_looks), saved_look(@account, nil) ].find { |look| KeystoneUi.configuration.looks.key?(look) }
+        [ (saved_look(@person) if person_chooses_look?), (saved_look(@account) if configuration.account_looks) ].find { |look| KeystoneUi.configuration.looks.key?(look) }
+      end
+
+      def person_chooses_look?
+        configuration.user_looks && LayoutChoice.new(person: @person, account: @account, component_key: "look").members_choose?
       end
 
       def custom_offered?
@@ -43,8 +47,8 @@ module KeystoneUi
 
       private
 
-      def saved_look(owner, account)
-        LayoutChoice.new(person: owner, account: account, component_key: "look").value.to_h["look"]
+      def saved_look(owner)
+        LayoutChoice.new(person: owner, account: nil, component_key: "look").value.to_h["look"]
       end
 
       def palette_colour(value)

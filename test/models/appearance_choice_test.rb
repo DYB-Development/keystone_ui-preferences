@@ -152,4 +152,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "sharp", look_for(person, account)
   end
+
+  test "a person with no look of their own gets the app's default look when the app turns off account looks" do
+    KeystoneUi::Preferences.configure { |config| config.account_looks = false }
+    save_look(account, "sharp")
+
+    assert_nil look_for(person, account)
+  end
 end
