@@ -182,4 +182,14 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal %w[light dark system], mode_options
   end
+
+  def look_options
+    css_select("input[type=radio][name=look]").map { |option| option["value"] }
+  end
+
+  test "the appearance section offers the app's own look first and then every registered look" do
+    render_section
+
+    assert_equal [ "", "brutalist", "compact", "rounded", "sharp", "soft" ], look_options
+  end
 end

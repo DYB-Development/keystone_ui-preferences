@@ -78,6 +78,15 @@
         <% end %>
       <% end %>
 
+      <%= ui_section(title: "Look", spacing: :sm) do %>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <%= ui_radio_card(name: "look", value: "", label: configuration.app_look_label) %>
+          <% KeystoneUi.configuration.looks.each_key do |look| %>
+            <%= ui_radio_card(name: "look", value: look, label: look.humanize) %>
+          <% end %>
+        </div>
+      <% end %>
+
       <%= ui_section(title: "Mode", spacing: :sm) do %>
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
           <% KeystoneUi::ThemeChoice::MODES.each do |mode| %>
