@@ -92,4 +92,16 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ false ], switch_on?("members_choose_look")
   end
+
+  def look_options
+    css_select("input[type=radio][name=look]")
+  end
+
+  test "the account's section offers no look when the app turns off account looks" do
+    KeystoneUi::Preferences.configure { |config| config.account_looks = false }
+
+    render_section
+
+    assert_empty look_options
+  end
 end
