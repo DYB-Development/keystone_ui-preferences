@@ -7,6 +7,9 @@
   drawn = KeystoneUi::Preferences::AppearanceChoice.new(person: account, account: nil).colours
 %>
 
+<% if !offers_colours && !offers_look %>
+  <%= ui_alert(message: "This app does not let accounts choose their colours or look.") %>
+<% else %>
 <%= ui_panel(padding: :lg) do %>
   <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
     <div style="display: flex; flex-direction: column; gap: 2rem;">
@@ -34,4 +37,5 @@
       </div>
     </div>
   <% end %>
+<% end %>
 <% end %>

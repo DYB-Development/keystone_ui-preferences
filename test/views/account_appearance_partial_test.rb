@@ -134,4 +134,15 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_empty switch_on?("members_choose")
   end
+
+  test "the account's section offers nothing to save when the app turns off account colours and account looks" do
+    KeystoneUi::Preferences.configure do |config|
+      config.account_colors = false
+      config.account_looks = false
+    end
+
+    render_section
+
+    assert_equal [ [ "This app does not let accounts choose their colours or look." ], 0 ], [ css_select(".ks-alert-message").map { |message| message.text.strip }, css_select("form").size ]
+  end
 end
