@@ -104,4 +104,18 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "dark", mode_for(person, account)
   end
+
+  def look_for(person, account = nil)
+    KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).look
+  end
+
+  def save_look(owner, look, members_choose: true)
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: owner, component_key: "look", value: { "look" => look }, members_choose: members_choose)
+  end
+
+  test "a person who saved a registered look gets that look" do
+    save_look(person, "rounded")
+
+    assert_equal "rounded", look_for(person, account)
+  end
 end

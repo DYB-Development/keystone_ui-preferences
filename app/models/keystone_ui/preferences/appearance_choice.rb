@@ -30,6 +30,10 @@ module KeystoneUi
         LayoutChoice.new(person: @person, account: nil, component_key: "mode").value.to_h["mode"] || configuration.default_mode
       end
 
+      def look
+        LayoutChoice.new(person: @person, account: @account, component_key: "look").value.to_h["look"]
+      end
+
       def custom_offered?
         !colours[:background].casecmp?(WHITE)
       end
