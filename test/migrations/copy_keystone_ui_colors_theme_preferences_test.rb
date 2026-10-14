@@ -120,4 +120,12 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal [ {}, false ], [ saved(account, "look")&.value, saved(account, "look")&.members_choose ]
   end
+
+  test "a saved template named Default is copied as the app's default colours" do
+    theme_preference(account, template_name: "default")
+
+    copy
+
+    assert_equal({ "template_name" => "default" }, saved(account, "colours")&.value)
+  end
 end
