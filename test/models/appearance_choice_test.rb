@@ -90,4 +90,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "dark", mode_for(person, account)
   end
+
+  test "a person with no mode saved gets the mode the app configures" do
+    KeystoneUi::Preferences.configure { |config| config.default_mode = "system" }
+
+    assert_equal "system", mode_for(person, account)
+  end
 end

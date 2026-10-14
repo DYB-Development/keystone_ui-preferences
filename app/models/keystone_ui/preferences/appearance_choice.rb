@@ -26,7 +26,7 @@ module KeystoneUi
       end
 
       def mode
-        LayoutChoice.new(person: @person, account: nil, component_key: "mode").value.to_h["mode"]
+        LayoutChoice.new(person: @person, account: nil, component_key: "mode").value.to_h["mode"] || configuration.default_mode
       end
 
       private
