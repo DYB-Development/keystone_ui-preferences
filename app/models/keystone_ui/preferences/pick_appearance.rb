@@ -63,7 +63,7 @@ module KeystoneUi
       end
 
       def look_sent?
-        @values.key?(:look) && KeystoneUi::Preferences.configuration.user_looks
+        @values.key?(:look) && AppearanceChoice.new(person: @person, account: @account).person_chooses_look?
       end
 
       def look_preference
