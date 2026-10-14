@@ -122,6 +122,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     assert_equal [ "keystone_ui-preferences: Account #{account.id} saved the template \"retired\", which keystone_ui-looks does not have" ], warnings_from { colours_for(person, account) }
   end
 
+  test "a saved accent and surface the catalogue no longer has each write one warning naming the person and the name" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "accent" => "retired_accent", "surface" => "retired_surface" })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved the surface \"retired_surface\", which keystone_ui-looks does not have", "keystone_ui-preferences: User #{person.id} saved the accent \"retired_accent\", which keystone_ui-looks does not have" ], warnings_from { colours_for(person, account) }
+  end
+
   def mode_for(person, account = nil)
     KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).mode
   end

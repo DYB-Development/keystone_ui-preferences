@@ -19,9 +19,9 @@ module KeystoneUi
         return template_colours if template_offered?
         return fallback_colours if saved["template_name"].present?
 
-        surface = catalogue_colour(saved["surface"], KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
+        surface = catalogue_colour("surface", KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
         {
-          accent: catalogue_colour(saved["accent"], KeystoneUi::Looks::Palettes::ACCENTS) || configuration.default_accent,
+          accent: catalogue_colour("accent", KeystoneUi::Looks::Palettes::ACCENTS) || configuration.default_accent,
           surface: surface,
           background: surface.start_with?("#") ? surface : configuration.default_background,
           text: (saved["text"] if saved["text"].to_s.match?(HEX)) || configuration.default_text
@@ -52,10 +52,14 @@ module KeystoneUi
         LayoutChoice.new(person: owner, account: nil, component_key: "look").value.to_h["look"]
       end
 
-      def catalogue_colour(value, palettes)
-        return value if value.to_s.match?(HEX)
+      def catalogue_colour(kind, palettes)
+        value = saved[kind].to_s
+        return value if value.match?(HEX)
+        return unless value.match?(PALETTE_NAME)
+        return value if palettes.key?(value.to_sym)
 
-        value if value.to_s.match?(PALETTE_NAME) && palettes.key?(value.to_sym)
+        warn_missing(kind, value)
+        nil
       end
 
       def default_colours
