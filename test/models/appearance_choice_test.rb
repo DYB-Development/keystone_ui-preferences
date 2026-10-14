@@ -125,4 +125,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "sharp", look_for(person, account)
   end
+
+  test "a person's saved look is passed over for the app's default look when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+    save_look(person, "rounded")
+
+    assert_nil look_for(person, account)
+  end
 end

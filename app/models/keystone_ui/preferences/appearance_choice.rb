@@ -31,7 +31,7 @@ module KeystoneUi
       end
 
       def look
-        [ saved_look(@person, @account), saved_look(@account, nil) ].find { |look| KeystoneUi.configuration.looks.key?(look) }
+        [ (saved_look(@person, @account) if configuration.user_looks), saved_look(@account, nil) ].find { |look| KeystoneUi.configuration.looks.key?(look) }
       end
 
       def custom_offered?
