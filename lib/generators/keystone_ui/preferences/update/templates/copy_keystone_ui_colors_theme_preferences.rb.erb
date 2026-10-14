@@ -15,6 +15,7 @@ class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveR
       saved = saved_keys(theme_preferences)
       missing = rows.reject { |row| saved.include?(row.values_at(:owner_type, :owner_id, :component_key)) }
       ComponentPreference.insert_all(missing) if missing.any?
+      missing.each { |row| Rails.cache.delete([ "keystone_ui_preferences", *row.values_at(:owner_type, :owner_id, :component_key) ].join("/")) }
     end
   end
 

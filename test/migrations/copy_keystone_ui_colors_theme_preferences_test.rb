@@ -165,4 +165,13 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal 0, KeystoneUi::Preferences::ComponentPreference.count
   end
+
+  test "colours read before the copy ran are read again from the copied row" do
+    theme_preference(person, template_name: "forest")
+    KeystoneUi::Preferences::LayoutChoice.new(person: person, account: nil, component_key: "colours").value
+
+    copy
+
+    assert_equal({ "template_name" => "forest" }, KeystoneUi::Preferences::LayoutChoice.new(person: person, account: nil, component_key: "colours").value)
+  end
 end
