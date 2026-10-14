@@ -9,11 +9,20 @@ class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveR
 
   def up
     ThemePreference.find_in_batches do |theme_preferences|
-      ComponentPreference.insert_all(theme_preferences.flat_map { |theme_preference| [ colours(theme_preference), mode(theme_preference), look(theme_preference) ].compact })
+      rows = theme_preferences.flat_map { |theme_preference| [ colours(theme_preference), mode(theme_preference), look(theme_preference) ].compact }
+      saved = saved_keys(theme_preferences)
+      missing = rows.reject { |row| saved.include?(row.values_at(:owner_type, :owner_id, :component_key)) }
+      ComponentPreference.insert_all(missing) if missing.any?
     end
   end
 
   private
+
+  def saved_keys(theme_preferences)
+    theme_preferences.group_by(&:owner_type).flat_map do |owner_type, owned|
+      ComponentPreference.where(owner_type: owner_type, owner_id: owned.map(&:owner_id), component_key: %w[colours mode look]).pluck(:owner_type, :owner_id, :component_key)
+    end.to_set
+  end
 
   def colours(theme_preference)
     row(theme_preference, "colours", colours_value(theme_preference), members_choose: theme_preference.members_choose)

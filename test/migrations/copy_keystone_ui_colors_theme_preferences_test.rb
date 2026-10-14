@@ -128,4 +128,13 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "default" }, saved(account, "colours")&.value)
   end
+
+  test "an owner that already chose colours in keystone_ui-preferences keeps them" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "ocean" })
+    theme_preference(person, template_name: "forest")
+
+    copy
+
+    assert_equal [ { "template_name" => "ocean" } ], KeystoneUi::Preferences::ComponentPreference.where(owner: person, component_key: "colours").map(&:value)
+  end
 end
