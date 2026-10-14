@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Saving Default in the appearance section removes the person's saved colours, so the account's colours or the app's defaults apply again.
 - The appearance section refuses, with a message and nothing saved, a template not in the catalogue, a Custom colour that is neither a six-digit hex nor a palette name, and any save while the account sets the colours for everyone, when it also says so instead of offering a save.
 - `keystone_ui:preferences:install` copies the template picker script, which sets the colour pickers as soon as a template is picked, into `app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js`.
+- `keystone_ui:preferences:update` copies the template picker script into an app that installed an earlier version, and leaves the file alone when the app already has it.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.

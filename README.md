@@ -25,7 +25,7 @@ import ThemeSettingsController from "./keystone_ui/preferences/theme_settings_co
 application.register("keystone-ui--preferences--theme-settings", ThemeSettingsController)
 ```
 
-After updating the gem, run its update generator to copy any migrations added since it was installed:
+After updating the gem, run its update generator to copy any migrations added since it was installed, and the template picker script when the app does not have it yet:
 
 ```bash
 bin/rails generate keystone_ui:preferences:update
