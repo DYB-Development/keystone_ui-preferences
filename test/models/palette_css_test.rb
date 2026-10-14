@@ -18,4 +18,15 @@ class PaletteCssTest < ActiveSupport::TestCase
 
     assert_equal [ "--color-surface-50: #fafaf9;", "--color-surface-100: #f5f5f4;", "--color-surface-200: #e7e5e4;", "--color-surface-300: #d6d3d1;", "--color-surface-400: #a8a29e;", "--color-surface-500: #78716c;", "--color-surface-600: #57534e;", "--color-surface-700: #44403c;", "--color-surface-800: #292524;", "--color-surface-900: #1c1917;", "--color-surface-950: #0c0a09;" ], surface_lines
   end
+
+  test "a hex accent and a hex surface are each written as shades generated from that colour" do
+    shade_lines = css_for(accent: "#e11d48", surface: "#f5e6c8").lines.grep(/--color-(accent|surface)-/).map(&:strip)
+
+    assert_equal [
+      "--color-accent-50: #fef4f6;", "--color-accent-100: #fce8ed;", "--color-accent-200: #f9d2da;", "--color-accent-300: #f6bbc8;", "--color-accent-400: #f3a5b6;", "--color-accent-500: #e11d48;",
+      "--color-accent-600: #bf193d;", "--color-accent-700: #9e1432;", "--color-accent-800: #7c1028;", "--color-accent-900: #5a0c1d;", "--color-accent-950: #380712;",
+      "--color-surface-50: #fffefc;", "--color-surface-100: #fefdfa;", "--color-surface-200: #fdfaf4;", "--color-surface-300: #fcf8ef;", "--color-surface-400: #fbf5e9;", "--color-surface-500: #f5e6c8;",
+      "--color-surface-600: #d0c4aa;", "--color-surface-700: #aca18c;", "--color-surface-800: #877f6e;", "--color-surface-900: #625c50;", "--color-surface-950: #3d3a32;"
+    ], shade_lines
+  end
 end
