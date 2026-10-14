@@ -8,7 +8,7 @@ module KeystoneUi
       extend ActiveSupport::Concern
 
       included do
-        helper_method :keystone_component_preference if respond_to?(:helper_method)
+        helper_method :keystone_component_preference, :keystone_palette_style_tag if respond_to?(:helper_method)
       end
 
       def keystone_component_preference(component_key)
@@ -20,6 +20,11 @@ module KeystoneUi
           value: choice.value,
           save_url: (keystone_ui_preferences.component_preference_path(component_key: component_key) if choice.members_choose?)
         }
+      end
+
+      def keystone_palette_style_tag
+        colours = AppearanceChoice.new(person: send(KeystoneUi::Preferences.configuration.current_owner_method), account: keystone_preferences_account).colours
+        helpers.content_tag(:style, PaletteCss.new(**colours).to_s)
       end
 
       def keystone_layout_choice(component_key)
