@@ -1,0 +1,55 @@
+class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  class ThemePreference < ActiveRecord::Base
+    self.table_name = "keystone_ui_colors_theme_preferences"
+  end
+
+  class ComponentPreference < ActiveRecord::Base
+    self.table_name = "keystone_ui_preferences_component_preferences"
+  end
+
+  def up
+    return unless table_exists?(:keystone_ui_colors_theme_preferences)
+
+    ThemePreference.find_in_batches do |theme_preferences|
+      rows = theme_preferences.flat_map { |theme_preference| [ colours(theme_preference), mode(theme_preference), look(theme_preference) ].compact }
+      saved = saved_keys(theme_preferences)
+      missing = rows.reject { |row| saved.include?(row.values_at(:owner_type, :owner_id, :component_key)) }
+      ComponentPreference.insert_all(missing) if missing.any?
+      missing.each { |row| Rails.cache.delete([ "keystone_ui_preferences", *row.values_at(:owner_type, :owner_id, :component_key) ].join("/")) }
+    end
+  end
+
+  private
+
+  def saved_keys(theme_preferences)
+    theme_preferences.group_by(&:owner_type).flat_map do |owner_type, owned|
+      ComponentPreference.where(owner_type: owner_type, owner_id: owned.map(&:owner_id), component_key: %w[colours mode look]).pluck(:owner_type, :owner_id, :component_key)
+    end.to_set
+  end
+
+  def colours(theme_preference)
+    row(theme_preference, "colours", colours_value(theme_preference), members_choose: theme_preference.members_choose)
+  end
+
+  def mode(theme_preference)
+    return nil if theme_preference.mode.blank?
+
+    row(theme_preference, "mode", { "mode" => theme_preference.mode })
+  end
+
+  def look(theme_preference)
+    return nil if theme_preference.look.blank? && theme_preference.members_choose_look
+
+    row(theme_preference, "look", { "look" => theme_preference.look.presence }.compact, members_choose: theme_preference.members_choose_look)
+  end
+
+  def colours_value(theme_preference)
+    return { "template_name" => theme_preference.template_name } if theme_preference.template_name.present?
+
+    { "accent" => theme_preference.accent, "surface" => theme_preference.surface, "text" => theme_preference.text }
+  end
+
+  def row(theme_preference, component_key, value, members_choose: true)
+    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: component_key, value: value, members_choose: members_choose }
+  end
+end

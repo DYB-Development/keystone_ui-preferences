@@ -35,6 +35,10 @@ class KeystoneUi::Preferences::Generators::UpdateGeneratorTest < ActiveSupport::
     assert_equal "// edited by the app", File.read(script)
   end
 
+  test "copies a migration that copies keystone_ui-colors' saved colours, mode and look" do
+    assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_copy_keystone_ui_colors_theme_preferences.rb").first.to_s), "class CopyKeystoneUiColorsThemePreferences"
+  end
+
   private
 
   def migration

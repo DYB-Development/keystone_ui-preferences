@@ -238,6 +238,28 @@ end
 
 A choice made with keystone_ui's theme toggle in that browser still sets light or dark on these pages.
 
+## Moving off keystone_ui-colors
+
+An app that saved colours, modes and looks with keystone_ui-colors keeps them by running the update generator and migrating:
+
+```bash
+bin/rails generate keystone_ui:preferences:update
+bin/rails db:migrate
+```
+
+The generator copies a migration that reads every row of `keystone_ui_colors_theme_preferences` and writes up to three rows for the same owner:
+
+| keystone_ui-colors | keystone_ui-preferences |
+|--------------------|-------------------------|
+| `template_name`, including `default` | `colours` row holding `{"template_name": ...}` |
+| `accent`, `surface` and `text` with no template | `colours` row holding `{"accent": ..., "surface": ..., "text": ...}` |
+| `members_choose` | `members_choose` of the `colours` row |
+| `mode` | `mode` row holding `{"mode": ...}`, written only when a mode was saved |
+| `look` | `look` row holding `{"look": ...}`, written only when a look was saved |
+| `members_choose_look` | `members_choose` of the `look` row, which holds `{}` for an account on the app's own look that sets the look for everyone |
+
+An owner and key that already has a row keeps it, so a choice made in keystone_ui-preferences is never replaced by an older one, and running the migration again changes nothing. In an app without keystone_ui-colors' table the migration does nothing. Rolling it back changes neither table. Remove keystone_ui-colors from the app in the same deploy, since both gems set keystone_ui's mode and look, and drop its table afterwards.
+
 ## What is stored
 
 One row per owner and component key, in `keystone_ui_preferences_component_preferences`:
