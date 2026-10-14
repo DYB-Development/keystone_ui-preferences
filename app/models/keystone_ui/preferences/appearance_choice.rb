@@ -17,7 +17,7 @@ module KeystoneUi
         return default_colours unless configuration.account_colors
         return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
         return template_colours if template_offered?
-        return default_colours if saved["template_name"].present?
+        return fallback_colours if saved["template_name"].present?
 
         surface = palette_colour(saved["surface"]) || configuration.default_surface
         {
@@ -58,6 +58,12 @@ module KeystoneUi
 
       def default_colours
         { accent: configuration.default_accent, surface: configuration.default_surface, background: configuration.default_background, text: configuration.default_text }
+      end
+
+      def fallback_colours
+        return default_colours unless @account
+
+        AppearanceChoice.new(person: @account, account: nil).colours
       end
 
       def template_offered?

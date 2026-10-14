@@ -81,6 +81,13 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     assert_equal "#18181b", colours_for(person, account)[:text]
   end
 
+  test "a person whose saved template the catalogue no longer has gets the account's colours" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "forest" })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "retired" })
+
+    assert_equal({ accent: "emerald", surface: "stone", background: "#ecfdf5", text: "#064e3b" }, colours_for(person, account))
+  end
+
   def mode_for(person, account = nil)
     KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).mode
   end
