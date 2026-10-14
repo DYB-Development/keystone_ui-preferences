@@ -22,6 +22,10 @@ class KeystoneUi::Preferences::Generators::UpdateGeneratorTest < ActiveSupport::
     assert_includes migration, %(remove_index :keystone_ui_preferences_component_preferences, %i[owner_type owner_id], name: "index_keystone_ui_preferences_component_preferences_on_owner", if_exists: true)
   end
 
+  test "copies the template picker script into the app's Stimulus controllers" do
+    assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_settings_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js")
+  end
+
   private
 
   def migration
