@@ -21,7 +21,7 @@ module KeystoneUi
           accent: palette_colour(saved["accent"]) || configuration.default_accent,
           surface: surface,
           background: surface.start_with?("#") ? surface : configuration.default_background,
-          text: saved["text"].presence || configuration.default_text
+          text: (saved["text"] if saved["text"].to_s.match?(HEX)) || configuration.default_text
         }
       end
 

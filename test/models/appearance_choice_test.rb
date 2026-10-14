@@ -74,4 +74,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal [ "zinc", "#ffffff" ], colours_for(person, account).values_at(:surface, :background)
   end
+
+  test "a saved text colour that is not a six-digit hex draws the app's default text colour" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "text" => "black" })
+
+    assert_equal "#18181b", colours_for(person, account)[:text]
+  end
 end
