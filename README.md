@@ -163,6 +163,8 @@ The colours come from the `colours` key, read the way a table's layout is read: 
 
 A saved `template_name` draws that template's accent, surface, background and text from keystone_ui-looks, whatever else the value holds. The template named `default` is built from the four defaults in the configuration. A person with nothing saved, and a visitor who is not signed in, see those four defaults.
 
+A saved name keystone_ui-looks no longer has still draws a page. A missing template draws the account's colours, or the four defaults when the account has none or its own template is the missing one. A missing accent or surface name draws the default accent or surface. Each of these writes one warning to the app's log naming the owner's type and id and the missing name, for example `keystone_ui-preferences: User 5 saved the template "retired", which keystone_ui-looks does not have`. A saved value that is not a name or a six-digit hex falls back with no warning. The saved row is left as it is until the owner saves again, and the appearance section shows no template selected for it.
+
 ## Appearance
 
 A person picks their colours in a settings_hub section the app registers:
