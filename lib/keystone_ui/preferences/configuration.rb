@@ -3,13 +3,17 @@
 module KeystoneUi
   module Preferences
     class Configuration
-      attr_accessor :current_owner_method, :authentication_method, :current_account_method, :max_value_bytes
+      attr_accessor :current_owner_method, :authentication_method, :current_account_method, :max_value_bytes, :default_accent, :default_surface, :default_background, :default_text
 
       def initialize
         @current_owner_method = :current_user
         @authentication_method = :authenticate_user!
         @component_names = {}
         @max_value_bytes = 10_000
+        @default_accent = "blue"
+        @default_surface = "zinc"
+        @default_background = "#ffffff"
+        @default_text = "#18181b"
       end
 
       def name_component(component_key, name)

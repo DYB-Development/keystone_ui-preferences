@@ -1,6 +1,6 @@
 # keystone_ui-preferences
 
-Per-user saved choices for Keystone UI components, such as a data table's hidden columns.
+Per-user saved choices for Keystone UI components, such as a data table's hidden columns and the colours every page is drawn in.
 
 A page gives a `ui_data_table` a `key:`. This gem saves each signed-in person's layout for that key and hands it back to keystone_ui, so the table renders from it and shows a Columns menu that saves to it. A person with nothing saved sees the hidden columns the table's own call names.
 
@@ -49,6 +49,10 @@ KeystoneUi::Preferences.configure do |config|
   config.authentication_method = :authenticate_user! # runs before every save
   config.current_account_method = :current_account   # returns the account; nil (the default) skips the account level
   config.max_value_bytes = 10_000                    # the largest saved value accepted, in bytes
+  config.default_accent = "blue"                     # the accent for a person with no colours saved
+  config.default_surface = "zinc"                    # the surface for a person with no colours saved
+  config.default_background = "#ffffff"              # the custom background for a person with no colours saved
+  config.default_text = "#18181b"                    # the custom text colour for a person with no colours saved
 end
 ```
 
@@ -132,6 +136,20 @@ The section lists the groups declared with keystone_ui's `navigation_group`, eac
 A tab declared outside any group with keystone_ui's `navigation_tab` is one row in the list of groups, named by its label, with the same Up and Down buttons as a group. It has no tab rows under it, and no button moves it into a group.
 
 Saving keeps `"order": [{ "group": "Admin" }, { "group": "Sales", "tabs": ["orders", "quotes"] }, { "group": "Console" }]` for that person under the `navigation` key, naming groups by label and tabs by key, and a tab declared outside any group by its label alone. It leaves their saved placement as it was. keystone_ui draws the navigation in that order on the next page they open, with anything the order does not name after it in its declared order. Reset removes the saved order, so the navigation goes back to the declared order. An order that is not a list of groups is refused with a message, and nothing is saved.
+
+## Colours
+
+Add the palette style tag to your layout's `<head>`:
+
+```erb
+<%= keystone_palette_style_tag %>
+```
+
+It writes the same CSS variables keystone_ui-colors writes: `--color-accent-50` to `--color-accent-950`, `--color-surface-50` to `--color-surface-950`, `--color-custom-background` and `--color-custom-text`. A layout that already calls it for keystone_ui-colors keeps working unchanged, and an app must not load both gems.
+
+The colours come from the `colours` key, read the way a table's layout is read: the person's own row, or the account's row when the account does not let members choose. A saved value looks like `{ "accent": "#e11d48", "surface": "#f5e6c8", "text": "#3b2f1e" }` or `{ "template_name": "forest" }`. A named accent or surface, such as `emerald` or `stone`, uses that palette's shades from keystone_ui-looks, and a hex value has its shades generated. A custom hex surface is also the custom background. A saved accent or surface that is neither a name of lowercase letters, digits and underscores nor a six-digit hex, and a saved text colour that is not a six-digit hex, is drawn as the configured default for that colour instead.
+
+A saved `template_name` draws that template's accent, surface, background and text from keystone_ui-looks, whatever else the value holds. The template named `default` is built from the four defaults in the configuration. A person with nothing saved, and a visitor who is not signed in, see those four defaults.
 
 ## What is stored
 
