@@ -36,6 +36,7 @@ All notable changes to this project will be documented in this file.
 - A saved template keystone_ui-looks no longer has draws the account's colours, or the configured defaults, instead of raising an error, and the appearance section shows no template selected for it and still saves a new one.
 - A saved accent or surface name keystone_ui-looks no longer has draws the configured default accent or surface instead of raising an error.
 - Each of these fallbacks writes one warning to the app's log naming the owner's type and id and the missing name.
+- An app that loads keystone_ui-colors beside keystone_ui-preferences stops at boot with `KeystoneUi::Preferences::ColorsCheck::Error`, whose message names keystone_ui-colors as the gem to remove and the update generator as the step to run first.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.
