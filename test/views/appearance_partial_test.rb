@@ -26,4 +26,20 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "" ], template_options.map { |option| option["value"] }
   end
+
+  def selected_template
+    css_select("input[type=radio][name=template_name][checked]").map { |option| option["value"] }
+  end
+
+  def save_colours(value, owner = person)
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: owner, component_key: "colours", value: value)
+  end
+
+  test "the appearance section selects the template the person saved" do
+    save_colours("template_name" => "forest")
+
+    render_section
+
+    assert_equal [ "forest" ], selected_template
+  end
 end

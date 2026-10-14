@@ -3,6 +3,7 @@
   palette_hex = ->(colour, palette) { colour.to_s.start_with?("#") ? colour.to_s : palette.call(colour)[500] }
   templates = { "default" => { accent: configuration.default_accent, surface: configuration.default_surface, text: configuration.default_text, label: "Default" } }
   KeystoneUi::Looks::Templates.all.each { |name, template| templates[name.to_s] = template }
+  saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value.to_h
 %>
 
 <%= ui_panel(padding: :lg) do %>
@@ -13,7 +14,7 @@
           <% templates.each do |name, template| %>
             <% accent_hex = palette_hex.call(template[:accent], KeystoneUi::Looks::Palettes.method(:accent)) %>
             <% surface_hex = palette_hex.call(template[:surface], KeystoneUi::Looks::Palettes.method(:surface)) %>
-            <%= ui_option_card(name: "template_name", value: name) do %>
+            <%= ui_option_card(name: "template_name", value: name, selected: saved["template_name"] == name) do %>
               <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 9999px; background-color: <%= accent_hex %>;"></span>
               <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 0.25rem; background-color: <%= surface_hex %>;"></span>
               <span><%= template[:label] %></span>
