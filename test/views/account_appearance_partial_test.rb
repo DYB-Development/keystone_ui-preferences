@@ -78,4 +78,10 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "", false ], [ "brutalist", false ], [ "compact", false ], [ "rounded", false ], [ "sharp", true ], [ "soft", false ] ], css_select("input[type=radio][name=look]").map { |option| [ option["value"], option.key?("checked") ] }
   end
+
+  test "the account's section lets members choose their own look until an admin turns it off" do
+    render_section
+
+    assert_equal [ true ], switch_on?("members_choose_look")
+  end
 end

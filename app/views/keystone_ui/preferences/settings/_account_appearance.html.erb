@@ -15,6 +15,8 @@
       <%= ui_section(title: "Members", spacing: :sm) do %>
         <%= hidden_field_tag "members_choose", "0", id: nil %>
         <%= ui_checkbox_row(name: "members_choose", value: "1", label: "Members choose their own colours", checked: colours.nil? || colours.members_choose) %>
+        <%= hidden_field_tag "members_choose_look", "0", id: nil %>
+        <%= ui_checkbox_row(name: "members_choose_look", value: "1", label: "Members choose their own look", checked: look.nil? || look.members_choose) %>
       <% end %>
 
       <div>
