@@ -20,4 +20,12 @@ class ConfigurationTest < ActiveSupport::TestCase
   test "an app that configures nothing lets each person choose their own look" do
     assert KeystoneUi::Preferences::Configuration.new.user_looks
   end
+
+  test "an app that configures nothing lets each account choose its colours" do
+    assert KeystoneUi::Preferences::Configuration.new.account_colors
+  end
+
+  test "an app that configures nothing lets each account choose its look" do
+    assert KeystoneUi::Preferences::Configuration.new.account_looks
+  end
 end

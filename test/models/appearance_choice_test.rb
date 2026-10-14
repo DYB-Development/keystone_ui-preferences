@@ -138,4 +138,46 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_nil look_for(nil, account)
   end
+
+  test "a person gets the app's default colours when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "forest" })
+
+    assert_equal({ accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, colours_for(person, account))
+  end
+
+  test "a person whose account turns off members choosing their own look gets the account's look" do
+    save_look(account, "sharp", members_choose: false)
+    save_look(person, "rounded")
+
+    assert_equal "sharp", look_for(person, account)
+  end
+
+  test "a person with no look of their own gets the app's default look when the app turns off account looks" do
+    KeystoneUi::Preferences.configure { |config| config.account_looks = false }
+    save_look(account, "sharp")
+
+    assert_nil look_for(person, account)
+  end
+
+  test "a person gets the app's default look when the app turns off account looks and the account turns off members choosing their own" do
+    KeystoneUi::Preferences.configure { |config| config.account_looks = false }
+    save_look(account, "sharp", members_choose: false)
+    save_look(person, "rounded")
+
+    assert_nil look_for(person, account)
+  end
+
+  test "a person who chose a look keeps it over the account's look while the account lets members choose" do
+    save_look(account, "sharp")
+    save_look(person, "rounded")
+
+    assert_equal "rounded", look_for(person, account)
+  end
+
+  test "a person with no look of their own gets the account's look" do
+    save_look(account, "sharp")
+
+    assert_equal "sharp", look_for(person, account)
+  end
 end

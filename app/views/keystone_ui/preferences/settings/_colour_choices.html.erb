@@ -1,0 +1,66 @@
+<%
+  configuration = KeystoneUi::Preferences.configuration
+  palette_hex = ->(colour, palette) { colour.to_s.start_with?("#") ? colour.to_s : palette.call(colour)[500] }
+  templates = { "default" => { accent: configuration.default_accent, surface: configuration.default_surface, text: configuration.default_text, label: "Default" } }
+  KeystoneUi::Looks::Templates.all.each { |name, template| templates[name.to_s] = template }
+%>
+
+<%= ui_section(title: "Theme", spacing: :sm) do %>
+  <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+    <% templates.each do |name, template| %>
+      <% accent_hex = palette_hex.call(template[:accent], KeystoneUi::Looks::Palettes.method(:accent)) %>
+      <% surface_hex = palette_hex.call(template[:surface], KeystoneUi::Looks::Palettes.method(:surface)) %>
+      <%= ui_option_card(
+        name: "template_name",
+        value: name,
+        selected: saved["template_name"] == name,
+        input_data: {
+          action: "keystone-ui--preferences--theme-settings#selectTemplate",
+          "accent-hex": accent_hex,
+          "surface-hex": surface_hex,
+          "text-hex": template[:text]
+        },
+        label_data: {
+          "keystone-ui--preferences--theme-settings-target": "templateLabel",
+          template: name
+        }
+      ) do %>
+        <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 9999px; background-color: <%= accent_hex %>;"></span>
+        <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 0.25rem; background-color: <%= surface_hex %>;"></span>
+        <span><%= template[:label] %></span>
+      <% end %>
+    <% end %>
+    <%= ui_option_card(
+      name: "template_name",
+      value: "",
+      selected: saved["template_name"].blank?,
+      input_data: {
+        "keystone-ui--preferences--theme-settings-target": "customRadio"
+      },
+      label_data: {
+        "keystone-ui--preferences--theme-settings-target": "templateLabel",
+        template: "custom"
+      }
+    ) do %>
+      <span>Custom</span>
+    <% end %>
+  </div>
+<% end %>
+
+<%= ui_section(title: "Accent Color", spacing: :sm) do %>
+  <div data-keystone-ui--preferences--theme-settings-target="accentPicker">
+    <%= ui_color_picker(name: "accent", value: palette_hex.call(drawn[:accent], KeystoneUi::Looks::Palettes.method(:accent))) %>
+  </div>
+<% end %>
+
+<%= ui_section(title: "Surface", spacing: :sm) do %>
+  <div data-keystone-ui--preferences--theme-settings-target="surfacePicker">
+    <%= ui_color_picker(name: "surface", value: palette_hex.call(drawn[:surface], KeystoneUi::Looks::Palettes.method(:surface))) %>
+  </div>
+<% end %>
+
+<%= ui_section(title: "Text Color", spacing: :sm) do %>
+  <div data-keystone-ui--preferences--theme-settings-target="textPicker">
+    <%= ui_color_picker(name: "text", value: drawn[:text]) %>
+  </div>
+<% end %>

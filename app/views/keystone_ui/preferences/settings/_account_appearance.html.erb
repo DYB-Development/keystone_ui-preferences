@@ -1,0 +1,41 @@
+<%
+  colours = KeystoneUi::Preferences::ComponentPreference.find_by(owner: account, component_key: "colours")
+  saved = colours&.value.presence || { "template_name" => "default" }
+  look = KeystoneUi::Preferences::ComponentPreference.find_by(owner: account, component_key: "look")
+  offers_colours = KeystoneUi::Preferences.configuration.account_colors
+  offers_look = KeystoneUi::Preferences.configuration.account_looks && KeystoneUi.configuration.looks.any?
+  drawn = KeystoneUi::Preferences::AppearanceChoice.new(person: account, account: nil).colours
+%>
+
+<% if !offers_colours && !offers_look %>
+  <%= ui_alert(message: "This app does not let accounts choose their colours or look.") %>
+<% else %>
+<%= ui_panel(padding: :lg) do %>
+  <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      <% if offers_colours %>
+        <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn } %>
+      <% end %>
+
+      <% if offers_look %>
+        <%= render partial: "keystone_ui/preferences/settings/look_choices", locals: { saved_look: look&.value.to_h["look"] } %>
+      <% end %>
+
+      <%= ui_section(title: "Members", spacing: :sm) do %>
+        <% if offers_colours %>
+          <%= hidden_field_tag "members_choose", "0", id: nil %>
+          <%= ui_checkbox_row(name: "members_choose", value: "1", label: "Members choose their own colours", checked: colours.nil? || colours.members_choose) %>
+        <% end %>
+        <% if offers_look %>
+          <%= hidden_field_tag "members_choose_look", "0", id: nil %>
+          <%= ui_checkbox_row(name: "members_choose_look", value: "1", label: "Members choose their own look", checked: look.nil? || look.members_choose) %>
+        <% end %>
+      <% end %>
+
+      <div>
+        <%= ui_button(label: "Save", type: :submit) %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+<% end %>

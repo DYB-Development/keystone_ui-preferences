@@ -233,4 +233,43 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_empty look_options
   end
+
+  test "the appearance section offers no look when the account turns off members choosing their own look" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "look", value: { "look" => "sharp" }, members_choose: false)
+
+    render_section(account: account)
+
+    assert_empty look_options
+  end
+
+  test "the appearance section offers no colours when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_empty template_options
+  end
+
+  test "the appearance section leaves out Custom when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_equal %w[light dark system], mode_options
+  end
+
+  test "the appearance section does not say the account sets the colours when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section(account: account_setting_colours)
+
+    assert_not_includes rendered, "Your account sets the colours for everyone."
+  end
+
+  test "the appearance section offers no colours while the account sets the colours for everyone" do
+    render_section(account: account_setting_colours)
+
+    assert_empty template_options
+  end
 end

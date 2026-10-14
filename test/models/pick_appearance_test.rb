@@ -183,4 +183,19 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_predicate pick(template_name: "forest", look: "retired"), :ok?
   end
+
+  test "colours are refused with a reason when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    assert_equal "This app sets the colours for everyone, so this was not saved.", pick(template_name: "forest").message
+  end
+
+  test "a look sent with a save is ignored when the account turns off members choosing their own look" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "look", value: { "look" => "sharp" }, members_choose: false)
+
+    pick({ template_name: "forest", look: "rounded" }, account)
+
+    assert_nil saved_look
+  end
 end
