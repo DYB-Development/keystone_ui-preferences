@@ -70,4 +70,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ false ], switch_on?("members_choose")
   end
+
+  test "the account's section selects the look the account saved among the app's own look and every registered look" do
+    save("look", { "look" => "sharp" })
+
+    render_section
+
+    assert_equal [ [ "", false ], [ "brutalist", false ], [ "compact", false ], [ "rounded", false ], [ "sharp", true ], [ "soft", false ] ], css_select("input[type=radio][name=look]").map { |option| [ option["value"], option.key?("checked") ] }
+  end
 end
