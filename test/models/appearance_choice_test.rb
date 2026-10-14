@@ -68,4 +68,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "blue", colours_for(person, account)[:accent]
   end
+
+  test "a saved surface that is neither a palette name nor a six-digit hex draws the app's default surface and background" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "surface" => "#f5e6c8;} body{display:none}" })
+
+    assert_equal [ "zinc", "#ffffff" ], colours_for(person, account).values_at(:surface, :background)
+  end
 end

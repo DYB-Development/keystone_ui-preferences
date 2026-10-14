@@ -16,7 +16,7 @@ module KeystoneUi
         return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
         return template_colours if saved["template_name"].present?
 
-        surface = saved["surface"] || configuration.default_surface
+        surface = palette_colour(saved["surface"]) || configuration.default_surface
         {
           accent: palette_colour(saved["accent"]) || configuration.default_accent,
           surface: surface,
