@@ -28,7 +28,7 @@ class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveR
   def look(theme_preference)
     return nil if theme_preference.look.blank?
 
-    row(theme_preference, "look", { "look" => theme_preference.look })
+    row(theme_preference, "look", { "look" => theme_preference.look }, members_choose: theme_preference.members_choose_look)
   end
 
   def colours_value(theme_preference)
