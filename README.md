@@ -63,6 +63,8 @@ KeystoneUi::Preferences.configure do |config|
   config.default_mode = "light"                      # the mode for a person with no mode saved and for a visitor
   config.user_looks = true                           # whether a person may choose their own look
   config.app_look_label = "Classic"                  # the label for the app's own look in the appearance section
+  config.account_colors = true                       # whether an account may choose its colours, and its members their own
+  config.account_looks = true                        # whether an account may choose its look
 end
 ```
 
@@ -199,11 +201,30 @@ When the app registers looks with keystone_ui, the appearance section also offer
 
 Saving a look keeps `{ "look": "rounded" }` for that person under the `look` key. Saving the app's own look removes the person's `look` row, so the account's look, or the app's default look, applies again. A look name keystone_ui does not register is refused with a message, and nothing is saved.
 
-The `look` key follows the account layouts above. A person's look comes from their own row, then from the account's, and a saved look the app no longer registers is passed over for the next one. With neither, keystone_ui uses its `default_look`. A visitor who is not signed in gets `default_look` too.
+A person's look comes from their own row while the account lets members choose their own look, then from the account's row, and a saved look the app no longer registers is passed over for the next one. With neither, keystone_ui uses its `default_look`. A visitor who is not signed in gets `default_look` too.
 
 The gem gives keystone_ui the look through keystone_ui's look supplier, so the same `keystone_theme_attributes` call marks the `<html>` tag with `data-look` on every page.
 
 An app that keeps people off their own looks sets `user_looks` to false. The appearance section then shows no look choice, a save ignores any look sent with it and keeps the rest, and a person's saved look is passed over for the account's look or the app's default look. With no looks registered the section shows no look choice.
+
+## Account appearance
+
+An admin sets the account's colours and look in a settings_hub section. Who may open it is the app's decision, so register it behind a capability of the app's choosing:
+
+```ruby
+SettingsHub.section :account_appearance, area: :account, title: "Appearance",
+  capability: :manage_account,
+  renders: "keystone_ui/preferences/settings/account_appearance",
+  runs: "KeystoneUi::Preferences::PickAccountAppearance"
+```
+
+The section looks and behaves as keystone_ui-colors' account picker does. It offers Default, the five named templates and Custom with the three colour pickers, then the app's own look and every registered look, with the account's saved choices selected, or Default and the app's own look when it has none. Under them are two switches, one for whether members choose their own colours and one for whether members choose their own look. Both are on until an admin turns them off.
+
+Saving keeps the account's colours under the `colours` key, as `{ "template_name": "forest" }` or `{ "accent": "#e11d48", "surface": "#f5e6c8", "text": "#3b2f1e" }`, and its look under the `look` key, with each switch in that row's `members_choose` column. Saving Default keeps `{ "template_name": "default" }`, and saving the app's own look keeps an empty look, so neither removes the row its switch is on. The colours and look pass the same checks as a person's, and a template, colour or look that fails one is refused with a message, and nothing is saved. A save with no account is refused too.
+
+While the colours switch is off, every member sees the account's colours, and their appearance section says the account sets the colours and offers no colour choice. While the look switch is off, every member sees the account's look, and their appearance section offers no look choice. A look a member sends then is ignored, and the rest of the save is kept. While the look switch is on, a member who chose a look keeps it, and a member with none sees the account's.
+
+An app that keeps accounts off colours sets `account_colors` to false. Neither section then offers a colour choice or the colours switch, every page is drawn in the four configured defaults, and colours sent to either section are refused with a message. An app that keeps accounts off looks sets `account_looks` to false. The account's section then offers no look choice and no look switch, a look sent to it is ignored, and a saved account look is not applied.
 
 ## What is stored
 

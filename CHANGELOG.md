@@ -24,6 +24,12 @@ All notable changes to this project will be documented in this file.
 - A look name keystone_ui does not register is refused with a message, and nothing is saved.
 - The new `user_looks` setting, true by default, turns off a person's own looks when false: the section offers no look, a save ignores a look sent with it, and a person's saved look is passed over for the account's look or the app's default look.
 - The appearance section offers no look when the app registers none.
+- A settings_hub account section, `keystone_ui/preferences/settings/account_appearance` with `KeystoneUi::Preferences::PickAccountAppearance`, lets an admin pick the account's template or custom colours and the account's look, with the same look as keystone_ui-colors' account picker, saved under the account's `colours` and `look` keys.
+- The account section has a switch for whether members choose their own colours and a separate switch for whether members choose their own look, both on until an admin turns them off, saved in the `members_choose` column of the account's `colours` and `look` rows.
+- The account section refuses, with a message and nothing saved, a template not in the catalogue, a Custom colour that is neither a six-digit hex nor a palette name, a look the app does not register, and a save with no account.
+- While the account turns off members choosing their own look, every member sees the account's look, their appearance section offers no look, and a look they send is ignored.
+- The new `account_colors` setting, true by default, turns off accounts' and members' colours when false: neither section offers colours, every page draws the configured defaults, and colours sent to either section are refused with a message.
+- The new `account_looks` setting, true by default, turns off accounts' looks when false: the account section offers no look, a look sent to it is ignored, and a saved account look is not applied.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.
