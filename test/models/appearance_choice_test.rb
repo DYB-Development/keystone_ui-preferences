@@ -42,4 +42,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal({ accent: "emerald", surface: "stone", background: "#ecfdf5", text: "#064e3b" }, colours_for(person, account))
   end
+
+  test "a person who saved the default template gets the accent, surface, background and text the app configures" do
+    KeystoneUi::Preferences.configure { |config| config.default_accent = "violet" }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "default", "accent" => "rose", "surface" => "#f5e6c8" })
+
+    assert_equal({ accent: "violet", surface: "zinc", background: "#ffffff", text: "#18181b" }, colours_for(person, account))
+  end
 end

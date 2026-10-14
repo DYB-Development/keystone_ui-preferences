@@ -3,12 +3,15 @@
 module KeystoneUi
   module Preferences
     class AppearanceChoice
+      DEFAULT_TEMPLATE = "default"
+
       def initialize(person:, account:)
         @person = person
         @account = account
       end
 
       def colours
+        return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
         return template_colours if saved["template_name"].present?
 
         surface = saved["surface"] || configuration.default_surface
@@ -21,6 +24,10 @@ module KeystoneUi
       end
 
       private
+
+      def default_colours
+        { accent: configuration.default_accent, surface: configuration.default_surface, background: configuration.default_background, text: configuration.default_text }
+      end
 
       def template_colours
         template = KeystoneUi::Looks::Templates[saved["template_name"]]
