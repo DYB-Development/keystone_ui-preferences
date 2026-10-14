@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 - Colours are read from the `colours` key through the same person-then-account choice and `Rails.cache` entries as a table's layout, so a second page view reads no colour rows.
 - A saved accent or surface that is not a palette name or a six-digit hex, and a saved text colour that is not a six-digit hex, draws the configured default for that colour, so a saved value cannot add CSS rules to a page.
 - `default_accent`, `default_surface`, `default_background` and `default_text` settings give the colours a person with nothing saved and a visitor who is not signed in see, and the `default` template is built from them.
+- A settings_hub section, `keystone_ui/preferences/settings/appearance` with `KeystoneUi::Preferences::PickAppearance`, lets a person pick Default, one of the five colour templates or Custom with an accent, a surface and a text colour, saved under the `colours` key, with the same look and behaviour as keystone_ui-colors' colour settings.
+- Saving Default in the appearance section removes the person's saved colours, so the account's colours or the app's defaults apply again.
+- The appearance section refuses, with a message and nothing saved, a template not in the catalogue, a Custom colour that is neither a six-digit hex nor a palette name, and any save while the account sets the colours for everyone, when it also says so instead of offering a save.
+- `keystone_ui:preferences:install` copies the template picker script, which sets the colour pickers as soon as a template is picked, into `app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js`.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.

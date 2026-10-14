@@ -6,7 +6,7 @@ A page gives a `ui_data_table` a `key:`. This gem saves each signed-in person's 
 
 ## Installation
 
-Add the gem and run its install generator, which copies a migration for its table:
+Add the gem and run its install generator, which copies a migration for its table and the template picker script the appearance section uses:
 
 ```ruby
 gem "keystone_ui-preferences"
@@ -16,6 +16,13 @@ gem "keystone_ui-preferences"
 bundle install
 bin/rails generate keystone_ui:preferences:install
 bin/rails db:migrate
+```
+
+The script lands at `app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js`. Register it in `app/javascript/controllers/index.js`:
+
+```js
+import ThemeSettingsController from "./keystone_ui/preferences/theme_settings_controller"
+application.register("keystone-ui--preferences--theme-settings", ThemeSettingsController)
 ```
 
 After updating the gem, run its update generator to copy any migrations added since it was installed:
@@ -150,6 +157,24 @@ It writes the same CSS variables keystone_ui-colors writes: `--color-accent-50` 
 The colours come from the `colours` key, read the way a table's layout is read: the person's own row, or the account's row when the account does not let members choose. A saved value looks like `{ "accent": "#e11d48", "surface": "#f5e6c8", "text": "#3b2f1e" }` or `{ "template_name": "forest" }`. A named accent or surface, such as `emerald` or `stone`, uses that palette's shades from keystone_ui-looks, and a hex value has its shades generated. A custom hex surface is also the custom background. A saved accent or surface that is neither a name of lowercase letters, digits and underscores nor a six-digit hex, and a saved text colour that is not a six-digit hex, is drawn as the configured default for that colour instead.
 
 A saved `template_name` draws that template's accent, surface, background and text from keystone_ui-looks, whatever else the value holds. The template named `default` is built from the four defaults in the configuration. A person with nothing saved, and a visitor who is not signed in, see those four defaults.
+
+## Appearance
+
+A person picks their colours in a settings_hub section the app registers:
+
+```ruby
+SettingsHub.section :appearance, area: :user, title: "Appearance",
+  renders: "keystone_ui/preferences/settings/appearance",
+  runs: "KeystoneUi::Preferences::PickAppearance"
+```
+
+The section looks and behaves as keystone_ui-colors' colour settings do. It offers Default, the five named templates from keystone_ui-looks and Custom, with an accent, a surface and a text colour picker under them. The person's own saved choice is selected, or Default when they have none, and the pickers show the colours drawn for them now. Picking a template sets the pickers to that template's colours at once, and changing a picker selects Custom, through the template picker script the install generator copies. Without the script the section still saves, and the form saves with a full page load, so it works in a Hotwire Native web view.
+
+Saving a template keeps `{ "template_name": "forest" }` for that person under the `colours` key. Saving Custom keeps `{ "accent": "#e11d48", "surface": "#f5e6c8", "text": "#3b2f1e" }`. Saving Default removes the person's `colours` row, so the account's colours, or the app's defaults, apply again. The next page the person opens is drawn in the saved colours.
+
+A template that is not Default or one of the five is refused with a message, and so is a Custom accent or surface that is neither a six-digit hex nor a palette name from keystone_ui-looks, and a text colour that is not a six-digit hex. Nothing is saved.
+
+The `colours` key follows the account layouts above. While an account turns off members-choose for it, the section says the account sets the colours for everyone and offers no save, and a save sent anyway is refused with a message and saves nothing.
 
 ## What is stored
 
