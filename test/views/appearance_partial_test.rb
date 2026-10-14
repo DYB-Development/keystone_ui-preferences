@@ -192,4 +192,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "", "brutalist", "compact", "rounded", "sharp", "soft" ], look_options
   end
+
+  test "the appearance section labels the app's own look as the app configures and each registered look by its name" do
+    KeystoneUi::Preferences.configure { |config| config.app_look_label = "House" }
+
+    render_section
+
+    assert_equal [ "House", "Brutalist", "Compact", "Rounded", "Sharp", "Soft" ], css_select("label:has(input[name=look]) .ks-radio-card-label").map(&:text)
+  end
 end
