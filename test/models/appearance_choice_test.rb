@@ -80,4 +80,14 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "#18181b", colours_for(person, account)[:text]
   end
+
+  def mode_for(person, account = nil)
+    KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).mode
+  end
+
+  test "a person who saved a mode gets that mode" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "mode", value: { "mode" => "dark" })
+
+    assert_equal "dark", mode_for(person, account)
+  end
 end
