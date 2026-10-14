@@ -11,7 +11,7 @@
   saved_look = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "look")&.value.to_h["look"]
 %>
 
-<% unless choice.members_choose? %>
+<% if configuration.account_colors && !choice.members_choose? %>
   <%= ui_alert(message: "Your account sets the colours for everyone.") %>
 <% end %>
 

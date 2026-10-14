@@ -258,4 +258,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal %w[light dark system], mode_options
   end
+
+  test "the appearance section does not say the account sets the colours when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section(account: account_setting_colours)
+
+    assert_not_includes rendered, "Your account sets the colours for everyone."
+  end
 end
