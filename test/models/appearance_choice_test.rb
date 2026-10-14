@@ -30,4 +30,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal({ accent: "violet", surface: "stone", background: "#fefce8", text: "#422006" }, colours_for(person, account))
   end
+
+  test "a person's saved custom colours draw as saved, with the custom surface as the background" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "accent" => "#e11d48", "surface" => "#f5e6c8", "text" => "#3b2f1e" })
+
+    assert_equal({ accent: "#e11d48", surface: "#f5e6c8", background: "#f5e6c8", text: "#3b2f1e" }, colours_for(person, account))
+  end
 end

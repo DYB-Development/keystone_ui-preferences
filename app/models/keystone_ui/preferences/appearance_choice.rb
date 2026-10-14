@@ -9,8 +9,23 @@ module KeystoneUi
       end
 
       def colours
-        configuration = KeystoneUi::Preferences.configuration
-        { accent: configuration.default_accent, surface: configuration.default_surface, background: configuration.default_background, text: configuration.default_text }
+        surface = saved["surface"] || configuration.default_surface
+        {
+          accent: saved["accent"] || configuration.default_accent,
+          surface: surface,
+          background: surface.start_with?("#") ? surface : configuration.default_background,
+          text: saved["text"].presence || configuration.default_text
+        }
+      end
+
+      private
+
+      def saved
+        @saved ||= LayoutChoice.new(person: @person, account: @account, component_key: "colours").value.to_h
+      end
+
+      def configuration
+        KeystoneUi::Preferences.configuration
       end
     end
   end
