@@ -9,6 +9,8 @@ module KeystoneUi
       end
 
       def colours
+        return template_colours if saved["template_name"].present?
+
         surface = saved["surface"] || configuration.default_surface
         {
           accent: saved["accent"] || configuration.default_accent,
@@ -19,6 +21,11 @@ module KeystoneUi
       end
 
       private
+
+      def template_colours
+        template = KeystoneUi::Looks::Templates[saved["template_name"]]
+        { accent: template[:accent].to_s, surface: template[:surface].to_s, background: template[:background], text: template[:text] }
+      end
 
       def saved
         @saved ||= LayoutChoice.new(person: @person, account: @account, component_key: "colours").value.to_h

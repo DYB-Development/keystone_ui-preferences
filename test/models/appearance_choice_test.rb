@@ -36,4 +36,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal({ accent: "#e11d48", surface: "#f5e6c8", background: "#f5e6c8", text: "#3b2f1e" }, colours_for(person, account))
   end
+
+  test "a person's saved template draws that template's accent, surface, background and text" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "forest", "accent" => "rose", "surface" => "zinc", "text" => "#3b2f1e" })
+
+    assert_equal({ accent: "emerald", surface: "stone", background: "#ecfdf5", text: "#064e3b" }, colours_for(person, account))
+  end
 end
