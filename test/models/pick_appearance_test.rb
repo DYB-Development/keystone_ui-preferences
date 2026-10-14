@@ -1,0 +1,27 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class PickAppearanceTest < ActiveSupport::TestCase
+  def person
+    @person ||= User.create!(name: "Rep")
+  end
+
+  def teardown
+    KeystoneUi::Preferences::ComponentPreference.delete_all
+  end
+
+  def pick(values, account = nil)
+    KeystoneUi::Preferences::PickAppearance.new(person: person, account: account, values: values).call
+  end
+
+  def saved_value
+    KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value
+  end
+
+  test "saving a template keeps its name as the person's colours" do
+    pick(template_name: "forest")
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
+end
