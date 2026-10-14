@@ -173,4 +173,13 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal %w[light dark system custom], mode_options
   end
+
+  test "the appearance section leaves out Custom when the account sets colours drawn on a white background" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "accent" => "rose", "surface" => "neutral" }, members_choose: false)
+
+    render_section(account: account)
+
+    assert_equal %w[light dark system], mode_options
+  end
 end

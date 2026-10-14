@@ -6,6 +6,7 @@ module KeystoneUi
       DEFAULT_TEMPLATE = "default"
       HEX = /\A#\h{6}\z/
       PALETTE_NAME = /\A[a-z][a-z0-9_]*\z/
+      WHITE = "#ffffff"
 
       def initialize(person:, account:)
         @person = person
@@ -27,6 +28,10 @@ module KeystoneUi
 
       def mode
         LayoutChoice.new(person: @person, account: nil, component_key: "mode").value.to_h["mode"] || configuration.default_mode
+      end
+
+      def custom_offered?
+        !colours[:background].casecmp?(WHITE)
       end
 
       private
