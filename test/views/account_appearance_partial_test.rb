@@ -52,4 +52,14 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "#10b981" ], css_select("input[type=hidden][name=accent]").map { |input| input["value"] }
   end
+
+  def switch_on?(name)
+    css_select("input[type=checkbox][name=#{name}][value=\"1\"]").map { |input| input.key?("checked") }
+  end
+
+  test "the account's section lets members choose their own colours until an admin turns it off" do
+    render_section
+
+    assert_equal [ true ], switch_on?("members_choose")
+  end
 end
