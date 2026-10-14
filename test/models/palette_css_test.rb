@@ -29,4 +29,10 @@ class PaletteCssTest < ActiveSupport::TestCase
       "--color-surface-600: #d0c4aa;", "--color-surface-700: #aca18c;", "--color-surface-800: #877f6e;", "--color-surface-900: #625c50;", "--color-surface-950: #3d3a32;"
     ], shade_lines
   end
+
+  test "the background and text are written as keystone_ui-colors' custom colour variables at the end of the palette" do
+    css = css_for(background: "#ecfdf5", text: "#064e3b")
+
+    assert_equal [ "  --color-custom-background: #ecfdf5;\n", "  --color-custom-text: #064e3b;\n", "}" ], css.lines.last(3)
+  end
 end

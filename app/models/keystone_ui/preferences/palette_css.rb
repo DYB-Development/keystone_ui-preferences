@@ -12,6 +12,7 @@ module KeystoneUi
 
       def to_s
         lines = shade_lines("accent", shades(@accent) { KeystoneUi::Looks::Palettes.accent(@accent) }) + shade_lines("surface", shades(@surface) { KeystoneUi::Looks::Palettes.surface(@surface) })
+        lines << "  --color-custom-background: #{@background};" << "  --color-custom-text: #{@text};"
         ":root {\n#{lines.join("\n")}\n}"
       end
 
