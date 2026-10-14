@@ -39,4 +39,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
   test "a template that is not in the catalogue is refused with a reason" do
     assert_equal "Choose Default, one of the colour templates or Custom.", pick(template_name: "sunset").message
   end
+
+  test "a save with no account to save it on is refused with a reason" do
+    result = KeystoneUi::Preferences::PickAccountAppearance.new(person: admin, account: nil, values: { template_name: "forest" }).call
+
+    assert_equal "There is no account to save this appearance on.", result.message
+  end
 end

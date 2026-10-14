@@ -10,6 +10,8 @@ module KeystoneUi
       end
 
       def call
+        return Refusal.new("There is no account to save this appearance on.") unless @account
+
         chosen = ChosenColours.new(@values)
         return chosen.refusal if chosen.refusal
 
