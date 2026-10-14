@@ -12,8 +12,8 @@ module KeystoneUi
       end
 
       class_methods do
-        def keystone_host_colors
-          before_action :keystone_keep_host_colours
+        def keystone_host_colors(**options)
+          before_action :keystone_keep_host_colours, **options
         end
       end
 

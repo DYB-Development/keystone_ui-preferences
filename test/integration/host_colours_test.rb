@@ -59,4 +59,12 @@ class HostColoursTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "--color-accent-500: #3b82f6;", "--color-surface-500: #71717a;", "--color-custom-background: #ffffff;", "--color-custom-text: #18181b;" ], palette_lines.grep(/-(500|background|text):/)
   end
+
+  test "an action left out of the host colours declaration's only option draws the colours the person saved" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "forest" })
+
+    get "/partly_kept_palettes"
+
+    assert_includes palette_lines, "--color-accent-500: #10b981;"
+  end
 end
