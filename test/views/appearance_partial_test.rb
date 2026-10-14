@@ -233,4 +233,13 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_empty look_options
   end
+
+  test "the appearance section offers no look when the account turns off members choosing their own look" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "look", value: { "look" => "sharp" }, members_choose: false)
+
+    render_section(account: account)
+
+    assert_empty look_options
+  end
 end
