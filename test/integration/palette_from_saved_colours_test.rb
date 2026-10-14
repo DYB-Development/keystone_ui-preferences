@@ -23,7 +23,7 @@ class PaletteFromSavedColoursTest < ActionDispatch::IntegrationTest
   test "a layout that calls the palette style tag draws the page in the colours the signed-in person saved" do
     KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "forest" })
 
-    get "/months"
+    get "/palette"
 
     assert_equal [ "--color-accent-500: #10b981;", "--color-surface-500: #78716c;", "--color-custom-background: #ecfdf5;", "--color-custom-text: #064e3b;" ], palette_lines.grep(/-(500|background|text):/)
   end
