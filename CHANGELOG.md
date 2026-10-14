@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - Saving the app's own look removes the person's saved look, so the account's look or the app's default look applies again.
 - A saved look is read through the same person-then-account choice as the colours and given to keystone_ui through its look supplier, so every page the person opens is marked with it, and a saved look the app no longer registers is passed over for the account's look or the app's default look.
 - A look name keystone_ui does not register is refused with a message, and nothing is saved.
-- The new `user_looks` setting, true by default, turns off a person's own looks when false: the section offers no look, a save ignores a look sent with it, and a person's saved look is passed over.
+- The new `user_looks` setting, true by default, turns off a person's own looks when false: the section offers no look, a save ignores a look sent with it, and a person's saved look is passed over for the account's look or the app's default look.
 - The appearance section offers no look when the app registers none.
 
 ### Changed

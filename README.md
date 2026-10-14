@@ -203,7 +203,7 @@ The `look` key follows the account layouts above. A person's look comes from the
 
 The gem gives keystone_ui the look through keystone_ui's look supplier, so the same `keystone_theme_attributes` call marks the `<html>` tag with `data-look` on every page.
 
-An app that wants every person on the app's look sets `user_looks` to false. The appearance section then shows no look choice, a save ignores any look sent with it and keeps the rest, and a person's saved look is passed over. With no looks registered the section shows no look choice.
+An app that keeps people off their own looks sets `user_looks` to false. The appearance section then shows no look choice, a save ignores any look sent with it and keeps the rest, and a person's saved look is passed over for the account's look or the app's default look. With no looks registered the section shows no look choice.
 
 ## What is stored
 
