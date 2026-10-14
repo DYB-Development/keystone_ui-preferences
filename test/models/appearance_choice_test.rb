@@ -96,4 +96,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "system", mode_for(person, account)
   end
+
+  test "a person's saved mode applies when the account turns off members-choose" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "ocean" }, members_choose: false)
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "mode", value: { "mode" => "light" }, members_choose: false)
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "mode", value: { "mode" => "dark" })
+
+    assert_equal "dark", mode_for(person, account)
+  end
 end
