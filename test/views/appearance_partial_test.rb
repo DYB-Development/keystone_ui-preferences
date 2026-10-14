@@ -42,4 +42,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "forest" ], selected_template
   end
+
+  test "the appearance section selects Default for a person with no colours saved" do
+    render_section
+
+    assert_equal [ "default" ], selected_template
+  end
 end

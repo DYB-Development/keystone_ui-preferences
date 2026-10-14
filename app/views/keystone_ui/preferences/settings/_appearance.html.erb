@@ -3,7 +3,7 @@
   palette_hex = ->(colour, palette) { colour.to_s.start_with?("#") ? colour.to_s : palette.call(colour)[500] }
   templates = { "default" => { accent: configuration.default_accent, surface: configuration.default_surface, text: configuration.default_text, label: "Default" } }
   KeystoneUi::Looks::Templates.all.each { |name, template| templates[name.to_s] = template }
-  saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value.to_h
+  saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value || { "template_name" => "default" }
 %>
 
 <%= ui_panel(padding: :lg) do %>
