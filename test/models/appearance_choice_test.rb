@@ -56,4 +56,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal({ accent: "rose", surface: "neutral", background: "#ffffff", text: "#18181b" }, colours_for(person, account))
   end
+
+  test "a visitor who is not signed in gets the accent, surface, background and text the app configures" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "accent" => "cyan", "surface" => "gray" })
+
+    assert_equal({ accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, colours_for(nil))
+  end
 end
