@@ -124,4 +124,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal %w[default ocean forest twilight coral arctic custom], css_select("label[data-keystone-ui--preferences--theme-settings-target=templateLabel]").map { |label| label["data-template"] }
   end
+
+  test "the template picker script finds the Custom option to select when a colour picker changes" do
+    render_section
+
+    assert_equal [ "" ], css_select("input[data-keystone-ui--preferences--theme-settings-target=customRadio]").map { |input| input["value"] }
+  end
 end
