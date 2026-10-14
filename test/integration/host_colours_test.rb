@@ -27,4 +27,12 @@ class HostColoursTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "--color-accent-500: #3b82f6;", "--color-surface-500: #71717a;", "--color-custom-background: #ffffff;", "--color-custom-text: #18181b;" ], palette_lines.grep(/-(500|background|text):/)
   end
+
+  test "a person who saved Dark opening a page kept on the app's colours sees the app's default mode" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "mode", value: { "mode" => "dark" })
+
+    get "/host_palette"
+
+    assert_equal "light", css_select("html").first["data-theme"]
+  end
 end
