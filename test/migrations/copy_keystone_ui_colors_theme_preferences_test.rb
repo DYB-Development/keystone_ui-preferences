@@ -68,4 +68,12 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal({ "accent" => "#1d4ed8", "surface" => "slate", "text" => "#111111" }, saved(person, "colours")&.value)
   end
+
+  test "a person's saved mode is copied as their mode" do
+    theme_preference(person, mode: "dark")
+
+    copy
+
+    assert_equal({ "mode" => "dark" }, saved(person, "mode")&.value)
+  end
 end
