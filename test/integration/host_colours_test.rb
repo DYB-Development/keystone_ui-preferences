@@ -67,4 +67,12 @@ class HostColoursTest < ActionDispatch::IntegrationTest
 
     assert_includes palette_lines, "--color-accent-500: #10b981;"
   end
+
+  test "a person who chose Dark with the theme toggle in this browser sees a page kept on the app's colours in dark" do
+    cookies[KeystoneUi::ThemeChoice::COOKIE] = "dark"
+
+    get "/host_palette"
+
+    assert_equal "dark", css_select("html").first["data-theme"]
+  end
 end
