@@ -212,4 +212,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "rounded" ], selected_look
   end
+
+  test "the appearance section selects the app's own look for a person with no look saved" do
+    render_section
+
+    assert_equal [ "" ], selected_look
+  end
 end

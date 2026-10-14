@@ -81,7 +81,7 @@
 
       <%= ui_section(title: "Look", spacing: :sm) do %>
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-          <%= ui_radio_card(name: "look", value: "", label: configuration.app_look_label) %>
+          <%= ui_radio_card(name: "look", value: "", label: configuration.app_look_label, checked: saved_look.nil?) %>
           <% KeystoneUi.configuration.looks.each_key do |look| %>
             <%= ui_radio_card(name: "look", value: look, label: look.humanize, checked: saved_look == look) %>
           <% end %>
