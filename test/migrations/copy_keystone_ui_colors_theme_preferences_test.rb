@@ -76,4 +76,12 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal({ "mode" => "dark" }, saved(person, "mode")&.value)
   end
+
+  test "an owner with no saved mode gets no mode" do
+    theme_preference(person)
+
+    copy
+
+    assert_nil saved(person, "mode")
+  end
 end
