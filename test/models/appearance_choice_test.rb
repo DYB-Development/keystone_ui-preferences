@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class AppearanceChoiceTest < ActiveSupport::TestCase
+  def person
+    @person ||= User.create!(name: "Rep")
+  end
+
+  def account
+    @account ||= Account.create!(name: "Acme")
+  end
+
+  def teardown
+    KeystoneUi::Preferences.reset_configuration!
+    KeystoneUi::Preferences::ComponentPreference.delete_all
+  end
+
+  def colours_for(person, account = nil)
+    KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).colours
+  end
+
+  test "a person with nothing saved gets the accent, surface, background and text the app configures" do
+    KeystoneUi::Preferences.configure do |config|
+      config.default_accent = "violet"
+      config.default_surface = "stone"
+      config.default_background = "#fefce8"
+      config.default_text = "#422006"
+    end
+
+    assert_equal({ accent: "violet", surface: "stone", background: "#fefce8", text: "#422006" }, colours_for(person, account))
+  end
+end
