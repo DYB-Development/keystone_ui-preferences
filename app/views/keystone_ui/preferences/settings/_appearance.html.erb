@@ -39,6 +39,12 @@
         </div>
       <% end %>
 
+      <%= ui_section(title: "Text Color", spacing: :sm) do %>
+        <div>
+          <%= ui_color_picker(name: "text", value: drawn[:text]) %>
+        </div>
+      <% end %>
+
       <div>
         <%= ui_button(label: "Save", type: :submit) %>
       </div>

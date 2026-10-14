@@ -76,4 +76,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "#78716c" ], picker_value("surface")
   end
+
+  test "the appearance section's text colour picker shows the text colour drawn for the person" do
+    save_colours("template_name" => "forest")
+
+    render_section
+
+    assert_equal [ "#064e3b" ], picker_value("text")
+  end
 end
