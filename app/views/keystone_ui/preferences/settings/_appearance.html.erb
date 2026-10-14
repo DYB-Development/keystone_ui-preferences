@@ -7,6 +7,7 @@
   appearance = KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account)
   drawn = appearance.colours
   saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value || { "template_name" => "default" }
+  saved_look = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "look")&.value.to_h["look"]
 %>
 
 <% unless choice.members_choose? %>
@@ -82,7 +83,7 @@
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
           <%= ui_radio_card(name: "look", value: "", label: configuration.app_look_label) %>
           <% KeystoneUi.configuration.looks.each_key do |look| %>
-            <%= ui_radio_card(name: "look", value: look, label: look.humanize) %>
+            <%= ui_radio_card(name: "look", value: look, label: look.humanize, checked: saved_look == look) %>
           <% end %>
         </div>
       <% end %>

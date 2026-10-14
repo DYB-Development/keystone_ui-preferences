@@ -200,4 +200,16 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "House", "Brutalist", "Compact", "Rounded", "Sharp", "Soft" ], css_select("label:has(input[name=look]) .ks-radio-card-label").map(&:text)
   end
+
+  def selected_look
+    css_select("input[type=radio][name=look][checked]").map { |option| option["value"] }
+  end
+
+  test "the appearance section selects the look the person saved" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "look", value: { "look" => "rounded" })
+
+    render_section
+
+    assert_equal [ "rounded" ], selected_look
+  end
 end
