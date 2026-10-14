@@ -26,6 +26,15 @@ class KeystoneUi::Preferences::Generators::UpdateGeneratorTest < ActiveSupport::
     assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_settings_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js")
   end
 
+  test "leaves an app's own edited copy of the template picker script as it is" do
+    script = "#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js"
+    File.write(script, "// edited by the app")
+
+    Rails::Generators.invoke("keystone_ui:preferences:update", [], destination_root: destination, quiet: true)
+
+    assert_equal "// edited by the app", File.read(script)
+  end
+
   private
 
   def migration
