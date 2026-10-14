@@ -20,6 +20,13 @@ module KeystoneUi
           )
         end
 
+        def copy_keystone_ui_colors_theme_preferences_migration
+          migration_template(
+            "copy_keystone_ui_colors_theme_preferences.rb.erb",
+            "db/migrate/copy_keystone_ui_colors_theme_preferences.rb"
+          )
+        end
+
         def copy_template_picker_script
           copy = "app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js"
           return if File.exist?(File.join(destination_root, copy))
