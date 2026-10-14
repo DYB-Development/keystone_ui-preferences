@@ -26,6 +26,10 @@
                   "accent-hex": accent_hex,
                   "surface-hex": surface_hex,
                   "text-hex": template[:text]
+                },
+                label_data: {
+                  "keystone-ui--preferences--theme-settings-target": "templateLabel",
+                  template: name
                 }
               ) do %>
                 <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 9999px; background-color: <%= accent_hex %>;"></span>
@@ -33,7 +37,15 @@
                 <span><%= template[:label] %></span>
               <% end %>
             <% end %>
-            <%= ui_option_card(name: "template_name", value: "", selected: saved["template_name"].blank?) do %>
+            <%= ui_option_card(
+              name: "template_name",
+              value: "",
+              selected: saved["template_name"].blank?,
+              label_data: {
+                "keystone-ui--preferences--theme-settings-target": "templateLabel",
+                template: "custom"
+              }
+            ) do %>
               <span>Custom</span>
             <% end %>
           </div>
