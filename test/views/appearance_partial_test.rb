@@ -96,4 +96,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_includes rendered, "Your account sets the colours for everyone."
   end
+
+  test "the appearance section's form runs the template picker script" do
+    render_section
+
+    assert_equal [ "keystone-ui--preferences--theme-settings" ], css_select("form[data-controller]").map { |form| form["data-controller"] }
+  end
 end
