@@ -13,6 +13,8 @@ class HostColoursTest < ActionDispatch::IntegrationTest
 
   def teardown
     ApplicationController.signed_in_user = nil
+    ApplicationController.signed_in_account = nil
+    KeystoneUi::Preferences.reset_configuration!
     KeystoneUi::Preferences::ComponentPreference.delete_all
   end
 
@@ -45,5 +47,16 @@ class HostColoursTest < ActionDispatch::IntegrationTest
     assert_equal "sharp", css_select("html").first["data-look"]
   ensure
     KeystoneUi.configuration.default_look = nil
+  end
+
+  test "a member of an account with saved colours opening a page kept on the app's colours sees the app's default colours" do
+    KeystoneUi::Preferences.configure { |config| config.current_account_method = :current_account }
+    account = Account.create!(name: "Acme")
+    ApplicationController.signed_in_account = account
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "forest" }, members_choose: false)
+
+    get "/host_palette"
+
+    assert_equal [ "--color-accent-500: #3b82f6;", "--color-surface-500: #71717a;", "--color-custom-background: #ffffff;", "--color-custom-text: #18181b;" ], palette_lines.grep(/-(500|background|text):/)
   end
 end
