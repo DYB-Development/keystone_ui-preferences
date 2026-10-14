@@ -177,4 +177,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_nil saved_look
   end
+
+  test "a look the app does not register is not refused when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+
+    assert_predicate pick(template_name: "forest", look: "retired"), :ok?
+  end
 end

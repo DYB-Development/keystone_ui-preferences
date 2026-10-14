@@ -29,7 +29,7 @@ module KeystoneUi
       end
 
       def look_offered?
-        @values[:look].blank? || KeystoneUi.configuration.looks.key?(@values[:look])
+        !look_sent? || @values[:look].blank? || KeystoneUi.configuration.looks.key?(@values[:look])
       end
 
       def members_choose?
