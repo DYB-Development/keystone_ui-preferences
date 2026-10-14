@@ -17,7 +17,7 @@
 <%= ui_panel(padding: :lg) do %>
   <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
     <div style="display: flex; flex-direction: column; gap: 2rem;">
-      <% if choice.members_choose? %>
+      <% if configuration.account_colors && choice.members_choose? %>
         <%= ui_section(title: "Theme", spacing: :sm) do %>
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             <% templates.each do |name, template| %>
