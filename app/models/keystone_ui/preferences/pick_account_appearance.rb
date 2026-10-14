@@ -23,9 +23,9 @@ module KeystoneUi
       private
 
       def keep_look
-        return unless @values.key?(:look)
-
-        ComponentPreference.find_or_initialize_by(owner: @account, component_key: "look").update!(value: { "look" => @values[:look].presence }.compact)
+        chosen = @values.key?(:look) ? { value: { "look" => @values[:look].presence }.compact } : {}
+        changes = chosen.merge(switch(:members_choose_look))
+        ComponentPreference.find_or_initialize_by(owner: @account, component_key: "look").update!(changes) if changes.any?
       end
 
       def switch(name)

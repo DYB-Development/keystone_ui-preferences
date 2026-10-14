@@ -65,4 +65,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({}, account_preference("look").value)
   end
+
+  test "turning the look switch off keeps the account's members from choosing their own look" do
+    pick(template_name: "forest", look: "rounded", members_choose_look: "0")
+
+    assert_equal false, account_preference("look").members_choose
+  end
 end
