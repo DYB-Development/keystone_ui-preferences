@@ -146,4 +146,16 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal %w[light dark system custom], mode_options
   end
+
+  def selected_mode
+    css_select("input[type=radio][name=mode][checked]").map { |option| option["value"] }
+  end
+
+  test "the appearance section selects the mode the person saved" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "mode", value: { "mode" => "dark" })
+
+    render_section
+
+    assert_equal [ "dark" ], selected_mode
+  end
 end

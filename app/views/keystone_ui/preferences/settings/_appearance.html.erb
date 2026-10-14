@@ -4,7 +4,8 @@
   palette_hex = ->(colour, palette) { colour.to_s.start_with?("#") ? colour.to_s : palette.call(colour)[500] }
   templates = { "default" => { accent: configuration.default_accent, surface: configuration.default_surface, text: configuration.default_text, label: "Default" } }
   KeystoneUi::Looks::Templates.all.each { |name, template| templates[name.to_s] = template }
-  drawn = KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).colours
+  appearance = KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account)
+  drawn = appearance.colours
   saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value || { "template_name" => "default" }
 %>
 
@@ -75,7 +76,7 @@
         <%= ui_section(title: "Mode", spacing: :sm) do %>
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             <% KeystoneUi::ThemeChoice::MODES.each do |mode| %>
-              <%= ui_radio_card(name: "mode", value: mode, label: mode.capitalize) %>
+              <%= ui_radio_card(name: "mode", value: mode, label: mode.capitalize, checked: appearance.mode == mode) %>
             <% end %>
           </div>
         <% end %>
