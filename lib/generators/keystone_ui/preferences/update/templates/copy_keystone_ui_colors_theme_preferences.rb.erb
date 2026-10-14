@@ -1,4 +1,21 @@
 class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  class ThemePreference < ActiveRecord::Base
+    self.table_name = "keystone_ui_colors_theme_preferences"
+  end
+
+  class ComponentPreference < ActiveRecord::Base
+    self.table_name = "keystone_ui_preferences_component_preferences"
+  end
+
   def up
+    ThemePreference.find_in_batches do |theme_preferences|
+      ComponentPreference.insert_all(theme_preferences.map { |theme_preference| colours(theme_preference) })
+    end
+  end
+
+  private
+
+  def colours(theme_preference)
+    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: "colours", value: { "template_name" => theme_preference.template_name } }
   end
 end
