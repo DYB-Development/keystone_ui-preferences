@@ -45,6 +45,14 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ "forest" ], selected_template
   end
 
+  test "the appearance section selects no template for a person whose saved template the catalogue no longer has" do
+    save_colours("template_name" => "retired")
+
+    render_section
+
+    assert_empty selected_template
+  end
+
   test "the appearance section selects Default for a person with no colours saved" do
     render_section
 
