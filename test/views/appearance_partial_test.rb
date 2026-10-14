@@ -10,6 +10,7 @@ class AppearancePartialTest < ActionView::TestCase
   end
 
   def teardown
+    KeystoneUi::Preferences.reset_configuration!
     KeystoneUi::Preferences::ComponentPreference.delete_all
   end
 
@@ -157,5 +158,13 @@ class AppearancePartialTest < ActionView::TestCase
     render_section
 
     assert_equal [ "dark" ], selected_mode
+  end
+
+  test "the appearance section selects the app's default mode for a person with no mode saved" do
+    KeystoneUi::Preferences.configure { |config| config.default_mode = "system" }
+
+    render_section
+
+    assert_equal [ "system" ], selected_mode
   end
 end
