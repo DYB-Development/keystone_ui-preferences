@@ -157,7 +157,7 @@ Add the palette style tag to your layout's `<head>`:
 <%= keystone_palette_style_tag %>
 ```
 
-It writes the same CSS variables keystone_ui-colors writes: `--color-accent-50` to `--color-accent-950`, `--color-surface-50` to `--color-surface-950`, `--color-custom-background` and `--color-custom-text`. A layout that already calls it for keystone_ui-colors keeps working unchanged, and an app must not load both gems.
+It writes the same CSS variables keystone_ui-colors writes: `--color-accent-50` to `--color-accent-950`, `--color-surface-50` to `--color-surface-950`, `--color-custom-background` and `--color-custom-text`. A layout that already calls it for keystone_ui-colors keeps working unchanged, and an app that loads both gems stops at boot.
 
 The colours come from the `colours` key, read the way a table's layout is read: the person's own row, or the account's row when the account does not let members choose. A saved value looks like `{ "accent": "#e11d48", "surface": "#f5e6c8", "text": "#3b2f1e" }` or `{ "template_name": "forest" }`. A named accent or surface, such as `emerald` or `stone`, uses that palette's shades from keystone_ui-looks, and a hex value has its shades generated. A custom hex surface is also the custom background. A saved accent or surface that is neither a name of lowercase letters, digits and underscores nor a six-digit hex, and a saved text colour that is not a six-digit hex, is drawn as the configured default for that colour instead.
 
@@ -242,12 +242,22 @@ A choice made with keystone_ui's theme toggle in that browser still sets light o
 
 ## Moving off keystone_ui-colors
 
-An app that saved colours, modes and looks with keystone_ui-colors keeps them by running the update generator and migrating:
+An app that saved colours, modes and looks with keystone_ui-colors keeps them by following these steps in this order:
+
+1. Update keystone_ui-preferences.
+2. Run its update generator, which copies the migration below into `db/migrate`.
+3. Remove keystone_ui-colors from the Gemfile and run `bundle install`.
+4. Run `bin/rails db:migrate`.
 
 ```bash
+bundle update keystone_ui-preferences
 bin/rails generate keystone_ui:preferences:update
+# remove keystone_ui-colors from the Gemfile
+bundle install
 bin/rails db:migrate
 ```
+
+Boot stops with `KeystoneUi::Preferences::ColorsCheck::Error` while keystone_ui-colors is loaded, and the message names keystone_ui-colors as the gem to remove and the update generator as the step to run first. `bin/rails db:migrate` boots the app, so keystone_ui-colors comes out of the Gemfile before the migration runs, and the generator runs before keystone_ui-colors comes out so the copy migration is in `db/migrate` when it does.
 
 The generator copies a migration that reads every row of `keystone_ui_colors_theme_preferences` and writes up to three rows for the same owner:
 
@@ -260,7 +270,7 @@ The generator copies a migration that reads every row of `keystone_ui_colors_the
 | `look` | `look` row holding `{"look": ...}`, written only when a look was saved |
 | `members_choose_look` | `members_choose` of the `look` row, which holds `{}` for an account on the app's own look that sets the look for everyone |
 
-An owner and key that already has a row keeps it, so a choice made in keystone_ui-preferences is never replaced by an older one, and running the migration again changes nothing. In an app without keystone_ui-colors' table the migration does nothing. Rolling it back changes neither table. Remove keystone_ui-colors from the app in the same deploy, since both gems set keystone_ui's mode and look, and drop its table afterwards.
+An owner and key that already has a row keeps it, so a choice made in keystone_ui-preferences is never replaced by an older one, and running the migration again changes nothing. In an app without keystone_ui-colors' table the migration does nothing. Rolling it back changes neither table. Drop keystone_ui-colors' table once the copy has run.
 
 ## What is stored
 
