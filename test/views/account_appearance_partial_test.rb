@@ -118,4 +118,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_empty look_options
   end
+
+  test "the account's section offers no colours when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_empty template_options
+  end
 end
