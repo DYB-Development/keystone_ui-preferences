@@ -167,4 +167,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_nil look_for(person, account)
   end
+
+  test "a person who chose a look keeps it over the account's look while the account lets members choose" do
+    save_look(account, "sharp")
+    save_look(person, "rounded")
+
+    assert_equal "rounded", look_for(person, account)
+  end
 end
