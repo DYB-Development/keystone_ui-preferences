@@ -1,0 +1,16 @@
+<%
+  saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: account, component_key: "colours")&.value.presence || { "template_name" => "default" }
+  drawn = KeystoneUi::Preferences::AppearanceChoice.new(person: account, account: nil).colours
+%>
+
+<%= ui_panel(padding: :lg) do %>
+  <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn } %>
+
+      <div>
+        <%= ui_button(label: "Save", type: :submit) %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
