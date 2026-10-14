@@ -266,4 +266,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_not_includes rendered, "Your account sets the colours for everyone."
   end
+
+  test "the appearance section offers no colours while the account sets the colours for everyone" do
+    render_section(account: account_setting_colours)
+
+    assert_empty template_options
+  end
 end
