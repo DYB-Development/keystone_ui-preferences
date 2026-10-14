@@ -160,4 +160,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a look the app does not register is refused with a reason" do
     assert_equal "Choose the app's own look or one of the looks it offers.", pick(template_name: "forest", look: "retired").message
   end
+
+  test "a refused look leaves the person's saved colours, mode and look as they were" do
+    pick(template_name: "forest", mode: "dark", look: "rounded")
+
+    pick(template_name: "ocean", mode: "light", look: "retired")
+
+    assert_equal [ { "template_name" => "forest" }, { "mode" => "dark" }, { "look" => "rounded" } ], [ saved_value, saved_mode, saved_look ]
+  end
 end
