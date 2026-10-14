@@ -39,6 +39,12 @@ module KeystoneUi
         method = KeystoneUi::Preferences.configuration.current_account_method
         send(method) if method
       end
+
+      private
+
+      def after_settings_change(section:, **)
+        cookies.delete(KeystoneUi::ThemeChoice::COOKIE) if section.runs.to_s == PickAppearance.name
+      end
     end
   end
 end

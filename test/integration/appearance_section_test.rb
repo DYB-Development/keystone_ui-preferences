@@ -33,4 +33,12 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal "dark", css_select("html").first["data-theme"]
   end
+
+  test "saving in the appearance section clears the theme toggle's choice in this browser" do
+    cookies[KeystoneUi::ThemeChoice::COOKIE] = "light"
+
+    patch "/settings/appearance", params: { template_name: "forest", mode: "dark" }
+
+    assert_predicate cookies[KeystoneUi::ThemeChoice::COOKIE], :blank?
+  end
 end
