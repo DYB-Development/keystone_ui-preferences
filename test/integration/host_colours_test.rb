@@ -35,4 +35,15 @@ class HostColoursTest < ActionDispatch::IntegrationTest
 
     assert_equal "light", css_select("html").first["data-theme"]
   end
+
+  test "a person who saved a look opening a page kept on the app's colours sees the app's default look" do
+    KeystoneUi.configuration.default_look = "sharp"
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "look", value: { "look" => "rounded" })
+
+    get "/host_palette"
+
+    assert_equal "sharp", css_select("html").first["data-look"]
+  ensure
+    KeystoneUi.configuration.default_look = nil
+  end
 end

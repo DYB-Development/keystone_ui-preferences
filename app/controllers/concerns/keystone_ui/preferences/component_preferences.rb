@@ -38,7 +38,7 @@ module KeystoneUi
       end
 
       def keystone_look
-        AppearanceChoice.new(person: send(KeystoneUi::Preferences.configuration.current_owner_method), account: keystone_preferences_account).look
+        keystone_appearance_choice.look
       end
 
       def keystone_layout_choice(component_key)
