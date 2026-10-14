@@ -104,4 +104,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_empty look_options
   end
+
+  test "the account's section has no look switch when the app turns off account looks" do
+    KeystoneUi::Preferences.configure { |config| config.account_looks = false }
+
+    render_section
+
+    assert_empty switch_on?("members_choose_look")
+  end
 end
