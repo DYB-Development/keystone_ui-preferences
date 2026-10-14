@@ -30,12 +30,16 @@ module KeystoneUi
       end
 
       def look_offered?
-        @values[:look].blank? || KeystoneUi.configuration.looks.key?(@values[:look])
+        !look_sent? || @values[:look].blank? || KeystoneUi.configuration.looks.key?(@values[:look])
       end
 
       def keep_look
-        chosen = @values.key?(:look) ? { value: { "look" => @values[:look].presence }.compact } : {}
+        chosen = look_sent? ? { value: { "look" => @values[:look].presence }.compact } : {}
         keep("look", chosen.merge(switch(:members_choose_look)))
+      end
+
+      def look_sent?
+        @values.key?(:look) && KeystoneUi::Preferences.configuration.account_looks
       end
 
       def keep(component_key, changes)

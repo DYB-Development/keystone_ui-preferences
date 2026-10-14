@@ -87,4 +87,12 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal "This app does not let accounts choose their colours.", pick(template_name: "forest").message
   end
+
+  test "a look sent with a save is ignored when the app turns off account looks" do
+    KeystoneUi::Preferences.configure { |config| config.account_looks = false }
+
+    pick(template_name: "forest", look: "rounded")
+
+    assert_nil account_preference("look")
+  end
 end
