@@ -32,7 +32,7 @@ module KeystoneUi
       def colours_offered?
         return true if @values[:template_name].present?
 
-        colour_offered?(@values[:accent], KeystoneUi::Looks::Palettes::ACCENTS) && colour_offered?(@values[:surface], KeystoneUi::Looks::Palettes::SURFACES)
+        colour_offered?(@values[:accent], KeystoneUi::Looks::Palettes::ACCENTS) && colour_offered?(@values[:surface], KeystoneUi::Looks::Palettes::SURFACES) && colour_offered?(@values[:text], {})
       end
 
       def colour_offered?(colour, palettes)

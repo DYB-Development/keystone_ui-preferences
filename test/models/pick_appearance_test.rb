@@ -78,4 +78,8 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a Custom surface that is neither a six-digit hex nor a catalogue surface is refused with a reason" do
     assert_equal "Choose each colour as a six-digit hex value, such as #1d4ed8.", custom(surface: "blue").message
   end
+
+  test "a Custom text colour that is not a six-digit hex is refused with a reason" do
+    assert_equal "Choose each colour as a six-digit hex value, such as #1d4ed8.", custom(text: "zinc").message
+  end
 end
