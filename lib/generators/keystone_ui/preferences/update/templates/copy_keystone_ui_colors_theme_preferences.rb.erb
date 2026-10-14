@@ -8,6 +8,8 @@ class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveR
   end
 
   def up
+    return unless table_exists?(:keystone_ui_colors_theme_preferences)
+
     ThemePreference.find_in_batches do |theme_preferences|
       rows = theme_preferences.flat_map { |theme_preference| [ colours(theme_preference), mode(theme_preference), look(theme_preference) ].compact }
       saved = saved_keys(theme_preferences)

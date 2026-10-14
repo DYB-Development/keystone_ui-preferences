@@ -157,4 +157,12 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal before, ThemePreference.order(:id).map(&:attributes)
   end
+
+  test "an app without keystone_ui-colors' table runs the copy and nothing changes" do
+    ActiveRecord::Base.connection.drop_table(:keystone_ui_colors_theme_preferences)
+
+    copy
+
+    assert_equal 0, KeystoneUi::Preferences::ComponentPreference.count
+  end
 end
