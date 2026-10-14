@@ -138,4 +138,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_nil look_for(nil, account)
   end
+
+  test "a person gets the app's default colours when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "forest" })
+
+    assert_equal({ accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, colours_for(person, account))
+  end
 end

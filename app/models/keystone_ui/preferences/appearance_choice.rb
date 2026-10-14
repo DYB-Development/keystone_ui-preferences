@@ -14,6 +14,7 @@ module KeystoneUi
       end
 
       def colours
+        return default_colours unless configuration.account_colors
         return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
         return template_colours if saved["template_name"].present?
 
