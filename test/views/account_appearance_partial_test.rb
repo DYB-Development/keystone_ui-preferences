@@ -44,4 +44,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "forest" ], css_select("input[type=radio][name=template_name][checked]").map { |option| option["value"] }
   end
+
+  test "the account's section's accent picker shows the accent drawn from the account's colours" do
+    save("colours", { "template_name" => "forest" })
+
+    render_section
+
+    assert_equal [ "#10b981" ], css_select("input[type=hidden][name=accent]").map { |input| input["value"] }
+  end
 end
