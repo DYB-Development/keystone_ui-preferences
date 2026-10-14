@@ -218,4 +218,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "" ], selected_look
   end
+
+  test "the appearance section offers no look when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+
+    render_section
+
+    assert_empty look_options
+  end
 end
