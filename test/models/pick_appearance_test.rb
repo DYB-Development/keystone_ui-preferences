@@ -183,4 +183,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_predicate pick(template_name: "forest", look: "retired"), :ok?
   end
+
+  test "colours are refused with a reason when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    assert_equal "This app sets the colours for everyone, so this was not saved.", pick(template_name: "forest").message
+  end
 end

@@ -13,6 +13,7 @@ module KeystoneUi
         return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
         return Refusal.new("Choose the app's own look or one of the looks it offers.") unless look_offered?
         return keep_mode_and_look unless @values.key?(:template_name)
+        return Refusal.new("This app sets the colours for everyone, so this was not saved.") unless KeystoneUi::Preferences.configuration.account_colors
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
 
