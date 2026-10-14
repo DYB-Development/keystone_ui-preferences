@@ -30,11 +30,21 @@ module KeystoneUi
         LayoutChoice.new(person: @person, account: nil, component_key: "mode").value.to_h["mode"] || configuration.default_mode
       end
 
+      def look
+        return nil unless @person
+
+        [ (saved_look(@person, @account) if configuration.user_looks), saved_look(@account, nil) ].find { |look| KeystoneUi.configuration.looks.key?(look) }
+      end
+
       def custom_offered?
         !colours[:background].casecmp?(WHITE)
       end
 
       private
+
+      def saved_look(owner, account)
+        LayoutChoice.new(person: owner, account: account, component_key: "look").value.to_h["look"]
+      end
 
       def palette_colour(value)
         value if value.to_s.match?(HEX) || value.to_s.match?(PALETTE_NAME)

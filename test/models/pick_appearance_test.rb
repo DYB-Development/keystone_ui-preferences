@@ -8,6 +8,7 @@ class PickAppearanceTest < ActiveSupport::TestCase
   end
 
   def teardown
+    KeystoneUi::Preferences.reset_configuration!
     KeystoneUi::Preferences::ComponentPreference.delete_all
   end
 
@@ -137,5 +138,49 @@ class PickAppearanceTest < ActiveSupport::TestCase
     pick({ mode: "dark" }, account_setting_colours)
 
     assert_equal({ "mode" => "dark" }, saved_mode)
+  end
+
+  def saved_look
+    KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "look")&.value
+  end
+
+  test "saving a look keeps it as the person's look" do
+    pick(template_name: "forest", look: "rounded")
+
+    assert_equal({ "look" => "rounded" }, saved_look)
+  end
+
+  test "saving the app's own look removes the person's saved look" do
+    pick(template_name: "forest", look: "rounded")
+
+    pick(template_name: "forest", look: "")
+
+    assert_nil saved_look
+  end
+
+  test "a look the app does not register is refused with a reason" do
+    assert_equal "Choose the app's own look or one of the looks it offers.", pick(template_name: "forest", look: "retired").message
+  end
+
+  test "a refused look leaves the person's saved colours, mode and look as they were" do
+    pick(template_name: "forest", mode: "dark", look: "rounded")
+
+    pick(template_name: "ocean", mode: "light", look: "retired")
+
+    assert_equal [ { "template_name" => "forest" }, { "mode" => "dark" }, { "look" => "rounded" } ], [ saved_value, saved_mode, saved_look ]
+  end
+
+  test "a look sent with a save is ignored when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+
+    pick(template_name: "forest", look: "rounded")
+
+    assert_nil saved_look
+  end
+
+  test "a look the app does not register is not refused when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+
+    assert_predicate pick(template_name: "forest", look: "retired"), :ok?
   end
 end

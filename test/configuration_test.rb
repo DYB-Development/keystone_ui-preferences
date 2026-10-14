@@ -12,4 +12,12 @@ class ConfigurationTest < ActiveSupport::TestCase
   test "an app that configures no mode gets Light, keystone_ui-colors' default mode" do
     assert_equal "light", KeystoneUi::Preferences::Configuration.new.default_mode
   end
+
+  test "an app that configures no label for its own look gets Classic, keystone_ui-colors' label" do
+    assert_equal "Classic", KeystoneUi::Preferences::Configuration.new.app_look_label
+  end
+
+  test "an app that configures nothing lets each person choose their own look" do
+    assert KeystoneUi::Preferences::Configuration.new.user_looks
+  end
 end

@@ -3,7 +3,7 @@
 module KeystoneUi
   module Preferences
     class Configuration
-      attr_accessor :current_owner_method, :authentication_method, :current_account_method, :max_value_bytes, :default_accent, :default_surface, :default_background, :default_text, :default_mode
+      attr_accessor :current_owner_method, :authentication_method, :current_account_method, :max_value_bytes, :default_accent, :default_surface, :default_background, :default_text, :default_mode, :user_looks, :app_look_label
 
       def initialize
         @current_owner_method = :current_user
@@ -15,6 +15,8 @@ module KeystoneUi
         @default_background = "#ffffff"
         @default_text = "#18181b"
         @default_mode = "light"
+        @user_looks = true
+        @app_look_label = "Classic"
       end
 
       def name_component(component_key, name)

@@ -18,6 +18,12 @@ All notable changes to this project will be documented in this file.
 - A saved mode is read only from the person's own row and given to keystone_ui through its theme mode supplier, so every page the person opens is marked with it whether or not their account lets members choose colours, and a visitor who is not signed in gets the new `default_mode` setting.
 - A mode other than Light, Dark, System or Custom is refused with a message, and nothing is saved.
 - Saving in the appearance section clears keystone_ui's theme toggle cookie through settings_hub's `after_settings_change` hook, which the `ComponentPreferences` concern now defines, so the saved mode shows on the next page.
+- The appearance section offers a look, with the same look as keystone_ui-colors' look control: the app's own look first under the new `app_look_label` setting, which defaults to "Classic", then every look registered with keystone_ui, with the person's saved look selected, saved under the `look` key.
+- Saving the app's own look removes the person's saved look, so the account's look or the app's default look applies again.
+- A saved look is read through the same person-then-account choice as the colours and given to keystone_ui through its look supplier, so every page the person opens is marked with it, and a saved look the app no longer registers is passed over for the account's look or the app's default look.
+- A look name keystone_ui does not register is refused with a message, and nothing is saved.
+- The new `user_looks` setting, true by default, turns off a person's own looks when false: the section offers no look, a save ignores a look sent with it, and a person's saved look is passed over for the account's look or the app's default look.
+- The appearance section offers no look when the app registers none.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.

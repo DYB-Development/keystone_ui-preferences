@@ -61,6 +61,8 @@ KeystoneUi::Preferences.configure do |config|
   config.default_background = "#ffffff"              # the custom background for a person with no colours saved
   config.default_text = "#18181b"                    # the custom text colour for a person with no colours saved
   config.default_mode = "light"                      # the mode for a person with no mode saved and for a visitor
+  config.user_looks = true                           # whether a person may choose their own look
+  config.app_look_label = "Classic"                  # the label for the app's own look in the appearance section
 end
 ```
 
@@ -190,6 +192,18 @@ The gem gives keystone_ui the mode through keystone_ui's theme mode supplier, so
 ```
 
 A visitor who is not signed in gets `default_mode`. A choice made with keystone_ui's theme toggle is kept in a cookie and wins over the saved mode in that browser. Saving in the appearance section clears that cookie, so the saved mode shows on the next page. The clearing runs in settings_hub's `after_settings_change` hook, which the `ComponentPreferences` concern defines, so an app that defines its own `after_settings_change` calls `super` from it.
+
+## Look
+
+When the app registers looks with keystone_ui, the appearance section also offers a look, as keystone_ui-colors' look control does. It lists the app's own look first, labelled with `app_look_label`, and then every registered look by name. The person's saved look is selected, or the app's own look when they have none.
+
+Saving a look keeps `{ "look": "rounded" }` for that person under the `look` key. Saving the app's own look removes the person's `look` row, so the account's look, or the app's default look, applies again. A look name keystone_ui does not register is refused with a message, and nothing is saved.
+
+The `look` key follows the account layouts above. A person's look comes from their own row, then from the account's, and a saved look the app no longer registers is passed over for the next one. With neither, keystone_ui uses its `default_look`. A visitor who is not signed in gets `default_look` too.
+
+The gem gives keystone_ui the look through keystone_ui's look supplier, so the same `keystone_theme_attributes` call marks the `<html>` tag with `data-look` on every page.
+
+An app that keeps people off their own looks sets `user_looks` to false. The appearance section then shows no look choice, a save ignores any look sent with it and keeps the rest, and a person's saved look is passed over for the account's look or the app's default look. With no looks registered the section shows no look choice.
 
 ## What is stored
 

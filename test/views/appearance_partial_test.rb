@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "minitest/mock"
 
 class AppearancePartialTest < ActionView::TestCase
   include KeystoneUiHelper
@@ -181,5 +182,55 @@ class AppearancePartialTest < ActionView::TestCase
     render_section(account: account)
 
     assert_equal %w[light dark system], mode_options
+  end
+
+  def look_options
+    css_select("input[type=radio][name=look]").map { |option| option["value"] }
+  end
+
+  test "the appearance section offers the app's own look first and then every registered look" do
+    render_section
+
+    assert_equal [ "", "brutalist", "compact", "rounded", "sharp", "soft" ], look_options
+  end
+
+  test "the appearance section labels the app's own look as the app configures and each registered look by its name" do
+    KeystoneUi::Preferences.configure { |config| config.app_look_label = "House" }
+
+    render_section
+
+    assert_equal [ "House", "Brutalist", "Compact", "Rounded", "Sharp", "Soft" ], css_select("label:has(input[name=look]) .ks-radio-card-label").map(&:text)
+  end
+
+  def selected_look
+    css_select("input[type=radio][name=look][checked]").map { |option| option["value"] }
+  end
+
+  test "the appearance section selects the look the person saved" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "look", value: { "look" => "rounded" })
+
+    render_section
+
+    assert_equal [ "rounded" ], selected_look
+  end
+
+  test "the appearance section selects the app's own look for a person with no look saved" do
+    render_section
+
+    assert_equal [ "" ], selected_look
+  end
+
+  test "the appearance section offers no look when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+
+    render_section
+
+    assert_empty look_options
+  end
+
+  test "the appearance section offers no look when the app registers none" do
+    KeystoneUi.configuration.stub(:looks, {}) { render_section }
+
+    assert_empty look_options
   end
 end

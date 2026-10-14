@@ -49,4 +49,13 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal "light", cookies[KeystoneUi::ThemeChoice::COOKIE]
   end
+
+  test "a person who saves a look in the appearance section sees the next page marked with it" do
+    get "/settings/appearance"
+    patch "/settings/appearance", params: { template_name: "forest", look: "rounded" }
+    follow_redirect!
+    get "/palette"
+
+    assert_equal "rounded", css_select("html").first["data-look"]
+  end
 end

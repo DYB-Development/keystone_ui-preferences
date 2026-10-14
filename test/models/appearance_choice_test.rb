@@ -104,4 +104,38 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "dark", mode_for(person, account)
   end
+
+  def look_for(person, account = nil)
+    KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).look
+  end
+
+  def save_look(owner, look, members_choose: true)
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: owner, component_key: "look", value: { "look" => look }, members_choose: members_choose)
+  end
+
+  test "a person who saved a registered look gets that look" do
+    save_look(person, "rounded")
+
+    assert_equal "rounded", look_for(person, account)
+  end
+
+  test "a person whose saved look the app no longer registers gets the account's look" do
+    save_look(account, "sharp")
+    save_look(person, "retired")
+
+    assert_equal "sharp", look_for(person, account)
+  end
+
+  test "a person's saved look is passed over for the app's default look when the app turns off a person's own looks" do
+    KeystoneUi::Preferences.configure { |config| config.user_looks = false }
+    save_look(person, "rounded")
+
+    assert_nil look_for(person, account)
+  end
+
+  test "a visitor who is not signed in gets the app's default look" do
+    save_look(account, "sharp")
+
+    assert_nil look_for(nil, account)
+  end
 end

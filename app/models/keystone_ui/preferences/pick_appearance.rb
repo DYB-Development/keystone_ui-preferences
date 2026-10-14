@@ -11,21 +11,25 @@ module KeystoneUi
 
       def call
         return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
-        return keep_mode_only unless @values.key?(:template_name)
+        return Refusal.new("Choose the app's own look or one of the looks it offers.") unless look_offered?
+        return keep_mode_and_look unless @values.key?(:template_name)
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
         return Refusal.new("Choose Default, one of the colour templates or Custom.") unless template_offered?
         return Refusal.new("Choose each colour as a six-digit hex value, such as #1d4ed8.") unless colours_offered?
 
         preference.update!(value: chosen_colours)
-        keep_mode
-        Kept.new
+        keep_mode_and_look
       end
 
       private
 
       def mode_offered?
         !@values.key?(:mode) || KeystoneUi::ThemeChoice::MODES.include?(@values[:mode])
+      end
+
+      def look_offered?
+        !look_sent? || @values[:look].blank? || KeystoneUi.configuration.looks.key?(@values[:look])
       end
 
       def members_choose?
@@ -48,8 +52,7 @@ module KeystoneUi
 
       def use_default
         preference.destroy! if preference.persisted?
-        keep_mode
-        Kept.new
+        keep_mode_and_look
       end
 
       def chosen_colours
@@ -58,8 +61,9 @@ module KeystoneUi
         { "accent" => @values[:accent], "surface" => @values[:surface], "text" => @values[:text] }
       end
 
-      def keep_mode_only
+      def keep_mode_and_look
         keep_mode
+        keep_look
         Kept.new
       end
 
@@ -67,6 +71,21 @@ module KeystoneUi
         return unless @values.key?(:mode)
 
         ComponentPreference.find_or_initialize_by(owner: @person, component_key: "mode").update!(value: { "mode" => @values[:mode] })
+      end
+
+      def keep_look
+        return unless look_sent?
+        return look_preference.update!(value: { "look" => @values[:look] }) if @values[:look].present?
+
+        look_preference.destroy! if look_preference.persisted?
+      end
+
+      def look_sent?
+        @values.key?(:look) && KeystoneUi::Preferences.configuration.user_looks
+      end
+
+      def look_preference
+        @look_preference ||= ComponentPreference.find_or_initialize_by(owner: @person, component_key: "look")
       end
 
       def preference
