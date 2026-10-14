@@ -33,6 +33,9 @@ All notable changes to this project will be documented in this file.
 - A controller that declares `keystone_host_colors`, with the same name and the same `only:` and `except:` options as keystone_ui-colors' declaration, draws its pages in the app's default colours, mode and look whatever the signed-in person or their account saved, while a choice made with keystone_ui's theme toggle in that browser still sets light or dark there.
 - `keystone_ui:preferences:update` copies a migration that copies every keystone_ui-colors theme preference into the `colours`, `mode` and `look` rows of the same owner, with the account's two members-choose switches, so every person and account keeps the colours, mode and look they saved.
 - The copy keeps a row an owner already has for a key, does nothing in an app without keystone_ui-colors' table, changes nothing when run a second time or rolled back, and reads keystone_ui-colors' table in batches.
+- A saved template keystone_ui-looks no longer has draws the account's colours, or the configured defaults, instead of raising an error, and the appearance section shows no template selected for it and still saves a new one.
+- A saved accent or surface name keystone_ui-looks no longer has draws the configured default accent or surface instead of raising an error.
+- Each of these fallbacks writes one warning to the app's log naming the owner's type and id and the missing name.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.
