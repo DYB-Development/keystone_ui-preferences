@@ -226,6 +226,18 @@ While the colours switch is off, every member sees the account's colours, and th
 
 An app that keeps accounts off colours sets `account_colors` to false. Neither section then offers a colour choice or the colours switch, every page is drawn in the four configured defaults, and colours sent to either section are refused with a message. An app that keeps accounts off looks sets `account_looks` to false. The account's section then offers no look choice and no look switch, a look sent to it is ignored, and a saved account look is not applied.
 
+## Keeping a page on the app's colours
+
+A controller that declares `keystone_host_colors` draws its pages in the app's four default colours, `default_mode` and keystone_ui's `default_look`, whatever the signed-in person or their account saved. The declaration has the same name keystone_ui-colors gives it, so a controller that already declares it keeps working unchanged. It takes the same `only:` and `except:` options as `before_action`.
+
+```ruby
+class HomeController < ApplicationController
+  keystone_host_colors
+end
+```
+
+A choice made with keystone_ui's theme toggle in that browser still sets light or dark on these pages.
+
 ## What is stored
 
 One row per owner and component key, in `keystone_ui_preferences_component_preferences`:
