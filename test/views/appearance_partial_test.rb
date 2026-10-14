@@ -136,4 +136,14 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "false" ], css_select("form").map { |form| form["data-turbo"] }
   end
+
+  def mode_options
+    css_select("input[type=radio][name=mode]").map { |option| option["value"] }
+  end
+
+  test "the appearance section offers Light, Dark, System and Custom to a person who may choose their own colours" do
+    render_section
+
+    assert_equal %w[light dark system custom], mode_options
+  end
 end
