@@ -21,7 +21,7 @@ module KeystoneUi
 
         surface = palette_colour(saved["surface"]) || configuration.default_surface
         {
-          accent: palette_colour(saved["accent"]) || configuration.default_accent,
+          accent: catalogue_colour(saved["accent"], KeystoneUi::Looks::Palettes::ACCENTS) || configuration.default_accent,
           surface: surface,
           background: surface.start_with?("#") ? surface : configuration.default_background,
           text: (saved["text"] if saved["text"].to_s.match?(HEX)) || configuration.default_text
@@ -54,6 +54,12 @@ module KeystoneUi
 
       def palette_colour(value)
         value if value.to_s.match?(HEX) || value.to_s.match?(PALETTE_NAME)
+      end
+
+      def catalogue_colour(value, palettes)
+        return value if value.to_s.match?(HEX)
+
+        value if value.to_s.match?(PALETTE_NAME) && palettes.key?(value.to_sym)
       end
 
       def default_colours

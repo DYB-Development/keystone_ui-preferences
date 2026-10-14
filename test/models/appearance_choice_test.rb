@@ -88,6 +88,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     assert_equal({ accent: "emerald", surface: "stone", background: "#ecfdf5", text: "#064e3b" }, colours_for(person, account))
   end
 
+  test "a saved accent name the catalogue no longer has draws the app's default accent" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "accent" => "retired" })
+
+    assert_equal "blue", colours_for(person, account)[:accent]
+  end
+
   def mode_for(person, account = nil)
     KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).mode
   end
