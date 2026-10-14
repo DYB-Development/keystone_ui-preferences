@@ -62,4 +62,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ true ], switch_on?("members_choose")
   end
+
+  test "the account's section shows the colours switch off once an admin turns it off" do
+    save("colours", { "template_name" => "forest" }, members_choose: false)
+
+    render_section
+
+    assert_equal [ false ], switch_on?("members_choose")
+  end
 end
