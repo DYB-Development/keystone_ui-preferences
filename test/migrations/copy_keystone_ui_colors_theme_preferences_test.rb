@@ -112,4 +112,12 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal false, saved(account, "look")&.members_choose
   end
+
+  test "an account on the app's own look that sets the look for everyone keeps setting it" do
+    theme_preference(account, members_choose_look: false)
+
+    copy
+
+    assert_equal [ {}, false ], [ saved(account, "look")&.value, saved(account, "look")&.members_choose ]
+  end
 end
