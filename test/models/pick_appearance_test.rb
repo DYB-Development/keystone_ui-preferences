@@ -156,4 +156,8 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_nil saved_look
   end
+
+  test "a look the app does not register is refused with a reason" do
+    assert_equal "Choose the app's own look or one of the looks it offers.", pick(template_name: "forest", look: "retired").message
+  end
 end
