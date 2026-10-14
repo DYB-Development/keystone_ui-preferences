@@ -106,4 +106,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "mode" => "dark" }, saved_mode)
   end
+
+  test "saving Default with a mode keeps the mode as the person's mode" do
+    pick(template_name: "default", mode: "system")
+
+    assert_equal({ "mode" => "system" }, saved_mode)
+  end
 end

@@ -42,6 +42,7 @@ module KeystoneUi
 
       def use_default
         preference.destroy! if preference.persisted?
+        keep_mode
         Kept.new
       end
 
