@@ -112,4 +112,10 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_empty switch_on?("members_choose_look")
   end
+
+  test "the account's section offers no look when the app registers none" do
+    KeystoneUi.configuration.stub(:looks, {}) { render_section }
+
+    assert_empty look_options
+  end
 end

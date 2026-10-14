@@ -2,7 +2,7 @@
   colours = KeystoneUi::Preferences::ComponentPreference.find_by(owner: account, component_key: "colours")
   saved = colours&.value.presence || { "template_name" => "default" }
   look = KeystoneUi::Preferences::ComponentPreference.find_by(owner: account, component_key: "look")
-  offers_look = KeystoneUi::Preferences.configuration.account_looks
+  offers_look = KeystoneUi::Preferences.configuration.account_looks && KeystoneUi.configuration.looks.any?
   drawn = KeystoneUi::Preferences::AppearanceChoice.new(person: account, account: nil).colours
 %>
 
