@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "minitest/mock"
 
 class AppearancePartialTest < ActionView::TestCase
   include KeystoneUiHelper
@@ -223,6 +224,12 @@ class AppearancePartialTest < ActionView::TestCase
     KeystoneUi::Preferences.configure { |config| config.user_looks = false }
 
     render_section
+
+    assert_empty look_options
+  end
+
+  test "the appearance section offers no look when the app registers none" do
+    KeystoneUi.configuration.stub(:looks, {}) { render_section }
 
     assert_empty look_options
   end
