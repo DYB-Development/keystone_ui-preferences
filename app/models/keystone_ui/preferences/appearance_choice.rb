@@ -19,7 +19,7 @@ module KeystoneUi
         return template_colours if template_offered?
         return fallback_colours if saved["template_name"].present?
 
-        surface = palette_colour(saved["surface"]) || configuration.default_surface
+        surface = catalogue_colour(saved["surface"], KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
         {
           accent: catalogue_colour(saved["accent"], KeystoneUi::Looks::Palettes::ACCENTS) || configuration.default_accent,
           surface: surface,
@@ -50,10 +50,6 @@ module KeystoneUi
 
       def saved_look(owner)
         LayoutChoice.new(person: owner, account: nil, component_key: "look").value.to_h["look"]
-      end
-
-      def palette_colour(value)
-        value if value.to_s.match?(HEX) || value.to_s.match?(PALETTE_NAME)
       end
 
       def catalogue_colour(value, palettes)

@@ -94,6 +94,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     assert_equal "blue", colours_for(person, account)[:accent]
   end
 
+  test "a saved surface name the catalogue no longer has draws the app's default surface" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "surface" => "retired" })
+
+    assert_equal "zinc", colours_for(person, account)[:surface]
+  end
+
   def mode_for(person, account = nil)
     KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).mode
   end
