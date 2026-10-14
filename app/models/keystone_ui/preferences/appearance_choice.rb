@@ -31,7 +31,7 @@ module KeystoneUi
       end
 
       def look
-        LayoutChoice.new(person: @person, account: @account, component_key: "look").value.to_h["look"]
+        [ saved_look(@person, @account), saved_look(@account, nil) ].find { |look| KeystoneUi.configuration.looks.key?(look) }
       end
 
       def custom_offered?
@@ -39,6 +39,10 @@ module KeystoneUi
       end
 
       private
+
+      def saved_look(owner, account)
+        LayoutChoice.new(person: owner, account: account, component_key: "look").value.to_h["look"]
+      end
 
       def palette_colour(value)
         value if value.to_s.match?(HEX) || value.to_s.match?(PALETTE_NAME)

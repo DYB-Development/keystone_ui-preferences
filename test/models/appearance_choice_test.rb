@@ -118,4 +118,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "rounded", look_for(person, account)
   end
+
+  test "a person whose saved look the app no longer registers gets the account's look" do
+    save_look(account, "sharp")
+    save_look(person, "retired")
+
+    assert_equal "sharp", look_for(person, account)
+  end
 end
