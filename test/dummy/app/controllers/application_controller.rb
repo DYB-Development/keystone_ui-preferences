@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
     signed_in_user
   end
 
+  def current_person
+    signed_in_user
+  end
+
   def current_account
     signed_in_account
   end
