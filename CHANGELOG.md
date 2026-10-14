@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- `keystone_palette_style_tag` writes the accent and surface shades and the custom background and text colours for the signed-in person as a `<style>` tag, with the CSS variable names keystone_ui-colors writes, so a layout that calls it keeps working unchanged.
+- Colours are read from the `colours` key through the same person-then-account choice and `Rails.cache` entries as a table's layout, so a second page view reads no colour rows.
+- `default_accent`, `default_surface`, `default_background` and `default_text` settings give the colours a person with nothing saved and a visitor who is not signed in see, and the `default` template is built from them.
+
+### Changed
+- Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.
+
 ## [0.6.0] - 2026-10-13
 
 ### Changed
