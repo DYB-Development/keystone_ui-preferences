@@ -45,4 +45,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal "There is no account to save this appearance on.", result.message
   end
+
+  test "turning the colours switch off keeps the account's members from choosing their own colours" do
+    pick(template_name: "forest", members_choose: "0")
+
+    assert_equal false, account_preference("colours").members_choose
+  end
 end

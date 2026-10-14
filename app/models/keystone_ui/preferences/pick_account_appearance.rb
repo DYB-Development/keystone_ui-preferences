@@ -15,8 +15,14 @@ module KeystoneUi
         chosen = ChosenColours.new(@values)
         return chosen.refusal if chosen.refusal
 
-        ComponentPreference.find_or_initialize_by(owner: @account, component_key: "colours").update!(value: chosen.value)
+        ComponentPreference.find_or_initialize_by(owner: @account, component_key: "colours").update!(value: chosen.value, **switch(:members_choose))
         Kept.new
+      end
+
+      private
+
+      def switch(name)
+        @values.key?(name) ? { members_choose: @values[name] == "1" } : {}
       end
     end
   end
