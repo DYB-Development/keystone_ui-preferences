@@ -13,4 +13,8 @@ class ColorsCheckTest < ActiveSupport::TestCase
       "Run bin/rails generate keystone_ui:preferences:update first, so the migration copying keystone_ui-colors' saved choices is in db/migrate, " \
       "then remove keystone_ui-colors from the Gemfile and run bin/rails db:migrate.", error.message
   end
+
+  test "an app without keystone_ui-colors passes the check" do
+    assert_nil KeystoneUi::Preferences::ColorsCheck.new(colors_loaded: false).call
+  end
 end

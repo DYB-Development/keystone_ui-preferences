@@ -14,7 +14,7 @@ module KeystoneUi
       end
 
       def call
-        raise Error, MESSAGE
+        raise Error, MESSAGE if @colors_loaded
       end
     end
   end
