@@ -31,6 +31,8 @@ All notable changes to this project will be documented in this file.
 - The new `account_colors` setting, true by default, turns off accounts' and members' colours when false: neither section offers colours, every page draws the configured defaults, and colours sent to either section are refused with a message.
 - The new `account_looks` setting, true by default, turns off accounts' looks when false: the account section offers no look, a look sent to it is ignored, and a saved account look is not applied.
 - A controller that declares `keystone_host_colors`, with the same name and the same `only:` and `except:` options as keystone_ui-colors' declaration, draws its pages in the app's default colours, mode and look whatever the signed-in person or their account saved, while a choice made with keystone_ui's theme toggle in that browser still sets light or dark there.
+- `keystone_ui:preferences:update` copies a migration that copies every keystone_ui-colors theme preference into the `colours`, `mode` and `look` rows of the same owner, with the account's two members-choose switches, so every person and account keeps the colours, mode and look they saved.
+- The copy keeps a row an owner already has for a key, does nothing in an app without keystone_ui-colors' table, changes nothing when run a second time or rolled back, and reads keystone_ui-colors' table in batches.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.
