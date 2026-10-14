@@ -82,4 +82,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a Custom text colour that is not a six-digit hex is refused with a reason" do
     assert_equal "Choose each colour as a six-digit hex value, such as #1d4ed8.", custom(text: "zinc").message
   end
+
+  test "a refused Custom colour leaves the person's saved colours as they were" do
+    pick(template_name: "forest")
+
+    custom(accent: "not a colour")
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
 end
