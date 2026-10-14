@@ -90,4 +90,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, saved_value)
   end
+
+  test "saving Custom with a catalogue accent and surface keeps their names" do
+    custom(accent: "emerald", surface: "stone")
+
+    assert_equal({ "accent" => "emerald", "surface" => "stone", "text" => "#3b2f1e" }, saved_value)
+  end
 end
