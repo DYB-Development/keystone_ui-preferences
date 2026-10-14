@@ -11,8 +11,14 @@ module KeystoneUi
       end
 
       def to_s
-        lines = KeystoneUi::Looks::Palettes.accent(@accent).map { |shade, hex| "  --color-accent-#{shade}: #{hex};" }
+        lines = shade_lines("accent", KeystoneUi::Looks::Palettes.accent(@accent)) + shade_lines("surface", KeystoneUi::Looks::Palettes.surface(@surface))
         ":root {\n#{lines.join("\n")}\n}"
+      end
+
+      private
+
+      def shade_lines(name, shades)
+        shades.map { |shade, hex| "  --color-#{name}-#{shade}: #{hex};" }
       end
     end
   end
