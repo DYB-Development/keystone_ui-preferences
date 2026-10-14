@@ -148,4 +148,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "look" => "rounded" }, saved_look)
   end
+
+  test "saving the app's own look removes the person's saved look" do
+    pick(template_name: "forest", look: "rounded")
+
+    pick(template_name: "forest", look: "")
+
+    assert_nil saved_look
+  end
 end

@@ -70,8 +70,13 @@ module KeystoneUi
 
       def keep_look
         return unless @values.key?(:look)
+        return look_preference.destroy! if @values[:look].blank? && look_preference.persisted?
 
-        ComponentPreference.find_or_initialize_by(owner: @person, component_key: "look").update!(value: { "look" => @values[:look] })
+        look_preference.update!(value: { "look" => @values[:look] }) if @values[:look].present?
+      end
+
+      def look_preference
+        @look_preference ||= ComponentPreference.find_or_initialize_by(owner: @person, component_key: "look")
       end
 
       def preference
