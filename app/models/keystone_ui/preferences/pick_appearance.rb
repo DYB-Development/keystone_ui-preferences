@@ -10,11 +10,17 @@ module KeystoneUi
       end
 
       def call
-        preference.update!(value: { "template_name" => @values[:template_name] })
+        preference.update!(value: chosen_colours)
         Kept.new
       end
 
       private
+
+      def chosen_colours
+        return { "template_name" => @values[:template_name] } if @values[:template_name].present?
+
+        { "accent" => @values[:accent], "surface" => @values[:surface], "text" => @values[:text] }
+      end
 
       def preference
         @preference ||= ComponentPreference.find_or_initialize_by(owner: @person, component_key: "colours")
