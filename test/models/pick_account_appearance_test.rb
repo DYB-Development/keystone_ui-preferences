@@ -57,4 +57,12 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "look" => "rounded" }, account_preference("look").value)
   end
+
+  test "saving the app's own look leaves the account with no look" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "look", value: { "look" => "rounded" })
+
+    pick(template_name: "forest", look: "")
+
+    assert_equal({}, account_preference("look").value)
+  end
 end
