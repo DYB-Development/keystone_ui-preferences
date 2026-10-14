@@ -102,4 +102,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "keystone-ui--preferences--theme-settings" ], css_select("form[data-controller]").map { |form| form["data-controller"] }
   end
+
+  test "picking a template hands the template picker script that template's accent, surface and text colour" do
+    render_section
+
+    forest = css_select("input[type=radio][name=template_name][value=forest]").first
+
+    assert_equal [ "keystone-ui--preferences--theme-settings#selectTemplate", "#10b981", "#78716c", "#064e3b" ], %w[data-action data-accent-hex data-surface-hex data-text-hex].map { |attribute| forest[attribute] }
+  end
 end

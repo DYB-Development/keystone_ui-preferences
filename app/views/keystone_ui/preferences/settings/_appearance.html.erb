@@ -17,7 +17,17 @@
             <% templates.each do |name, template| %>
               <% accent_hex = palette_hex.call(template[:accent], KeystoneUi::Looks::Palettes.method(:accent)) %>
               <% surface_hex = palette_hex.call(template[:surface], KeystoneUi::Looks::Palettes.method(:surface)) %>
-              <%= ui_option_card(name: "template_name", value: name, selected: saved["template_name"] == name) do %>
+              <%= ui_option_card(
+                name: "template_name",
+                value: name,
+                selected: saved["template_name"] == name,
+                input_data: {
+                  action: "keystone-ui--preferences--theme-settings#selectTemplate",
+                  "accent-hex": accent_hex,
+                  "surface-hex": surface_hex,
+                  "text-hex": template[:text]
+                }
+              ) do %>
                 <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 9999px; background-color: <%= accent_hex %>;"></span>
                 <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 0.25rem; background-color: <%= surface_hex %>;"></span>
                 <span><%= template[:label] %></span>
