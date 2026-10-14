@@ -110,4 +110,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "keystone-ui--preferences--theme-settings#selectTemplate", "#10b981", "#78716c", "#064e3b" ], %w[data-action data-accent-hex data-surface-hex data-text-hex].map { |attribute| forest[attribute] }
   end
+
+  test "the template picker script finds the accent, surface and text colour pickers" do
+    render_section
+
+    targets = %w[accentPicker surfacePicker textPicker].map { |target| css_select("[data-keystone-ui--preferences--theme-settings-target=#{target}] input[type=hidden]").map { |input| input["name"] } }
+
+    assert_equal [ [ "accent" ], [ "surface" ], [ "text" ] ], targets
+  end
 end
