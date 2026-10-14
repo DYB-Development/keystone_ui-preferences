@@ -53,6 +53,20 @@ class AppearancePartialTest < ActionView::TestCase
     assert_empty selected_template
   end
 
+  test "the appearance section writes one warning for an account's saved template the catalogue no longer has" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "retired" }, members_choose: false)
+    log = StringIO.new
+    original = Rails.logger
+    Rails.logger = ActiveSupport::Logger.new(log, level: :warn)
+
+    render_section(account: account)
+
+    assert_equal 1, log.string.lines.count
+  ensure
+    Rails.logger = original
+  end
+
   test "the appearance section selects Default for a person with no colours saved" do
     render_section
 

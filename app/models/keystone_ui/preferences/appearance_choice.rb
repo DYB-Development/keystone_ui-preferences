@@ -14,18 +14,7 @@ module KeystoneUi
       end
 
       def colours
-        return default_colours unless configuration.account_colors
-        return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
-        return template_colours if template_offered?
-        return fallback_colours if saved["template_name"].present?
-
-        surface = catalogue_colour("surface", KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
-        {
-          accent: catalogue_colour("accent", KeystoneUi::Looks::Palettes::ACCENTS) || configuration.default_accent,
-          surface: surface,
-          background: surface.start_with?("#") ? surface : configuration.default_background,
-          text: (saved["text"] if saved["text"].to_s.match?(HEX)) || configuration.default_text
-        }
+        @colours ||= chosen_colours
       end
 
       def mode
@@ -47,6 +36,21 @@ module KeystoneUi
       end
 
       private
+
+      def chosen_colours
+        return default_colours unless configuration.account_colors
+        return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
+        return template_colours if template_offered?
+        return fallback_colours if saved["template_name"].present?
+
+        surface = catalogue_colour("surface", KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
+        {
+          accent: catalogue_colour("accent", KeystoneUi::Looks::Palettes::ACCENTS) || configuration.default_accent,
+          surface: surface,
+          background: surface.start_with?("#") ? surface : configuration.default_background,
+          text: (saved["text"] if saved["text"].to_s.match?(HEX)) || configuration.default_text
+        }
+      end
 
       def saved_look(owner)
         LayoutChoice.new(person: owner, account: nil, component_key: "look").value.to_h["look"]
