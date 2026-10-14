@@ -84,4 +84,16 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "#064e3b" ], picker_value("text")
   end
+
+  def account_setting_colours
+    Account.create!(name: "Acme").tap do |account|
+      KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "ocean" }, members_choose: false)
+    end
+  end
+
+  test "the appearance section says the account sets the colours when members may not choose their own" do
+    render_section(account: account_setting_colours)
+
+    assert_includes rendered, "Your account sets the colours for everyone."
+  end
 end
