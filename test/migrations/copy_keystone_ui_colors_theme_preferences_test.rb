@@ -15,6 +15,10 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
     @person ||= User.create!(name: "Rep")
   end
 
+  def account
+    @account ||= Account.create!(name: "Acme")
+  end
+
   def setup
     ActiveRecord::Base.connection.create_table(:keystone_ui_colors_theme_preferences, force: true) do |t|
       t.string :accent, null: false
@@ -91,5 +95,13 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
     copy
 
     assert_equal({ "look" => "rounded" }, saved(person, "look")&.value)
+  end
+
+  test "an account that sets the colours for everyone keeps setting them" do
+    theme_preference(account, members_choose: false)
+
+    copy
+
+    assert_equal false, saved(account, "colours")&.members_choose
   end
 end

@@ -16,24 +16,28 @@ class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveR
   private
 
   def colours(theme_preference)
-    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: "colours", value: colours_value(theme_preference) }
+    row(theme_preference, "colours", colours_value(theme_preference), members_choose: theme_preference.members_choose)
   end
 
   def mode(theme_preference)
     return nil if theme_preference.mode.blank?
 
-    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: "mode", value: { "mode" => theme_preference.mode } }
+    row(theme_preference, "mode", { "mode" => theme_preference.mode })
   end
 
   def look(theme_preference)
     return nil if theme_preference.look.blank?
 
-    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: "look", value: { "look" => theme_preference.look } }
+    row(theme_preference, "look", { "look" => theme_preference.look })
   end
 
   def colours_value(theme_preference)
     return { "template_name" => theme_preference.template_name } if theme_preference.template_name.present?
 
     { "accent" => theme_preference.accent, "surface" => theme_preference.surface, "text" => theme_preference.text }
+  end
+
+  def row(theme_preference, component_key, value, members_choose: true)
+    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: component_key, value: value, members_choose: members_choose }
   end
 end
