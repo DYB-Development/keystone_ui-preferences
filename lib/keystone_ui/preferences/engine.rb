@@ -12,6 +12,14 @@ module KeystoneUi
           end
         end
       end
+
+      initializer "keystone_ui.preferences.theme_mode" do
+        KeystoneUi.configure do |config|
+          config.theme_mode_supplier = lambda do |view|
+            view.respond_to?(:keystone_theme_mode) ? view.keystone_theme_mode : KeystoneUi::Preferences.configuration.default_mode
+          end
+        end
+      end
     end
   end
 end
