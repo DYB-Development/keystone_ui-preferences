@@ -29,4 +29,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
   end
+
+  test "saving Custom keeps the accent, surface and text colour as the account's colours" do
+    pick(template_name: "", accent: "#e11d48", surface: "#f5e6c8", text: "#3b2f1e")
+
+    assert_equal({ "accent" => "#e11d48", "surface" => "#f5e6c8", "text" => "#3b2f1e" }, account_preference("colours").value)
+  end
 end

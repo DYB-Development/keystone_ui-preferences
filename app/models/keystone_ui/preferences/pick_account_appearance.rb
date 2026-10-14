@@ -10,8 +10,16 @@ module KeystoneUi
       end
 
       def call
-        ComponentPreference.find_or_initialize_by(owner: @account, component_key: "colours").update!(value: { "template_name" => @values[:template_name] })
+        ComponentPreference.find_or_initialize_by(owner: @account, component_key: "colours").update!(value: chosen_colours)
         Kept.new
+      end
+
+      private
+
+      def chosen_colours
+        return { "template_name" => @values[:template_name] } if @values[:template_name].present?
+
+        { "accent" => @values[:accent], "surface" => @values[:surface], "text" => @values[:text] }
       end
     end
   end
