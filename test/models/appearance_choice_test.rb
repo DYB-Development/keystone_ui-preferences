@@ -132,4 +132,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_nil look_for(person, account)
   end
+
+  test "a visitor who is not signed in gets the app's default look" do
+    save_look(account, "sharp")
+
+    assert_nil look_for(nil, account)
+  end
 end

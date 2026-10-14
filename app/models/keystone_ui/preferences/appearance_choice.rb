@@ -31,6 +31,8 @@ module KeystoneUi
       end
 
       def look
+        return nil unless @person
+
         [ (saved_look(@person, @account) if configuration.user_looks), saved_look(@account, nil) ].find { |look| KeystoneUi.configuration.looks.key?(look) }
       end
 
