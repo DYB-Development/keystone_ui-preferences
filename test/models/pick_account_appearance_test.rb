@@ -71,4 +71,8 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal false, account_preference("look").members_choose
   end
+
+  test "a look the app does not register is refused with a reason" do
+    assert_equal "Choose the app's own look or one of the looks it offers.", pick(template_name: "forest", look: "retired").message
+  end
 end

@@ -11,6 +11,7 @@ module KeystoneUi
 
       def call
         return Refusal.new("There is no account to save this appearance on.") unless @account
+        return Refusal.new("Choose the app's own look or one of the looks it offers.") unless look_offered?
 
         chosen = ChosenColours.new(@values)
         return chosen.refusal if chosen.refusal
@@ -21,6 +22,10 @@ module KeystoneUi
       end
 
       private
+
+      def look_offered?
+        @values[:look].blank? || KeystoneUi.configuration.looks.key?(@values[:look])
+      end
 
       def keep_look
         chosen = @values.key?(:look) ? { value: { "look" => @values[:look].presence }.compact } : {}
