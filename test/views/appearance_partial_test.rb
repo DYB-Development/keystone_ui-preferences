@@ -167,4 +167,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "system" ], selected_mode
   end
+
+  test "the appearance section offers the modes while the account sets the colours for everyone" do
+    render_section(account: account_setting_colours)
+
+    assert_equal %w[light dark system custom], mode_options
+  end
 end

@@ -9,10 +9,14 @@
   saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value || { "template_name" => "default" }
 %>
 
-<% if choice.members_choose? %>
-  <%= ui_panel(padding: :lg) do %>
-    <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
-      <div style="display: flex; flex-direction: column; gap: 2rem;">
+<% unless choice.members_choose? %>
+  <%= ui_alert(message: "Your account sets the colours for everyone.") %>
+<% end %>
+
+<%= ui_panel(padding: :lg) do %>
+  <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+      <% if choice.members_choose? %>
         <%= ui_section(title: "Theme", spacing: :sm) do %>
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             <% templates.each do |name, template| %>
@@ -72,21 +76,19 @@
             <%= ui_color_picker(name: "text", value: drawn[:text]) %>
           </div>
         <% end %>
+      <% end %>
 
-        <%= ui_section(title: "Mode", spacing: :sm) do %>
-          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-            <% KeystoneUi::ThemeChoice::MODES.each do |mode| %>
-              <%= ui_radio_card(name: "mode", value: mode, label: mode.capitalize, checked: appearance.mode == mode) %>
-            <% end %>
-          </div>
-        <% end %>
-
-        <div>
-          <%= ui_button(label: "Save", type: :submit) %>
+      <%= ui_section(title: "Mode", spacing: :sm) do %>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <% KeystoneUi::ThemeChoice::MODES.each do |mode| %>
+            <%= ui_radio_card(name: "mode", value: mode, label: mode.capitalize, checked: appearance.mode == mode) %>
+          <% end %>
         </div>
+      <% end %>
+
+      <div>
+        <%= ui_button(label: "Save", type: :submit) %>
       </div>
-    <% end %>
+    </div>
   <% end %>
-<% else %>
-  <%= ui_alert(message: "Your account sets the colours for everyone.") %>
 <% end %>
