@@ -10,6 +10,7 @@ module KeystoneUi
       end
 
       def call
+        return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
 
         preference.update!(value: chosen_colours)
@@ -17,6 +18,10 @@ module KeystoneUi
       end
 
       private
+
+      def members_choose?
+        LayoutChoice.new(person: @person, account: @account, component_key: "colours").members_choose?
+      end
 
       def use_default
         preference.destroy! if preference.persisted?

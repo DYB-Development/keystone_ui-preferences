@@ -38,4 +38,14 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_nil saved_value
   end
+
+  def account_setting_colours
+    Account.create!(name: "Acme").tap do |account|
+      KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "ocean" }, members_choose: false)
+    end
+  end
+
+  test "a save is refused with a reason when the account sets the colours for everyone" do
+    assert_equal "Your account sets the colours for everyone, so this was not saved.", pick({ template_name: "forest" }, account_setting_colours).message
+  end
 end
