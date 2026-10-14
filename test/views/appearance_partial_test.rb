@@ -250,4 +250,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_empty template_options
   end
+
+  test "the appearance section leaves out Custom when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_equal %w[light dark system], mode_options
+  end
 end

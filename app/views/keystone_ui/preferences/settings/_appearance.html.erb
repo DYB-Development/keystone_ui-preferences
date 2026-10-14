@@ -1,6 +1,7 @@
 <%
   choice = KeystoneUi::Preferences::LayoutChoice.new(person: person, account: account, component_key: "colours")
   configuration = KeystoneUi::Preferences.configuration
+  chooses_colours = configuration.account_colors && choice.members_choose?
   palette_hex = ->(colour, palette) { colour.to_s.start_with?("#") ? colour.to_s : palette.call(colour)[500] }
   templates = { "default" => { accent: configuration.default_accent, surface: configuration.default_surface, text: configuration.default_text, label: "Default" } }
   KeystoneUi::Looks::Templates.all.each { |name, template| templates[name.to_s] = template }
@@ -17,7 +18,7 @@
 <%= ui_panel(padding: :lg) do %>
   <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
     <div style="display: flex; flex-direction: column; gap: 2rem;">
-      <% if configuration.account_colors && choice.members_choose? %>
+      <% if chooses_colours %>
         <%= ui_section(title: "Theme", spacing: :sm) do %>
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             <% templates.each do |name, template| %>
@@ -93,7 +94,7 @@
       <%= ui_section(title: "Mode", spacing: :sm) do %>
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
           <% KeystoneUi::ThemeChoice::MODES.each do |mode| %>
-            <% next if mode == "custom" && !(choice.members_choose? || appearance.custom_offered?) %>
+            <% next if mode == "custom" && !(chooses_colours || appearance.custom_offered?) %>
             <%= ui_radio_card(name: "mode", value: mode, label: mode.capitalize, checked: appearance.mode == mode) %>
           <% end %>
         </div>
