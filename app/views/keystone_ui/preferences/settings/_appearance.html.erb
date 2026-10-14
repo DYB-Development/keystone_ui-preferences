@@ -40,19 +40,19 @@
         <% end %>
 
         <%= ui_section(title: "Accent Color", spacing: :sm) do %>
-          <div>
+          <div data-keystone-ui--preferences--theme-settings-target="accentPicker">
             <%= ui_color_picker(name: "accent", value: palette_hex.call(drawn[:accent], KeystoneUi::Looks::Palettes.method(:accent))) %>
           </div>
         <% end %>
 
         <%= ui_section(title: "Surface", spacing: :sm) do %>
-          <div>
+          <div data-keystone-ui--preferences--theme-settings-target="surfacePicker">
             <%= ui_color_picker(name: "surface", value: palette_hex.call(drawn[:surface], KeystoneUi::Looks::Palettes.method(:surface))) %>
           </div>
         <% end %>
 
         <%= ui_section(title: "Text Color", spacing: :sm) do %>
-          <div>
+          <div data-keystone-ui--preferences--theme-settings-target="textPicker">
             <%= ui_color_picker(name: "text", value: drawn[:text]) %>
           </div>
         <% end %>
