@@ -10,6 +10,7 @@ class AppearancePartialTest < ActionView::TestCase
   end
 
   def teardown
+    KeystoneUi::Preferences.reset_configuration!
     KeystoneUi::Preferences::ComponentPreference.delete_all
   end
 
@@ -135,5 +136,50 @@ class AppearancePartialTest < ActionView::TestCase
     render_section
 
     assert_equal [ "false" ], css_select("form").map { |form| form["data-turbo"] }
+  end
+
+  def mode_options
+    css_select("input[type=radio][name=mode]").map { |option| option["value"] }
+  end
+
+  test "the appearance section offers Light, Dark, System and Custom to a person who may choose their own colours" do
+    render_section
+
+    assert_equal %w[light dark system custom], mode_options
+  end
+
+  def selected_mode
+    css_select("input[type=radio][name=mode][checked]").map { |option| option["value"] }
+  end
+
+  test "the appearance section selects the mode the person saved" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "mode", value: { "mode" => "dark" })
+
+    render_section
+
+    assert_equal [ "dark" ], selected_mode
+  end
+
+  test "the appearance section selects the app's default mode for a person with no mode saved" do
+    KeystoneUi::Preferences.configure { |config| config.default_mode = "system" }
+
+    render_section
+
+    assert_equal [ "system" ], selected_mode
+  end
+
+  test "the appearance section offers the modes while the account sets the colours for everyone" do
+    render_section(account: account_setting_colours)
+
+    assert_equal %w[light dark system custom], mode_options
+  end
+
+  test "the appearance section leaves out Custom when the account sets colours drawn on a white background" do
+    account = Account.create!(name: "Acme")
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "accent" => "rose", "surface" => "neutral" }, members_choose: false)
+
+    render_section(account: account)
+
+    assert_equal %w[light dark system], mode_options
   end
 end

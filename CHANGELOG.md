@@ -11,9 +11,13 @@ All notable changes to this project will be documented in this file.
 - `default_accent`, `default_surface`, `default_background` and `default_text` settings give the colours a person with nothing saved and a visitor who is not signed in see, and the `default` template is built from them.
 - A settings_hub section, `keystone_ui/preferences/settings/appearance` with `KeystoneUi::Preferences::PickAppearance`, lets a person pick Default, one of the five colour templates or Custom with an accent, a surface and a text colour, saved under the `colours` key, with the same look and behaviour as keystone_ui-colors' colour settings.
 - Saving Default in the appearance section removes the person's saved colours, so the account's colours or the app's defaults apply again.
-- The appearance section refuses, with a message and nothing saved, a template not in the catalogue, a Custom colour that is neither a six-digit hex nor a palette name, and any save while the account sets the colours for everyone, when it also says so instead of offering a save.
+- The appearance section refuses, with a message and nothing saved, a template not in the catalogue, a Custom colour that is neither a six-digit hex nor a palette name, and any save of colours while the account sets the colours for everyone, when it also says so instead of offering the colours.
 - `keystone_ui:preferences:install` copies the template picker script, which sets the colour pickers as soon as a template is picked, into `app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js`.
 - `keystone_ui:preferences:update` copies the template picker script into an app that installed an earlier version, and leaves the file alone when the app already has it.
+- The appearance section offers Light, Dark and System, and Custom to a person who may choose their own colours or whose colours draw a background other than white, with the same look as keystone_ui-colors' mode control, and saves the mode under the `mode` key.
+- A saved mode is read only from the person's own row and given to keystone_ui through its theme mode supplier, so every page the person opens is marked with it whether or not their account lets members choose colours, and a visitor who is not signed in gets the new `default_mode` setting.
+- A mode other than Light, Dark, System or Custom is refused with a message, and nothing is saved.
+- Saving in the appearance section clears keystone_ui's theme toggle cookie through settings_hub's `after_settings_change` hook, which the `ComponentPreferences` concern now defines, so the saved mode shows on the next page.
 
 ### Changed
 - Requires keystone_ui-looks 0.3.0 or later, which supplies the colour palettes, the shade generator and the named colour templates.

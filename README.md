@@ -60,6 +60,7 @@ KeystoneUi::Preferences.configure do |config|
   config.default_surface = "zinc"                    # the surface for a person with no colours saved
   config.default_background = "#ffffff"              # the custom background for a person with no colours saved
   config.default_text = "#18181b"                    # the custom text colour for a person with no colours saved
+  config.default_mode = "light"                      # the mode for a person with no mode saved and for a visitor
 end
 ```
 
@@ -174,7 +175,21 @@ Saving a template keeps `{ "template_name": "forest" }` for that person under th
 
 A template that is not Default or one of the five is refused with a message, and so is a Custom accent or surface that is neither a six-digit hex nor a palette name from keystone_ui-looks, and a text colour that is not a six-digit hex. Nothing is saved.
 
-The `colours` key follows the account layouts above. While an account turns off members-choose for it, the section says the account sets the colours for everyone and offers no save, and a save sent anyway is refused with a message and saves nothing.
+The `colours` key follows the account layouts above. While an account turns off members-choose for it, the section says the account sets the colours for everyone and offers no colours, and a save that sends colours anyway is refused with a message and saves nothing.
+
+## Mode
+
+The appearance section also offers Light, Dark and System, as keystone_ui-colors' mode control does, with the person's saved mode selected, or `default_mode` when they have none. It offers Custom too when the person may choose their own colours, or when the colours that apply to them draw a background other than white. The mode is offered while the account sets the colours, and saving it there keeps the mode alone.
+
+Saving keeps `{ "mode": "dark" }` for that person under the `mode` key. A mode is only ever read from the person's own row, never from the account's, so it applies whether or not the account lets members choose colours. A mode other than `light`, `dark`, `system` or `custom` is refused with a message, and nothing is saved.
+
+The gem gives keystone_ui the mode through keystone_ui's theme mode supplier, so a layout whose `<html>` tag calls keystone_ui's `keystone_theme_attributes` is marked with the person's mode on every page:
+
+```erb
+<html <%= keystone_theme_attributes %>>
+```
+
+A visitor who is not signed in gets `default_mode`. A choice made with keystone_ui's theme toggle is kept in a cookie and wins over the saved mode in that browser. Saving in the appearance section clears that cookie, so the saved mode shows on the next page. The clearing runs in settings_hub's `after_settings_change` hook, which the `ComponentPreferences` concern defines, so an app that defines its own `after_settings_change` calls `super` from it.
 
 ## What is stored
 

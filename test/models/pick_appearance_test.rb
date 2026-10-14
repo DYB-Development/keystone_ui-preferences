@@ -96,4 +96,46 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "accent" => "emerald", "surface" => "stone", "text" => "#3b2f1e" }, saved_value)
   end
+
+  def saved_mode
+    KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "mode")&.value
+  end
+
+  test "saving a mode keeps it as the person's mode" do
+    pick(template_name: "forest", mode: "dark")
+
+    assert_equal({ "mode" => "dark" }, saved_mode)
+  end
+
+  test "saving Default with a mode keeps the mode as the person's mode" do
+    pick(template_name: "default", mode: "system")
+
+    assert_equal({ "mode" => "system" }, saved_mode)
+  end
+
+  test "a mode other than Light, Dark, System or Custom is refused with a reason" do
+    assert_equal "Choose Light, Dark, System or Custom for the mode.", pick(template_name: "forest", mode: "sepia").message
+  end
+
+  test "a refused mode leaves the person's saved colours and mode as they were" do
+    pick(template_name: "forest", mode: "dark")
+
+    pick(template_name: "ocean", mode: "sepia")
+
+    assert_equal [ { "template_name" => "forest" }, { "mode" => "dark" } ], [ saved_value, saved_mode ]
+  end
+
+  test "a save that sends no mode leaves the person's saved mode as it was" do
+    pick(template_name: "forest", mode: "dark")
+
+    pick(template_name: "ocean")
+
+    assert_equal({ "mode" => "dark" }, saved_mode)
+  end
+
+  test "a mode saves while the account sets the colours for everyone" do
+    pick({ mode: "dark" }, account_setting_colours)
+
+    assert_equal({ "mode" => "dark" }, saved_mode)
+  end
 end

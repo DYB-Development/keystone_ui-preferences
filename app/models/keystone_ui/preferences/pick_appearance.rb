@@ -10,16 +10,23 @@ module KeystoneUi
       end
 
       def call
+        return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
+        return keep_mode_only unless @values.key?(:template_name)
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
         return Refusal.new("Choose Default, one of the colour templates or Custom.") unless template_offered?
         return Refusal.new("Choose each colour as a six-digit hex value, such as #1d4ed8.") unless colours_offered?
 
         preference.update!(value: chosen_colours)
+        keep_mode
         Kept.new
       end
 
       private
+
+      def mode_offered?
+        !@values.key?(:mode) || KeystoneUi::ThemeChoice::MODES.include?(@values[:mode])
+      end
 
       def members_choose?
         LayoutChoice.new(person: @person, account: @account, component_key: "colours").members_choose?
@@ -41,6 +48,7 @@ module KeystoneUi
 
       def use_default
         preference.destroy! if preference.persisted?
+        keep_mode
         Kept.new
       end
 
@@ -48,6 +56,17 @@ module KeystoneUi
         return { "template_name" => @values[:template_name] } if @values[:template_name].present?
 
         { "accent" => @values[:accent], "surface" => @values[:surface], "text" => @values[:text] }
+      end
+
+      def keep_mode_only
+        keep_mode
+        Kept.new
+      end
+
+      def keep_mode
+        return unless @values.key?(:mode)
+
+        ComponentPreference.find_or_initialize_by(owner: @person, component_key: "mode").update!(value: { "mode" => @values[:mode] })
       end
 
       def preference
