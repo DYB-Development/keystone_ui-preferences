@@ -44,13 +44,13 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
     ThemePreference.create!(owner_type: owner.class.name, owner_id: owner.id, accent: "blue", surface: "zinc", **columns)
   end
 
-  def copy
+  def copy(direction = :up)
     Dir.mktmpdir do |directory|
       file = File.join(directory, "copy_keystone_ui_colors_theme_preferences.rb")
       File.write(file, ERB.new(File.read(TEMPLATE)).result)
       load file
     end
-    ActiveRecord::Migration.suppress_messages { CopyKeystoneUiColorsThemePreferences.new.migrate(:up) }
+    ActiveRecord::Migration.suppress_messages { CopyKeystoneUiColorsThemePreferences.new.migrate(direction) }
   end
 
   def saved(owner, component_key)
@@ -146,5 +146,15 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
     copy
 
     assert_equal first, KeystoneUi::Preferences::ComponentPreference.order(:id).map(&:attributes)
+  end
+
+  test "rolling the copy back leaves keystone_ui-colors' table as it was" do
+    theme_preference(person, template_name: "forest", mode: "dark", look: "rounded")
+    before = ThemePreference.order(:id).map(&:attributes)
+    copy
+
+    copy(:down)
+
+    assert_equal before, ThemePreference.order(:id).map(&:attributes)
   end
 end
