@@ -56,4 +56,16 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "" ], selected_template
   end
+
+  def picker_value(name)
+    css_select("input[type=hidden][name=#{name}]").map { |input| input["value"] }
+  end
+
+  test "the appearance section's accent picker shows the accent drawn for the person" do
+    save_colours("template_name" => "forest")
+
+    render_section
+
+    assert_equal [ "#10b981" ], picker_value("accent")
+  end
 end
