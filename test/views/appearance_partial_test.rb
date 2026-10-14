@@ -130,4 +130,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "" ], css_select("input[data-keystone-ui--preferences--theme-settings-target=customRadio]").map { |input| input["value"] }
   end
+
+  test "the appearance section saves with a full page load, as the other sections do in a Hotwire Native web view" do
+    render_section
+
+    assert_equal [ "false" ], css_select("form").map { |form| form["data-turbo"] }
+  end
 end

@@ -10,7 +10,7 @@
 
 <% if choice.members_choose? %>
   <%= ui_panel(padding: :lg) do %>
-    <%= form_with(url: submit_url, method: :patch, data: { controller: "keystone-ui--preferences--theme-settings" }) do %>
+    <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
       <div style="display: flex; flex-direction: column; gap: 2rem;">
         <%= ui_section(title: "Theme", spacing: :sm) do %>
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
