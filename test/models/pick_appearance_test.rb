@@ -66,4 +66,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, saved_value)
   end
+
+  def custom(accent: "#e11d48", surface: "#f5e6c8", text: "#3b2f1e")
+    pick(template_name: "", accent: accent, surface: surface, text: text)
+  end
+
+  test "a Custom accent that is neither a six-digit hex nor a catalogue accent is refused with a reason" do
+    assert_equal "Choose each colour as a six-digit hex value, such as #1d4ed8.", custom(accent: "red; } body { display: none").message
+  end
 end

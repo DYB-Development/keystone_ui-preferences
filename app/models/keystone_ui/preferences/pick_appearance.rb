@@ -13,6 +13,7 @@ module KeystoneUi
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
         return Refusal.new("Choose Default, one of the colour templates or Custom.") unless template_offered?
+        return Refusal.new("Choose each colour as a six-digit hex value, such as #1d4ed8.") unless colours_offered?
 
         preference.update!(value: chosen_colours)
         Kept.new
@@ -26,6 +27,14 @@ module KeystoneUi
 
       def template_offered?
         @values[:template_name].blank? || KeystoneUi::Looks::Templates.names.map(&:to_s).include?(@values[:template_name])
+      end
+
+      def colours_offered?
+        @values[:template_name].present? || colour_offered?(@values[:accent], KeystoneUi::Looks::Palettes::ACCENTS)
+      end
+
+      def colour_offered?(colour, palettes)
+        colour.to_s.match?(AppearanceChoice::HEX) || palettes.key?(colour.to_s.to_sym)
       end
 
       def use_default
