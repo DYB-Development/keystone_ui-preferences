@@ -62,4 +62,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal({ accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, colours_for(nil))
   end
+
+  test "a saved accent that is neither a palette name nor a six-digit hex draws the app's default accent" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "accent" => "red;} body{display:none}" })
+
+    assert_equal "blue", colours_for(person, account)[:accent]
+  end
 end

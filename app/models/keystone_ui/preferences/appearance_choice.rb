@@ -4,6 +4,8 @@ module KeystoneUi
   module Preferences
     class AppearanceChoice
       DEFAULT_TEMPLATE = "default"
+      HEX = /\A#\h{6}\z/
+      PALETTE_NAME = /\A[a-z][a-z0-9_]*\z/
 
       def initialize(person:, account:)
         @person = person
@@ -16,7 +18,7 @@ module KeystoneUi
 
         surface = saved["surface"] || configuration.default_surface
         {
-          accent: saved["accent"] || configuration.default_accent,
+          accent: palette_colour(saved["accent"]) || configuration.default_accent,
           surface: surface,
           background: surface.start_with?("#") ? surface : configuration.default_background,
           text: saved["text"].presence || configuration.default_text
@@ -24,6 +26,10 @@ module KeystoneUi
       end
 
       private
+
+      def palette_colour(value)
+        value if value.to_s.match?(HEX) || value.to_s.match?(PALETTE_NAME)
+      end
 
       def default_colours
         { accent: configuration.default_accent, surface: configuration.default_surface, background: configuration.default_background, text: configuration.default_text }
