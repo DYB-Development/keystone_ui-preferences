@@ -145,4 +145,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal({ accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, colours_for(person, account))
   end
+
+  test "a person whose account turns off members choosing their own look gets the account's look" do
+    save_look(account, "sharp", members_choose: false)
+    save_look(person, "rounded")
+
+    assert_equal "sharp", look_for(person, account)
+  end
 end
