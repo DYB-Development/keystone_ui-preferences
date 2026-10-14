@@ -116,4 +116,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a mode other than Light, Dark, System or Custom is refused with a reason" do
     assert_equal "Choose Light, Dark, System or Custom for the mode.", pick(template_name: "forest", mode: "sepia").message
   end
+
+  test "a refused mode leaves the person's saved colours and mode as they were" do
+    pick(template_name: "forest", mode: "dark")
+
+    pick(template_name: "ocean", mode: "sepia")
+
+    assert_equal [ { "template_name" => "forest" }, { "mode" => "dark" } ], [ saved_value, saved_mode ]
+  end
 end
