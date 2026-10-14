@@ -11,6 +11,12 @@ module KeystoneUi
         helper_method :keystone_component_preference, :keystone_palette_style_tag, :keystone_theme_mode, :keystone_look if respond_to?(:helper_method)
       end
 
+      class_methods do
+        def keystone_host_colors
+          before_action :keystone_keep_host_colours
+        end
+      end
+
       def keystone_component_preference(component_key)
         owner = send(KeystoneUi::Preferences.configuration.current_owner_method)
         return unless owner
@@ -23,7 +29,7 @@ module KeystoneUi
       end
 
       def keystone_palette_style_tag
-        colours = AppearanceChoice.new(person: send(KeystoneUi::Preferences.configuration.current_owner_method), account: keystone_preferences_account).colours
+        colours = keystone_appearance_choice.colours
         helpers.content_tag(:style, PaletteCss.new(**colours).to_s)
       end
 
@@ -45,6 +51,16 @@ module KeystoneUi
       end
 
       private
+
+      def keystone_keep_host_colours
+        @keystone_host_colours = true
+      end
+
+      def keystone_appearance_choice
+        return AppearanceChoice.new(person: nil, account: nil) if @keystone_host_colours
+
+        AppearanceChoice.new(person: send(KeystoneUi::Preferences.configuration.current_owner_method), account: keystone_preferences_account)
+      end
 
       def after_settings_change(section:, **)
         cookies.delete(KeystoneUi::ThemeChoice::COOKIE) if section.runs.to_s == PickAppearance.name
