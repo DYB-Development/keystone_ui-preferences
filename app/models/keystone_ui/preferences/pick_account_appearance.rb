@@ -13,7 +13,9 @@ module KeystoneUi
         return Refusal.new("There is no account to save this appearance on.") unless @account
         return Refusal.new("Choose the app's own look or one of the looks it offers.") unless look_offered?
 
-        chosen = ChosenColours.new(@values) if @values.key?(:template_name)
+        return Refusal.new("This app does not let accounts choose their colours.") if colours_sent? && !KeystoneUi::Preferences.configuration.account_colors
+
+        chosen = ChosenColours.new(@values) if colours_sent?
         return chosen.refusal if chosen&.refusal
 
         keep("colours", (chosen ? { value: chosen.value } : {}).merge(switch(:members_choose)))
@@ -22,6 +24,10 @@ module KeystoneUi
       end
 
       private
+
+      def colours_sent?
+        @values.key?(:template_name)
+      end
 
       def look_offered?
         @values[:look].blank? || KeystoneUi.configuration.looks.key?(@values[:look])

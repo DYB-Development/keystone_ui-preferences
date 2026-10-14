@@ -81,4 +81,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "look" => "rounded" }, account_preference("look").value)
   end
+
+  test "colours are refused with a reason when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    assert_equal "This app does not let accounts choose their colours.", pick(template_name: "forest").message
+  end
 end
