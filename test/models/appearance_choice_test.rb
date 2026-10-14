@@ -116,6 +116,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     assert_equal [ "keystone_ui-preferences: User #{person.id} saved the template \"retired\", which keystone_ui-looks does not have" ], warnings_from { colours_for(person) }
   end
 
+  test "an account's saved template the catalogue no longer has writes one warning naming the account and the template" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "retired" })
+
+    assert_equal [ "keystone_ui-preferences: Account #{account.id} saved the template \"retired\", which keystone_ui-looks does not have" ], warnings_from { colours_for(person, account) }
+  end
+
   def mode_for(person, account = nil)
     KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).mode
   end

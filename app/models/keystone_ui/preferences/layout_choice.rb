@@ -12,9 +12,13 @@ module KeystoneUi
       end
 
       def value
-        return account_preference.value unless members_choose?
+        preference&.value
+      end
 
-        (own_preference || account_preference)&.value
+      def preference
+        return account_preference unless members_choose?
+
+        own_preference || account_preference
       end
 
       def members_choose?

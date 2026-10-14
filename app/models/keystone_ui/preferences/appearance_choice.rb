@@ -64,13 +64,14 @@ module KeystoneUi
 
       def fallback_colours
         warn_missing("template", saved["template_name"])
-        return default_colours unless @account
+        return default_colours if @account.nil? || colours_choice.preference.owned_by?(@account)
 
         AppearanceChoice.new(person: @account, account: nil).colours
       end
 
       def warn_missing(kind, name)
-        Rails.logger.warn("keystone_ui-preferences: #{@person.class.name} #{@person.id} saved the #{kind} \"#{name}\", which keystone_ui-looks does not have")
+        row = colours_choice.preference
+        Rails.logger.warn("keystone_ui-preferences: #{row.owner_type} #{row.owner_id} saved the #{kind} #{name.to_s.inspect}, which keystone_ui-looks does not have")
       end
 
       def template_offered?
@@ -83,7 +84,11 @@ module KeystoneUi
       end
 
       def saved
-        @saved ||= LayoutChoice.new(person: @person, account: @account, component_key: "colours").value.to_h
+        @saved ||= colours_choice.value.to_h
+      end
+
+      def colours_choice
+        @colours_choice ||= LayoutChoice.new(person: @person, account: @account, component_key: "colours")
       end
 
       def configuration
