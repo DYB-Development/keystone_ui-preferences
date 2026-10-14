@@ -30,4 +30,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "accent" => "#e11d48", "surface" => "#f5e6c8", "text" => "#3b2f1e" }, saved_value)
   end
+
+  test "saving Default removes the person's saved colours" do
+    pick(template_name: "forest")
+
+    pick(template_name: "default")
+
+    assert_nil saved_value
+  end
 end

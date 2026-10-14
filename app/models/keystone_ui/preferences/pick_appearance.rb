@@ -10,11 +10,18 @@ module KeystoneUi
       end
 
       def call
+        return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
+
         preference.update!(value: chosen_colours)
         Kept.new
       end
 
       private
+
+      def use_default
+        preference.destroy! if preference.persisted?
+        Kept.new
+      end
 
       def chosen_colours
         return { "template_name" => @values[:template_name] } if @values[:template_name].present?
