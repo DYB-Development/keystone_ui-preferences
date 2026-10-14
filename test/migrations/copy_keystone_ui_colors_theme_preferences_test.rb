@@ -84,4 +84,12 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_nil saved(person, "mode")
   end
+
+  test "a person's saved look is copied as their look" do
+    theme_preference(person, look: "rounded")
+
+    copy
+
+    assert_equal({ "look" => "rounded" }, saved(person, "look")&.value)
+  end
 end
