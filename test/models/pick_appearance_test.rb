@@ -54,4 +54,8 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_nil saved_value
   end
+
+  test "a template that is not in the catalogue is refused with a reason" do
+    assert_equal "Choose Default, one of the colour templates or Custom.", pick(template_name: "jungle").message
+  end
 end
