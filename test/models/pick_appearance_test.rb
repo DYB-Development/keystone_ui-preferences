@@ -124,4 +124,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal [ { "template_name" => "forest" }, { "mode" => "dark" } ], [ saved_value, saved_mode ]
   end
+
+  test "a save that sends no mode leaves the person's saved mode as it was" do
+    pick(template_name: "forest", mode: "dark")
+
+    pick(template_name: "ocean")
+
+    assert_equal({ "mode" => "dark" }, saved_mode)
+  end
 end

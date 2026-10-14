@@ -58,6 +58,8 @@ module KeystoneUi
       end
 
       def keep_mode
+        return unless @values.key?(:mode)
+
         ComponentPreference.find_or_initialize_by(owner: @person, component_key: "mode").update!(value: { "mode" => @values[:mode] })
       end
 
