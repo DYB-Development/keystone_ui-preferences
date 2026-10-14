@@ -16,6 +16,12 @@ class CopyKeystoneUiColorsThemePreferences < ActiveRecord::Migration[<%= ActiveR
   private
 
   def colours(theme_preference)
-    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: "colours", value: { "template_name" => theme_preference.template_name } }
+    { owner_type: theme_preference.owner_type, owner_id: theme_preference.owner_id, component_key: "colours", value: colours_value(theme_preference) }
+  end
+
+  def colours_value(theme_preference)
+    return { "template_name" => theme_preference.template_name } if theme_preference.template_name.present?
+
+    { "accent" => theme_preference.accent, "surface" => theme_preference.surface, "text" => theme_preference.text }
   end
 end

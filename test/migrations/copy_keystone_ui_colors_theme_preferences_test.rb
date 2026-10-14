@@ -60,4 +60,12 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, saved(person, "colours")&.value)
   end
+
+  test "a person's custom colours are copied as their accent, surface and text" do
+    theme_preference(person, accent: "#1d4ed8", surface: "slate", text: "#111111")
+
+    copy
+
+    assert_equal({ "accent" => "#1d4ed8", "surface" => "slate", "text" => "#111111" }, saved(person, "colours")&.value)
+  end
 end
