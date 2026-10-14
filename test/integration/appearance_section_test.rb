@@ -41,4 +41,12 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_predicate cookies[KeystoneUi::ThemeChoice::COOKIE], :blank?
   end
+
+  test "saving in another settings section leaves the theme toggle's choice in this browser" do
+    cookies[KeystoneUi::ThemeChoice::COOKIE] = "light"
+
+    patch "/settings/navigation_placement", params: { placement: "left" }
+
+    assert_equal "light", cookies[KeystoneUi::ThemeChoice::COOKIE]
+  end
 end
