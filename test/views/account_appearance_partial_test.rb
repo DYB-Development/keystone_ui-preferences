@@ -84,4 +84,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ true ], switch_on?("members_choose_look")
   end
+
+  test "the account's section shows the look switch off once an admin turns it off" do
+    save("look", { "look" => "sharp" }, members_choose: false)
+
+    render_section
+
+    assert_equal [ false ], switch_on?("members_choose_look")
+  end
 end
