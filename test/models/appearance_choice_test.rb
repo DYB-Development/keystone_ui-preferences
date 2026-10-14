@@ -174,4 +174,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "rounded", look_for(person, account)
   end
+
+  test "a person with no look of their own gets the account's look" do
+    save_look(account, "sharp")
+
+    assert_equal "sharp", look_for(person, account)
+  end
 end
