@@ -137,4 +137,14 @@ class CopyKeystoneUiColorsThemePreferencesTest < ActiveSupport::TestCase
 
     assert_equal [ { "template_name" => "ocean" } ], KeystoneUi::Preferences::ComponentPreference.where(owner: person, component_key: "colours").map(&:value)
   end
+
+  test "running the copy a second time changes nothing" do
+    theme_preference(person, template_name: "forest", mode: "dark", look: "rounded")
+    copy
+    first = KeystoneUi::Preferences::ComponentPreference.order(:id).map(&:attributes)
+
+    copy
+
+    assert_equal first, KeystoneUi::Preferences::ComponentPreference.order(:id).map(&:attributes)
+  end
 end
