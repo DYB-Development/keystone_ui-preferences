@@ -8,10 +8,16 @@ export default class extends Controller {
   static targets = ["accentPicker", "surfacePicker", "textPicker", "customRadio", "templateLabel"]
 
   #setVariables = new Set()
+  #loadedValues = []
 
   connect() {
+    this.#loadedValues = this.#themeValues()
     this.colorPickerTargets().forEach(picker => picker.addEventListener("change", () => this.customColorChanged()))
     this.#writeExport()
+  }
+
+  confirmLeave(event) {
+    if (this.#hasUnsavedChanges()) event.preventDefault()
   }
 
   disconnect() {
@@ -139,6 +145,14 @@ export default class extends Controller {
     const css = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
     exported.value = css
     this.element.querySelector("[data-controller~='clipboard']").dataset.clipboardText = css
+  }
+
+  #hasUnsavedChanges() {
+    return this.#themeValues().some((value, place) => value !== this.#loadedValues[place])
+  }
+
+  #themeValues() {
+    return [...this.element.querySelectorAll("[name^='theme[']")].map(({ value }) => value)
   }
 
   #roles() {

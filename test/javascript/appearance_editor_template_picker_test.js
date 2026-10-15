@@ -152,7 +152,7 @@ function listeningPicker() {
 }
 
 test("changing the accent, surface or text picker selects the Custom card and outlines it", () => {
-  const settings = new AppearanceEditorController({ scope: { element: { querySelector: () => null } } })
+  const settings = new AppearanceEditorController({ scope: { element: { querySelector: () => null, querySelectorAll: () => [] } } })
   const surface = listeningPicker()
   const customRadio = { checked: false }
   const labels = [cardLabel("forest", "border-accent-500"), cardLabel("custom", "border-transparent")]
