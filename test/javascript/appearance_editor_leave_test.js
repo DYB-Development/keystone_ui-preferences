@@ -2,13 +2,14 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import AppearanceEditorController from "../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js"
 
-function sectionLoadedWith(values) {
-  const fields = Object.entries(values).map(([name, value]) => ({ name, value }))
+function sectionLoadedWith(values, savedTheme = {}) {
+  const fields = Object.entries(values).map(([name, value]) => ({ name, value, closest: () => null, dispatchEvent() {} }))
   const visited = []
   const question = { classes: new Set(["hidden"]), classList: { add(name) { question.classes.add(name) }, remove(name) { question.classes.delete(name) } } }
+  const parts = { "[data-saved-theme]": { dataset: { savedTheme: JSON.stringify(savedTheme) } }, "[data-leave-question] [data-modal-target='backdrop']": question }
   const element = {
     ownerDocument: { documentElement: { style: {} }, defaultView: { Turbo: { visit(url) { visited.push(url) } } } },
-    querySelector: (selector) => (selector === "[data-leave-question] [data-modal-target='backdrop']" ? question : null),
+    querySelector: (selector) => parts[selector] ?? fields.find(({ name }) => selector === `[name="${name}"]`) ?? null,
     querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : [])
   }
   const editor = new AppearanceEditorController({ scope: { element } })
@@ -66,6 +67,18 @@ test("the visit made after choosing to leave is not held again", () => {
 
 test("following a link with no theme field changed is not held", () => {
   const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, false)
+})
+
+test("following a link after resetting the changed fields to the saved theme is not held", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000", "theme[radius][light]": "" }, { primary: { light: "#000000" } })
+  editor.change("theme[primary][light]", "#1f5fbf")
+  editor.change("theme[radius][light]", "0.5rem")
+  editor.reset()
   const leaving = visit()
 
   editor.confirmLeave(leaving)
