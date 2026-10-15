@@ -26,11 +26,15 @@ module KeystoneUi
       private
 
       def colours_sent?
-        @values.key?(:template_name)
+        @values.key?(:template_name) || pasting?
+      end
+
+      def pasting?
+        @values[:pasted_theme].present?
       end
 
       def chosen_colours
-        return pasted_theme if @values[:pasted_theme].present?
+        return pasted_theme if pasting?
 
         ChosenColours.new(@values) if colours_sent?
       end

@@ -103,4 +103,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.625rem" } } }, account_preference("colours").value)
   end
+
+  test "a pasted theme is refused with a reason when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    assert_equal "This app does not let accounts choose their colours.", pick(pasted_theme: PASTED_THEME).message
+  end
 end
