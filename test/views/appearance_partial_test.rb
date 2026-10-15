@@ -413,6 +413,17 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, settings_by_set("Typography")
   end
 
+  test "Other offers the radius, the spacing, the border width and the six shadow settings" do
+    render_section
+
+    expected = [
+      [ "Shape", %w[radius spacing border-width] ],
+      [ "Shadow", %w[shadow-color shadow-opacity shadow-blur shadow-spread shadow-offset-x shadow-offset-y] ]
+    ]
+
+    assert_equal expected, settings_by_set("Other")
+  end
+
   test "the theme settings are shown with no closed disclosure around them" do
     render_section
 
