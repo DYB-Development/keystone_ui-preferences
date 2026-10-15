@@ -242,4 +242,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ 1, 1, 1, 13, 1 ], targets
   end
+
+  test "the account's section shows the saved theme, not theme values carried in the address, when the page is opened" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "theme" => { "radius" => { "light" => "0.5rem" } } })
+
+    render partial: "keystone_ui/preferences/settings/account_appearance", locals: { person: admin, account: account, submit_url: "/settings/account_appearance", selection: { theme: { "radius" => { "light" => "9rem" } } } }
+
+    assert_equal "0.5rem", css_select("input[name='theme[radius][light]']").first["value"]
+  end
 end
