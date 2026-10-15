@@ -234,4 +234,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal JSON.parse(File.read(File.expand_path("../fixtures/pinned/cards.json", __dir__))), cards
   end
+
+  test "the template picker script finds the account's accent, surface and text colour pickers, each card to outline and the Custom card" do
+    render_section
+
+    targets = %w[accentPicker surfacePicker textPicker templateLabel customRadio].map { |target| css_select("[data-keystone-ui--preferences--theme-settings-target=#{target}]").size }
+
+    assert_equal [ 1, 1, 1, 13, 1 ], targets
+  end
 end
