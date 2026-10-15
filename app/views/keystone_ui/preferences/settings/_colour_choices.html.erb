@@ -30,6 +30,13 @@
         <span><%= template[:label] %></span>
       <% end %>
     <% end %>
+    <% if local_assigns[:presets] %>
+      <% KeystoneUi::Looks::Themes.all.each do |name, preset| %>
+        <%= ui_option_card(name: "template_name", value: name.to_s, selected: false) do %>
+          <span><%= preset[:label] %></span>
+        <% end %>
+      <% end %>
+    <% end %>
     <%= ui_option_card(
       name: "template_name",
       value: "",

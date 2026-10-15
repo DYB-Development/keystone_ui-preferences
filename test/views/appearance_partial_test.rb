@@ -23,10 +23,10 @@ class AppearancePartialTest < ActionView::TestCase
     css_select("input[type=radio][name=template_name]")
   end
 
-  test "the appearance section offers Default, the five colour templates and Custom" do
+  test "the appearance section offers Default, the five colour templates, the six preset themes and Custom" do
     render_section
 
-    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "" ], template_options.map { |option| option["value"] }
+    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "graphite", "harbor", "fern", "terracotta", "heather", "ledger", "" ], template_options.map { |option| option["value"] }
   end
 
   def selected_template
