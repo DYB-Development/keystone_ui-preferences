@@ -15,4 +15,11 @@ class ThemeRolesTest < ActiveSupport::TestCase
 
     assert_equal expected, KeystoneUi::Preferences::ThemeRoles.names
   end
+
+  test "every variable a theme role sets is defined by keystone_ui-styles, light and dark" do
+    css = File.read(File.join(Gem.loaded_specs.fetch("keystone_ui-styles").full_gem_path, "app/assets/tailwind/keystone_ui_styles/engine.css"))
+    variables = KeystoneUi::Preferences::ThemeRoles::ROLES.values.flat_map { |role| role[:variables] }.flat_map { |variable| [ variable, "#{variable}-dark" ] }
+
+    assert_empty variables.reject { |variable| css.include?("#{variable}:") }
+  end
 end
