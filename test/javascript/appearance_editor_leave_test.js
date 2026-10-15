@@ -4,14 +4,16 @@ import AppearanceEditorController from "../../app/javascript/keystone_ui/prefere
 
 function sectionLoadedWith(values) {
   const fields = Object.entries(values).map(([name, value]) => ({ name, value }))
+  const question = { classes: new Set(["hidden"]), classList: { add(name) { question.classes.add(name) }, remove(name) { question.classes.delete(name) } } }
   const element = {
     ownerDocument: { documentElement: { style: {} } },
-    querySelector: () => null,
+    querySelector: (selector) => (selector === "[data-leave-question] [data-modal-target='backdrop']" ? question : null),
     querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : [])
   }
   const editor = new AppearanceEditorController({ scope: { element } })
   editor.connect()
   editor.change = (name, value) => { fields.find((field) => field.name === name).value = value }
+  editor.questionShown = () => !question.classes.has("hidden")
   return editor
 }
 
@@ -27,4 +29,13 @@ test("following a link after changing a theme field holds the visit", () => {
   editor.confirmLeave(leaving)
 
   assert.equal(leaving.held, true)
+})
+
+test("a held visit opens the question asking whether to leave without saving", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  editor.change("theme[primary][light]", "#1f5fbf")
+
+  editor.confirmLeave(visit())
+
+  assert.equal(editor.questionShown(), true)
 })

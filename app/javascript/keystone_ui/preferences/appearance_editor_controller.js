@@ -17,7 +17,10 @@ export default class extends Controller {
   }
 
   confirmLeave(event) {
-    if (this.#hasUnsavedChanges()) event.preventDefault()
+    if (!this.#hasUnsavedChanges()) return
+
+    event.preventDefault()
+    this.element.querySelector("[data-leave-question] [data-modal-target='backdrop']").classList.remove("hidden")
   }
 
   disconnect() {
