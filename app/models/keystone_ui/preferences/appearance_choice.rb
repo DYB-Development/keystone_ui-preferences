@@ -40,7 +40,7 @@ module KeystoneUi
         return unless configuration.account_colors
         return preset_css if saved.key?("preset_name")
         return unless saved.key?("theme")
-        return refused_theme_css if refused_setting
+        return refused_theme_css if refused_theme
 
         Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION, own_look? ]) { written_theme }
       end
@@ -53,7 +53,7 @@ module KeystoneUi
         return template_colours if template_offered?
         return fallback_colours if saved["template_name"].present?
         return account_colours if saved["preset_name"].present? && !preset_offered?
-        return account_colours if refused_setting
+        return account_colours if refused_theme
 
         surface = catalogue_colour("surface", KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
         {
@@ -79,15 +79,15 @@ module KeystoneUi
 
       def refused_theme_css
         row = colours_choice.preference
-        Rails.logger.warn("keystone_ui-preferences: #{row.owner_type} #{row.owner_id} saved a theme whose #{refused_setting} setting fails the theme check")
+        Rails.logger.warn("keystone_ui-preferences: #{row.owner_type} #{row.owner_id} saved a theme #{refused_theme}")
         account_theme_css
       end
 
-      def refused_setting
+      def refused_theme
         return unless saved.key?("theme")
-        return "malformed" unless theme_shaped?(saved["theme"])
+        return "that is not a set of roles, so it fails the theme check" unless theme_shaped?(saved["theme"])
 
-        @refused_setting ||= CheckedTheme.new(saved["theme"]).failing_setting&.then { |setting| "--#{setting}" }
+        @refused_theme ||= CheckedTheme.new(saved["theme"]).failing_setting&.then { |setting| "whose --#{setting} setting fails the theme check" }
       end
 
       def written_theme
