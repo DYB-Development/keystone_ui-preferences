@@ -5,6 +5,7 @@
   appearance = KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account)
   drawn = appearance.colours
   saved = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")&.value || { "template_name" => "default" }
+  sent = request.get? ? {} : local_assigns[:selection].to_h
   saved_look = KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "look")&.value.to_h["look"]
 %>
 
@@ -17,7 +18,7 @@
     <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
       <div style="display: flex; flex-direction: column; gap: 2rem;">
         <% if chooses_colours %>
-          <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true, presets: true } %>
+          <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true, presets: true, sent_paste: sent[:pasted_theme] } %>
         <% end %>
 
         <% if appearance.person_chooses_look? && KeystoneUi.configuration.looks.any? %>
@@ -34,7 +35,7 @@
         <% end %>
 
         <% if chooses_colours %>
-          <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, sent_theme: (local_assigns[:selection].to_h[:theme] unless request.get?) } %>
+          <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, sent_theme: sent[:theme] } %>
         <% end %>
 
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">

@@ -160,4 +160,12 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal({ "theme" => JSON.parse(File.read(File.join(export, "theme.json"))) }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value)
   end
+
+  test "a person whose pasted theme is refused finds it still in the paste box" do
+    pasted = ":root {\n  --primary: oklch(0.205 0 0);\n}\n@import \"x\";\n"
+
+    patch "/settings/appearance", params: { pasted_theme: pasted }
+
+    assert_equal pasted, css_select("textarea[name=pasted_theme]").first.text.delete_prefix("\n")
+  end
 end
