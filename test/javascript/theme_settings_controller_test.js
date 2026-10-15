@@ -183,3 +183,13 @@ test("picking a preset card fills a colour field's picker, swatch, hex label and
 
   assert.deepEqual(picker.shown(), ["#1f5fbf", "#1f5fbf", "#1f5fbf", "#1f5fbf"])
 })
+
+test("picking a preset card outlines that card and clears the outline from every other card", () => {
+  const labels = [cardLabel("default", "border-accent-500"), cardLabel("harbor", "border-transparent")]
+  const settings = new ThemeSettingsController({ scope: { element: { querySelector: () => null } } })
+  settings.templateLabelTargets = labels
+
+  settings.selectPreset(presetCard({ primary: { light: "#1f5fbf" } }))
+
+  assert.deepEqual(bordersOf(labels), [["border-transparent"], ["border-accent-500"]])
+})
