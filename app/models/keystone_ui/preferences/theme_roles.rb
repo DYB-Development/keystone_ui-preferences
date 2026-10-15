@@ -36,7 +36,7 @@ module KeystoneUi
         "sidebar-accent-foreground" => { kind: :colour, variables: %w[--ks-color-nav-text-hover] },
         "sidebar-border" => { kind: :colour, variables: %w[--ks-color-nav-border] },
         "sidebar-ring" => { kind: :colour, variables: [] },
-        "radius" => { kind: :length, variables: [] },
+        "radius" => { kind: :length, variables: %w[--ks-radius-control --ks-radius-surface] },
         "spacing" => { kind: :length, variables: [] },
         "letter-spacing" => { kind: :letter_spacing, variables: [] },
         "font-sans" => { kind: :font_list, variables: [] },

@@ -43,4 +43,8 @@ class ThemeCssTest < ActiveSupport::TestCase
       "--ks-color-danger-hover-dark: color-mix(in oklab, oklch(0.704 0.191 22.216) 85%, white);"
     ], declarations(css).grep(/-hover/)
   end
+
+  test "a theme's radius is written to the corner radius of controls and of surfaces" do
+    assert_equal [ "--ks-radius-control: 0.5rem;", "--ks-radius-surface: 0.5rem;" ], declarations(css_for("radius" => { "light" => "0.5rem" }))
+  end
 end
