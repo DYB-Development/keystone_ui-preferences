@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "minitest/mock"
 
 class AppearanceChoiceTest < ActiveSupport::TestCase
   def person
@@ -325,5 +326,22 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     css = theme_css_for(person, account)
 
     assert_equal css, Rails.cache.read([ "preset_css", "harbor", KeystoneUi::Looks::VERSION, KeystoneUi::Preferences::ThemeCss::VERSION, false ])
+  end
+
+  test "a preset changed in a later keystone_ui-looks release is drawn with the change for a person who picked it before" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "harbor" })
+    theme_css_for(person, account)
+    changed = KeystoneUi::Looks::Themes[:harbor].merge(theme: KeystoneUi::Looks::Themes[:harbor][:theme].merge("primary" => { "light" => "#123456", "dark" => "#654321" }))
+    looks = KeystoneUi::Looks
+    released = looks::VERSION
+    looks.send(:remove_const, :VERSION)
+    looks.const_set(:VERSION, "#{released}-next")
+
+    css = KeystoneUi::Looks::Themes.stub(:[], changed) { theme_css_for(person, account) }
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(changed[:theme]).to_s, css
+  ensure
+    looks.send(:remove_const, :VERSION)
+    looks.const_set(:VERSION, released)
   end
 end
