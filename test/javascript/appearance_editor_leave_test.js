@@ -4,9 +4,10 @@ import AppearanceEditorController from "../../app/javascript/keystone_ui/prefere
 
 function sectionLoadedWith(values) {
   const fields = Object.entries(values).map(([name, value]) => ({ name, value }))
+  const visited = []
   const question = { classes: new Set(["hidden"]), classList: { add(name) { question.classes.add(name) }, remove(name) { question.classes.delete(name) } } }
   const element = {
-    ownerDocument: { documentElement: { style: {} } },
+    ownerDocument: { documentElement: { style: {} }, defaultView: { Turbo: { visit(url) { visited.push(url) } } } },
     querySelector: (selector) => (selector === "[data-leave-question] [data-modal-target='backdrop']" ? question : null),
     querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : [])
   }
@@ -14,6 +15,7 @@ function sectionLoadedWith(values) {
   editor.connect()
   editor.change = (name, value) => { fields.find((field) => field.name === name).value = value }
   editor.questionShown = () => !question.classes.has("hidden")
+  editor.visited = visited
   return editor
 }
 
@@ -38,4 +40,14 @@ test("a held visit opens the question asking whether to leave without saving", (
   editor.confirmLeave(visit())
 
   assert.equal(editor.questionShown(), true)
+})
+
+test("choosing to leave without saving visits the page the held visit was going to", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  editor.change("theme[primary][light]", "#1f5fbf")
+  editor.confirmLeave(visit("/settings/layouts"))
+
+  editor.leave()
+
+  assert.deepEqual(editor.visited, ["/settings/layouts"])
 })

@@ -9,6 +9,7 @@ export default class extends Controller {
 
   #setVariables = new Set()
   #loadedValues = []
+  #heldUrl = null
 
   connect() {
     this.#loadedValues = this.#themeValues()
@@ -20,7 +21,12 @@ export default class extends Controller {
     if (!this.#hasUnsavedChanges()) return
 
     event.preventDefault()
+    this.#heldUrl = event.detail.url
     this.element.querySelector("[data-leave-question] [data-modal-target='backdrop']").classList.remove("hidden")
+  }
+
+  leave() {
+    this.element.ownerDocument.defaultView.Turbo.visit(this.#heldUrl)
   }
 
   disconnect() {
