@@ -65,4 +65,38 @@ class AccountAppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal [ [ 2, true ], [ "--ks-color-accent: #123456;", "--ks-color-accent-dark: #abcdef;" ] ], [ found, css_select("head style").text.lines.map(&:strip).grep(/--ks-color-accent(-dark)?:/) ]
   end
+
+  test "an admin whose typed theme for the account is refused is told why, sees what they typed in the theme fields and under the refused one, and has nothing saved" do
+    ApplicationController.signed_in_user = admin
+    patch "/settings/account_appearance", params: { template_name: "default", members_choose: "1", theme: { primary: { light: "#123456", dark: "#abcdef" }, radius: { light: "big" } } }
+
+    assert_equal [
+      true,
+      { "theme[primary][light]" => "#123456", "theme[primary][dark]" => "#abcdef", "theme[radius][light]" => "big" },
+      [ "The --radius value is not a number followed by px, rem or em, or zero, so it was not saved." ],
+      nil
+    ], [
+      response.body.include?("The --radius value is not a number followed by px, rem or em, or zero, so it was not saved."),
+      css_select("form input[name='theme[primary][light]'], form input[name='theme[primary][dark]'], form input[name='theme[radius][light]']").to_h { |field| [ field["name"], field["value"] ] },
+      css_select(".ks-form-field:has(> input[name='theme[radius][light]']) + p.ks-error").map { |error| error.text.strip },
+      KeystoneUi::Preferences::ComponentPreference.find_by(owner: account, component_key: "colours")
+    ]
+  end
+
+  test "an admin whose pasted theme for the account is refused finds it still in the paste box" do
+    ApplicationController.signed_in_user = admin
+    pasted = ":root {\n  --primary: oklch(0.205 0 0);\n}\n@import \"x\";\n"
+
+    patch "/settings/account_appearance", params: { template_name: "default", members_choose: "1", pasted_theme: pasted }
+
+    assert_equal pasted, css_select("textarea[name=pasted_theme]").first.text.delete_prefix("\n")
+  end
+
+  test "an admin whose pasted theme for the account is refused finds no theme field marked, since the paste is what was checked" do
+    ApplicationController.signed_in_user = admin
+
+    patch "/settings/account_appearance", params: { template_name: "default", members_choose: "1", pasted_theme: ":root {\n  --primary: oklch(0.205 0 0);\n}\n@import \"x\";\n", theme: { radius: { light: "big" } } }
+
+    assert_empty css_select("[data-theme-roles] p.ks-error")
+  end
 end

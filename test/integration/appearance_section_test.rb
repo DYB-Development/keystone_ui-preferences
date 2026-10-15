@@ -139,11 +139,39 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
     ], [ response.body.include?("The --radius value is not a number followed by px, rem or em, or zero, so it was not saved."), KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value ]
   end
 
+  test "a person whose typed theme is refused is told why, sees what they typed in the theme fields, and has nothing saved" do
+    patch "/settings/appearance", params: { theme: { primary: { light: "#123456", dark: "#abcdef" }, radius: { light: "big" } } }
+
+    assert_equal [
+      true,
+      { "theme[primary][light]" => "#123456", "theme[primary][dark]" => "#abcdef", "theme[radius][light]" => "big" },
+      nil
+    ], [
+      response.body.include?("The --radius value is not a number followed by px, rem or em, or zero, so it was not saved."),
+      css_select("form input[name='theme[primary][light]'], form input[name='theme[primary][dark]'], form input[name='theme[radius][light]']").to_h { |field| [ field["name"], field["value"] ] },
+      KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")
+    ]
+  end
+
   test "a person who pastes back an exported theme and saves it keeps every value the export held" do
     export = File.expand_path("../fixtures/export", __dir__)
 
     patch "/settings/appearance", params: { pasted_theme: File.read(File.join(export, "theme.css")) }
 
     assert_equal({ "theme" => JSON.parse(File.read(File.join(export, "theme.json"))) }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value)
+  end
+
+  test "a person whose pasted theme is refused finds it still in the paste box" do
+    pasted = ":root {\n  --primary: oklch(0.205 0 0);\n}\n@import \"x\";\n"
+
+    patch "/settings/appearance", params: { pasted_theme: pasted }
+
+    assert_equal pasted, css_select("textarea[name=pasted_theme]").first.text.delete_prefix("\n")
+  end
+
+  test "a person whose pasted theme is refused finds no theme field marked, since the paste is what was checked" do
+    patch "/settings/appearance", params: { pasted_theme: ":root {\n  --primary: oklch(0.205 0 0);\n}\n@import \"x\";\n", theme: { radius: { light: "big" } } }
+
+    assert_empty css_select("[data-theme-roles] p.ks-error")
   end
 end

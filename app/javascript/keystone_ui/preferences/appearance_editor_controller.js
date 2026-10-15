@@ -8,14 +8,13 @@ export default class extends Controller {
   static targets = ["accentPicker", "surfacePicker", "textPicker", "customRadio", "templateLabel"]
 
   #setVariables = new Set()
-  #loadedValues = []
   #heldUrl = null
   #leaveAllowed = false
 
   connect() {
-    this.#loadedValues = this.#themeValues()
     this.colorPickerTargets().forEach(picker => picker.addEventListener("change", () => this.customColorChanged()))
     this.#writeExport()
+    this.#drawUnsavedFields()
   }
 
   confirmLeave(event) {
@@ -166,12 +165,24 @@ export default class extends Controller {
     this.element.querySelector("[data-controller~='clipboard']").dataset.clipboardText = css
   }
 
-  #hasUnsavedChanges() {
-    return !this.#leaveAllowed && this.#themeValues().some((value, place) => value !== this.#loadedValues[place])
+  #drawUnsavedFields() {
+    this.#unsavedFields().forEach(field => this.apply({ target: field }))
   }
 
-  #themeValues() {
-    return [...this.element.querySelectorAll("[name^='theme[']")].map(({ value }) => value)
+  #unsavedFields() {
+    const saved = this.#savedTheme()
+    return [...this.element.querySelectorAll("[name^='theme[']")].filter(field => {
+      const [, role, side] = field.name.match(THEME_FIELD)
+      return field.value !== (saved[role]?.[side] ?? "")
+    })
+  }
+
+  #savedTheme() {
+    return JSON.parse(this.element.querySelector("[data-saved-theme]")?.dataset.savedTheme ?? "{}")
+  }
+
+  #hasUnsavedChanges() {
+    return !this.#leaveAllowed && this.#unsavedFields().length > 0
   }
 
   #roles() {
