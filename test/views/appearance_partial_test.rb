@@ -143,10 +143,10 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ [ "accent" ], [ "surface" ], [ "text" ] ], targets
   end
 
-  test "the template picker script finds each template's option and the Custom option to highlight" do
+  test "the template picker script finds each template's option, each preset theme's option and the Custom option to highlight" do
     render_section
 
-    assert_equal %w[default ocean forest twilight coral arctic custom], css_select("label[data-keystone-ui--preferences--theme-settings-target=templateLabel]").map { |label| label["data-template"] }
+    assert_equal %w[default ocean forest twilight coral arctic graphite harbor fern terracotta heather ledger custom], css_select("label[data-keystone-ui--preferences--theme-settings-target=templateLabel]").map { |label| label["data-template"] }
   end
 
   test "the template picker script finds the Custom option to select when a colour picker changes" do

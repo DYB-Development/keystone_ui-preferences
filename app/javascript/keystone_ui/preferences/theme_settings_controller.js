@@ -36,6 +36,8 @@ export default class extends Controller {
     Object.entries(theme).forEach(([role, sides]) => {
       Object.entries(sides).forEach(([side, value]) => this.setThemeField(`theme[${role}][${side}]`, value))
     })
+
+    this.highlightTemplate(input.closest("[data-template]").dataset.template)
   }
 
   setThemeField(name, value) {

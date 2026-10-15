@@ -40,6 +40,10 @@
           input_data: {
             action: "keystone-ui--preferences--theme-settings#selectPreset",
             theme: preset[:theme].to_json
+          },
+          label_data: {
+            "keystone-ui--preferences--theme-settings-target": "templateLabel",
+            template: name.to_s
           }
         ) do %>
           <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 9999px; background-color: <%= preset[:theme].dig("primary", "light") %>;"></span>
