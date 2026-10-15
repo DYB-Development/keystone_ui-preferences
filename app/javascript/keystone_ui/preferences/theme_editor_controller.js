@@ -6,6 +6,10 @@ const PROPERTY_FOR_KIND = { colour: "color", length: "width", letter_spacing: "l
 export default class extends Controller {
   #setVariables = new Set()
 
+  connect() {
+    this.#writeExport()
+  }
+
   apply({ target: { name, value } }) {
     const field = name.match(THEME_FIELD)
     if (!field) return
@@ -26,6 +30,15 @@ export default class extends Controller {
   disconnect() {
     this.#setVariables.forEach(variable => this.#rootStyle().removeProperty(variable))
     this.#setVariables.clear()
+  }
+
+  #writeExport() {
+    const roles = Object.keys(JSON.parse(this.element.dataset.themeRoles))
+    const block = side => roles.flatMap(role => {
+      const field = this.element.querySelector(`[name="theme[${role}][${side}]"]`)
+      return field ? [`  --${role}: ${field.value};\n`] : []
+    }).join("")
+    this.element.querySelector("[data-theme-export]").value = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
   }
 
   #set(variable, value) {
