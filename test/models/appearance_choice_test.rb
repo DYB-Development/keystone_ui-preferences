@@ -265,4 +265,17 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal css, Rails.cache.read([ row.cache_key_with_version, "theme_css" ])
   end
+
+  test "a saved theme that is not a set of roles each holding light and dark colours is not written" do
+    themes = [ "oklch(0.205 0 0)", { "primary" => "#171717" }, { "primary" => [ "#171717" ] } ]
+
+    written = themes.map do |theme|
+      KeystoneUi::Preferences::ComponentPreference.where(owner: person, component_key: "colours").delete_all
+      Rails.cache.clear
+      KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => theme })
+      theme_css_for(person, account)
+    end
+
+    assert_equal [ nil, nil, nil ], written
+  end
 end

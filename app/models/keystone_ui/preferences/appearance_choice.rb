@@ -59,8 +59,14 @@ module KeystoneUi
       end
 
       def written_theme
+        return unless theme_shaped?(saved["theme"])
+
         checked = CheckedTheme.new(saved["theme"])
         ThemeCss.new(checked.value["theme"]).to_s unless checked.refusal
+      end
+
+      def theme_shaped?(theme)
+        theme.is_a?(Hash) && theme.values.all?(Hash)
       end
 
       def saved_look(owner)
