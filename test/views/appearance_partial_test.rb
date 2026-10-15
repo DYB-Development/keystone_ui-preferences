@@ -391,6 +391,16 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, settings_by_set("Colors")
   end
 
+  test "each colour in Colors has its light value and its dark value side by side" do
+    render_section
+
+    rows = theme_group("Colors").css("[role=group]").map { |row| [ row["aria-label"], row.css("input[type=hidden][name^='theme[']").map { |field| field["name"] } ] }
+
+    expected = KeystoneUi::Preferences::ThemeRoles::GROUPS["Colors"].values.flatten.map { |name| [ "--#{name}", [ "theme[#{name}][light]", "theme[#{name}][dark]" ] ] }
+
+    assert_equal expected, rows
+  end
+
   test "the theme settings are shown with no closed disclosure around them" do
     render_section
 
