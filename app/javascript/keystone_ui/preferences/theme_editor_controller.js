@@ -12,9 +12,13 @@ export default class extends Controller {
 
     const [, role, side] = field
     const { kind, variables, hover } = JSON.parse(this.element.dataset.themeRoles)[role]
+    const suffix = side === "dark" ? "-dark" : ""
+    if (value === "") {
+      [...variables, hover].filter(Boolean).forEach(variable => this.#remove(`${variable}${suffix}`))
+      return
+    }
     if (!CSS.supports(PROPERTY_FOR_KIND[kind], value)) return
 
-    const suffix = side === "dark" ? "-dark" : ""
     variables.forEach(variable => this.#set(`${variable}${suffix}`, value))
     if (hover) this.#set(`${hover}${suffix}`, `color-mix(in oklab, ${value} 85%, white)`)
   }
@@ -27,6 +31,11 @@ export default class extends Controller {
   #set(variable, value) {
     this.#rootStyle().setProperty(variable, value)
     this.#setVariables.add(variable)
+  }
+
+  #remove(variable) {
+    this.#rootStyle().removeProperty(variable)
+    this.#setVariables.delete(variable)
   }
 
   #rootStyle() {
