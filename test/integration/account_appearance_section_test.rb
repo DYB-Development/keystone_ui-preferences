@@ -82,4 +82,13 @@ class AccountAppearanceSectionTest < ActionDispatch::IntegrationTest
       KeystoneUi::Preferences::ComponentPreference.find_by(owner: account, component_key: "colours")
     ]
   end
+
+  test "an admin whose pasted theme for the account is refused finds it still in the paste box" do
+    ApplicationController.signed_in_user = admin
+    pasted = ":root {\n  --primary: oklch(0.205 0 0);\n}\n@import \"x\";\n"
+
+    patch "/settings/account_appearance", params: { template_name: "default", members_choose: "1", pasted_theme: pasted }
+
+    assert_equal pasted, css_select("textarea[name=pasted_theme]").first.text.delete_prefix("\n")
+  end
 end

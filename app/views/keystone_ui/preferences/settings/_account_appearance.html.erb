@@ -5,6 +5,7 @@
   offers_colours = KeystoneUi::Preferences.configuration.account_colors
   offers_look = KeystoneUi::Preferences.configuration.account_looks && KeystoneUi.configuration.looks.any?
   drawn = KeystoneUi::Preferences::AppearanceChoice.new(person: account, account: nil).colours
+  sent = request.get? ? {} : local_assigns[:selection].to_h
 %>
 
 <% if !offers_colours && !offers_look %>
@@ -15,7 +16,7 @@
   <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
     <div style="display: flex; flex-direction: column; gap: 2rem;">
       <% if offers_colours %>
-        <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true, presets: true, own_theme_hint: "The account's current choice is its own theme.", id_prefix: "account-appearance" } %>
+        <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true, presets: true, own_theme_hint: "The account's current choice is its own theme.", id_prefix: "account-appearance", sent_paste: sent[:pasted_theme] } %>
       <% end %>
 
       <% if offers_look %>
@@ -34,7 +35,7 @@
       <% end %>
 
       <% if offers_colours %>
-        <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, id_prefix: "account-appearance", sent_theme: (local_assigns[:selection].to_h[:theme] unless request.get?) } %>
+        <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, id_prefix: "account-appearance", sent_theme: sent[:theme] } %>
       <% end %>
 
       <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
