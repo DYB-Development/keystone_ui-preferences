@@ -231,3 +231,18 @@ test("following a link with only spaces in the paste box is not held", () => {
 
   assert.equal(leaving.held, false)
 })
+
+function switchOf(name, checked) {
+  return { name, value: "1", type: "checkbox", checked }
+}
+
+test("following a link after turning off a Members choose switch holds the visit", () => {
+  const members = switchOf("members_choose", true)
+  const editor = sectionLoadedWith({}, {}, [{ name: "members_choose", value: "0", type: "hidden" }, members])
+  members.checked = false
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
+})
