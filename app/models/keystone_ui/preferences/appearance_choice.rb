@@ -62,7 +62,11 @@ module KeystoneUi
         return unless theme_shaped?(saved["theme"])
 
         checked = CheckedTheme.new(saved["theme"])
-        ThemeCss.new(checked.value["theme"]).to_s unless checked.refusal
+        ThemeCss.new(checked.value["theme"], own_look: own_look?).to_s unless checked.refusal
+      end
+
+      def own_look?
+        @person.present? && person_chooses_look? && KeystoneUi.configuration.looks.key?(saved_look(@person))
       end
 
       def theme_shaped?(theme)

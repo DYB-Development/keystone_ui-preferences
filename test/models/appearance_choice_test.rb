@@ -294,4 +294,13 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     writer.send(:remove_const, :VERSION)
     writer.const_set(:VERSION, earlier)
   end
+
+  test "a person who saved a look of their own gets the theme's shape and type in a rule their look outranks" do
+    theme = { "primary" => { "light" => "#171717" }, "radius" => { "light" => "0.5rem" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => theme })
+    save_look(account, "sharp")
+    save_look(person, "rounded")
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme, own_look: true).to_s, theme_css_for(person, account)
+  end
 end
