@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
+const THEME_FIELD = /^theme\[([^\]]+)\]\[(light|dark)\]$/
+
 export default class extends Controller {
   static targets = ["accentPicker", "surfacePicker", "textPicker", "customRadio", "templateLabel"]
 
@@ -38,6 +40,16 @@ export default class extends Controller {
     })
 
     this.highlightTemplate(input.closest("[data-template]").dataset.template)
+  }
+
+  reset() {
+    const preset = this.element.querySelector("input[name='template_name'][data-theme]:checked")
+    const theme = JSON.parse(preset.dataset.theme)
+
+    this.element.querySelectorAll("[name^='theme[']").forEach(({ name }) => {
+      const [, role, side] = name.match(THEME_FIELD)
+      this.setThemeField(name, theme[role]?.[side] ?? "")
+    })
   }
 
   setThemeField(name, value) {

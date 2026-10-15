@@ -47,12 +47,16 @@ function field(name, value, onEvent) {
   }
 }
 
-function editorFormOn(root, values) {
+function editorFormOn(root, values, { chosenPreset = null, savedTheme = {} } = {}) {
   const roles = { primary: { kind: "colour", variables: ["--ks-color-accent"] }, radius: { kind: "length", variables: ["--ks-radius-control"] } }
   const editor = new ThemeEditorController({ scope: { element: { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(roles) } } } })
   const fields = Object.entries(values).map(([name, value]) => field(name, value, (event) => editor.apply(event)))
   const element = {
-    querySelector: (selector) => fields.find(({ name }) => selector === `[name="${name}"]`) ?? null,
+    querySelector(selector) {
+      if (selector === "input[name='template_name'][data-theme]:checked") return chosenPreset && { dataset: { theme: JSON.stringify(chosenPreset) } }
+      if (selector === "[data-saved-theme]") return { dataset: { savedTheme: JSON.stringify(savedTheme) } }
+      return fields.find(({ name }) => selector === `[name="${name}"]`) ?? null
+    },
     querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : [])
   }
   const settings = new ThemeSettingsController({ scope: { element } })
@@ -71,4 +75,13 @@ test("picking a preset card draws the preset on the page's root element before s
   settings.selectPreset(presetCard({ primary: { light: "#1f5fbf", dark: "#8ab4f8" }, radius: { light: "0.5rem" } }))
 
   assert.deepEqual(root.variables, { "--ks-color-accent": "#1f5fbf", "--ks-color-accent-dark": "#8ab4f8", "--ks-radius-control": "0.5rem" })
+})
+
+test("reset fills every theme field from the chosen preset", () => {
+  const preset = { primary: { light: "#1f5fbf", dark: "#8ab4f8" }, radius: { light: "0.5rem" } }
+  const { fields, settings } = editorFormOn(pageRoot(), { "theme[primary][light]": "#ff0000", "theme[primary][dark]": "#ff0000", "theme[radius][light]": "2rem" }, { chosenPreset: preset })
+
+  settings.reset()
+
+  assert.deepEqual(fields.map(({ value }) => value), ["#1f5fbf", "#8ab4f8", "0.5rem"])
 })
