@@ -29,4 +29,10 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal [ true ] * colours.size, colours.map { |colour| check("ring" => { "light" => colour }).refusal.is_a?(KeystoneUi::Preferences::Refusal) }
   end
+
+  test "names that are not theme roles and sides other than light and dark are left out of the theme" do
+    checked = check("ring" => { "light" => "#a1a1a1", "hover" => "#000000" }, "radius" => { "light" => "#ffffff" })
+
+    assert_equal({ "theme" => { "ring" => { "light" => "#a1a1a1" } } }, checked.value)
+  end
 end
