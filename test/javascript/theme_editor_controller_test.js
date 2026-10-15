@@ -5,12 +5,14 @@ import ThemeEditorController from "../../app/javascript/keystone_ui/preferences/
 const ROLES = {
   "primary": { kind: "colour", variables: ["--ks-color-accent"], hover: "--ks-color-accent-hover" },
   "popover-foreground": { kind: "colour", variables: ["--ks-color-on-overlay", "--ks-color-on-overlay-muted"] },
-  "radius": { kind: "length", variables: ["--ks-radius-control", "--ks-radius-surface"] }
+  "radius": { kind: "length", variables: ["--ks-radius-control", "--ks-radius-surface"] },
+  "letter-spacing": { kind: "letter_spacing", variables: ["--ks-letter-spacing"] }
 }
 
 const DRAWABLE = {
   "color": ["#1f5fbf"],
-  "width": ["0.5rem"]
+  "width": ["0.5rem"],
+  "letter-spacing": ["-0.02em"]
 }
 
 globalThis.CSS = { supports: (property, value) => (DRAWABLE[property] ?? []).includes(value) }
@@ -73,4 +75,12 @@ test("changing a radius, spacing or border width sets each of its role's variabl
   editorOn(root).apply(change("theme[radius][light]", "0.5rem"))
 
   assert.deepEqual(root.variables, { "--ks-radius-control": "0.5rem", "--ks-radius-surface": "0.5rem" })
+})
+
+test("changing the letter spacing sets its variable on the page's root element", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("theme[letter-spacing][light]", "-0.02em"))
+
+  assert.deepEqual(root.variables, { "--ks-letter-spacing": "-0.02em" })
 })
