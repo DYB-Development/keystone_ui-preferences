@@ -44,7 +44,7 @@ module KeystoneUi
         x, y, blur, spread, colour, opacity = SHADOW_SETTINGS.map { |setting| @theme.dig(setting, "light") }
         return [] unless x && y && blur && spread && colour && opacity
 
-        SHADOWS.map { |variable| "  #{variable}: #{x} #{y} #{blur} #{spread} color-mix(in srgb, #{colour} calc(#{opacity} * 100%), transparent);" }
+        SHADOWS.map { |variable| declaration(variable, "#{x} #{y} #{blur} #{spread} color-mix(in srgb, #{colour} calc(#{opacity} * 100%), transparent)") }
       end
 
       def hover_declarations(role, sides)
@@ -54,7 +54,11 @@ module KeystoneUi
       end
 
       def declarations(variable, sides)
-        { variable => sides["light"], "#{variable}-dark" => sides["dark"] }.compact.map { |name, value| "  #{name}: #{value};" }
+        { variable => sides["light"], "#{variable}-dark" => sides["dark"] }.compact.map { |name, value| declaration(name, value) }
+      end
+
+      def declaration(name, value)
+        "  #{name}: #{value};"
       end
     end
   end
