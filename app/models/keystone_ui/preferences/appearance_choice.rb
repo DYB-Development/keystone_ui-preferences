@@ -35,6 +35,10 @@ module KeystoneUi
         !colours[:background].casecmp?(WHITE)
       end
 
+      def theme_css
+        ThemeCss.new(saved["theme"]).to_s if saved.key?("theme")
+      end
+
       private
 
       def chosen_colours

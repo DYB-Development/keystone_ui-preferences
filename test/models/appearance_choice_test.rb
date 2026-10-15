@@ -233,4 +233,15 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "sharp", look_for(person, account)
   end
+
+  def theme_css_for(person, account = nil)
+    KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).theme_css
+  end
+
+  test "a person's saved theme is written as a theme rule" do
+    theme = { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => theme })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
+  end
 end
