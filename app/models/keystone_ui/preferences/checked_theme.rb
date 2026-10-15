@@ -8,9 +8,14 @@ module KeystoneUi
       HEX = /\A#(?:\h{3}|\h{4}|\h{6}|\h{8})\z/
       FUNCTION = /\A(?:rgba?|hsla?|oklch)\(\s*#{NUMBER}#{GAP}#{NUMBER}#{GAP}#{NUMBER}(?:\s*[\/,]\s*#{NUMBER})?\s*\)\z/
       COLOUR = Regexp.union(HEX, FUNCTION)
-      LENGTH = /\A(?:0|(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em))\z/
-      PATTERNS = { colour: COLOUR, length: LENGTH }.freeze
-      REASONS = { length: "is not a number followed by px, rem or em, or zero" }.freeze
+      UNSIGNED_LENGTH = '(?:0|(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em))'
+      LENGTH = /\A#{UNSIGNED_LENGTH}\z/
+      SIGNED_LENGTH = /\A-?#{UNSIGNED_LENGTH}\z/
+      PATTERNS = { colour: COLOUR, length: LENGTH, letter_spacing: Regexp.union(SIGNED_LENGTH, /\Anormal\z/) }.freeze
+      REASONS = {
+        length: "is not a number followed by px, rem or em, or zero",
+        letter_spacing: "is not normal or a number followed by px, rem or em, or zero"
+      }.freeze
       SIDES = %w[light dark].freeze
 
       def initialize(values)

@@ -36,7 +36,8 @@ module KeystoneUi
         "sidebar-accent-foreground" => { kind: :colour, variables: %w[--ks-color-nav-text-hover] },
         "sidebar-border" => { kind: :colour, variables: %w[--ks-color-nav-border] },
         "sidebar-ring" => { kind: :colour, variables: [] },
-        "radius" => { kind: :length, variables: [] }
+        "radius" => { kind: :length, variables: [] },
+        "letter-spacing" => { kind: :letter_spacing, variables: [] }
       }.freeze
 
       def self.names

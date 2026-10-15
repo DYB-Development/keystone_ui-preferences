@@ -47,4 +47,11 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => { "radius" => { "light" => "0" } } }, checked.value)
   end
+
+  test "a letter spacing is kept only as normal or a length that may be negative, and is otherwise refused with a reason naming the setting" do
+    spacings = [ "normal", "-0.025em", "0", "0.5px", "wide", "-1vh", "--1px" ]
+    refused = "The --letter-spacing value is not normal or a number followed by px, rem or em, or zero, so it was not saved."
+
+    assert_equal [ nil, nil, nil, nil, refused, refused, refused ], spacings.map { |spacing| check("letter-spacing" => { "light" => spacing }).refusal&.message }
+  end
 end
