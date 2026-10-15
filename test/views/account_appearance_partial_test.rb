@@ -191,4 +191,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "Edit", "Preview" ], %w[light dark] ], [ tabs, css_select("[data-theme-preview] [data-theme]").map { |side| side["data-theme"] } ]
   end
+
+  test "the account's section shows no tabs and no preview when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_equal 0, css_select("[data-controller='tab-switcher'], [data-theme-preview]").size
+  end
 end
