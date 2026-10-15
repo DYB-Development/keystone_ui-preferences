@@ -54,6 +54,10 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js")
   end
 
+  test "copies the appearance editor script into the app's Stimulus controllers" do
+    assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/appearance_editor_controller.js")
+  end
+
   private
 
   def migration

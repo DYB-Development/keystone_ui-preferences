@@ -29,6 +29,11 @@ module KeystoneUi
           script = File.expand_path("../../../../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__)
           create_file "app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js", File.read(script)
         end
+
+        def copy_appearance_editor_script
+          script = File.expand_path("../../../../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js", __dir__)
+          create_file "app/javascript/controllers/keystone_ui/preferences/appearance_editor_controller.js", File.read(script)
+        end
       end
     end
   end
