@@ -328,4 +328,16 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_empty %w[light dark system] - mode_options
   end
+
+  def theme_field_names
+    theme_section.css("input[name^='theme[']").map { |field| field["name"] }
+  end
+
+  test "the Theme section has a field for every theme setting, with a light and a dark field for each colour role" do
+    render_section
+
+    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| (role[:kind] == :colour ? %w[light dark] : %w[light]).map { |side| "theme[#{name}][#{side}]" } }
+
+    assert_equal expected, theme_field_names
+  end
 end
