@@ -5,6 +5,7 @@ module KeystoneUi
     class ThemeReader
       BLOCK = %r{(?:\A|(?<=[\};])|(?<=\*/)|@layer\s+[\w-]+\s*\{)\s*(:root|\.dark)\s*\{([^\{\}]*)\}}
       DECLARATION = /--([a-z0-9-]+)\s*:\s*([^;]*)/
+      LIMIT = 20_000
       FETCHES = /url\(|@import/i
       SIDES = { ":root" => "light", ".dark" => "dark" }.freeze
 
@@ -13,6 +14,8 @@ module KeystoneUi
       end
 
       def refusal
+        return Refusal.new("The pasted theme is longer than 20,000 characters, so it was not saved.") if @text.length > LIMIT
+
         Refusal.new("The pasted theme contains url( or @import, so it was not saved.") if @text.match?(FETCHES)
       end
 

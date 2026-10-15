@@ -54,4 +54,10 @@ class ThemeReaderTest < ActiveSupport::TestCase
 
     assert_equal [ "The pasted theme contains url( or @import, so it was not saved." ] * 2, refusals
   end
+
+  test "a paste over 20,000 characters is refused for its size before any of it is read" do
+    reader = read("@import 'x.css';\n:root { --primary: #171717; }\n#{"/* padding */" * 2000}")
+
+    assert_equal "The pasted theme is longer than 20,000 characters, so it was not saved.", reader.refusal&.message
+  end
 end
