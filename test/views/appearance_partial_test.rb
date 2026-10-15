@@ -564,4 +564,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "Export", true, nil ] ], exports
   end
+
+  test "the theme editor's Copy button copies through keystone_ui's clipboard script without submitting the form" do
+    render_section
+
+    buttons = theme_settings.css("button[data-controller~=clipboard]").map { |button| [ button.text.strip, button["type"], button["data-action"] ] }
+
+    assert_equal [ [ "Copy", "button", "click->clipboard#copy" ] ], buttons
+  end
 end
