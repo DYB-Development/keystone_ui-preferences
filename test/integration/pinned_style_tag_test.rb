@@ -40,4 +40,10 @@ class PinnedStyleTagTest < ActionDispatch::IntegrationTest
 
     assert_equal pinned("custom_colours"), style_tag
   end
+
+  test "a saved preset writes the same style tag as before the writers were joined" do
+    save_colours({ "preset_name" => "harbor" })
+
+    assert_equal pinned("preset_harbor"), style_tag
+  end
 end
