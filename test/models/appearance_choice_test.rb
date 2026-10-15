@@ -263,7 +263,7 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     css = theme_css_for(person, account)
 
-    assert_equal css, Rails.cache.read([ row.cache_key_with_version, "theme_css" ])
+    assert_equal css, Rails.cache.read([ row.cache_key_with_version, "theme_css", KeystoneUi::Preferences::ThemeCss::VERSION ])
   end
 
   test "a saved theme that is not a set of roles each holding light and dark colours is not written" do
@@ -277,5 +277,21 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     end
 
     assert_equal [ nil, nil, nil ], written
+  end
+
+  test "a theme rule cached by another version of the writer is written again" do
+    row = KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" } } })
+    writer = KeystoneUi::Preferences::ThemeCss
+    earlier = writer::VERSION
+    Rails.cache.write([ row.cache_key_with_version, "theme_css", earlier ], "written by an earlier writer")
+    writer.send(:remove_const, :VERSION)
+    writer.const_set(:VERSION, "#{earlier}-next")
+
+    css = theme_css_for(person, account)
+
+    assert_equal writer.new(row.value["theme"]).to_s, css
+  ensure
+    writer.send(:remove_const, :VERSION)
+    writer.const_set(:VERSION, earlier)
   end
 end

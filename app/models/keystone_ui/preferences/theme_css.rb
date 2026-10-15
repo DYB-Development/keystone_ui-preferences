@@ -3,6 +3,7 @@
 module KeystoneUi
   module Preferences
     class ThemeCss
+      VERSION = "1"
       HOVERS = { "primary" => "--ks-color-accent-hover", "secondary" => "--ks-color-neutral-hover", "destructive" => "--ks-color-danger-hover" }.freeze
 
       def initialize(theme)
