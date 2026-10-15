@@ -401,6 +401,18 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, rows
   end
 
+  test "Typography offers the four fonts, the four font weights and the letter spacing" do
+    render_section
+
+    expected = [
+      [ "Fonts", %w[font-sans font-serif font-mono font-heading] ],
+      [ "Font weights", %w[font-weight-normal font-weight-medium font-weight-strong font-weight-heading] ],
+      [ "Letter spacing", %w[letter-spacing] ]
+    ]
+
+    assert_equal expected, settings_by_set("Typography")
+  end
+
   test "the theme settings are shown with no closed disclosure around them" do
     render_section
 
