@@ -75,4 +75,10 @@ class CheckedThemeTest < ActiveSupport::TestCase
   test "a font list naming no font the app offers and no system font is refused with a reason naming the setting" do
     assert_equal "The --font-mono value names no font this app offers, so it was not saved.", check("font-mono" => { "light" => "JetBrains Mono, Fira Code" }).refusal&.message
   end
+
+  test "a kept font name of more than one word is written in double quotes and a one-word name is written bare" do
+    KeystoneUi::Preferences.configure { |config| config.theme_fonts = [ "Source Serif 4" ] }
+
+    assert_equal({ "light" => "\"Source Serif 4\", \"Segoe UI\", Georgia, serif" }, check("font-serif" => { "light" => "Source Serif 4, 'Segoe UI', \"Georgia\", serif" }).value["theme"]["font-serif"])
+  end
 end

@@ -43,7 +43,7 @@ module KeystoneUi
       end
 
       def value
-        { "theme" => kept.to_h { |name, sides| [ name, kind_of(name) == :font_list ? sides.transform_values { |list| offered_fonts(list).join(", ") } : sides ] } }
+        { "theme" => kept.to_h { |name, sides| [ name, kind_of(name) == :font_list ? sides.transform_values { |list| offered_fonts(list).map { |font| written_font(font) }.join(", ") } : sides ] } }
       end
 
       private
@@ -58,7 +58,11 @@ module KeystoneUi
 
       def offered_fonts(list)
         offered = (KeystoneUi::Preferences.configuration.theme_fonts + SYSTEM_FONTS).map(&:downcase)
-        list.split(",").map(&:strip).select { |font| offered.include?(font.delete("\"'").downcase) }
+        list.split(",").map { |font| font.strip.delete("\"'") }.select { |font| offered.include?(font.downcase) }
+      end
+
+      def written_font(font)
+        font.include?(" ") ? "\"#{font}\"" : font
       end
 
       def reason(kind, name, side)
