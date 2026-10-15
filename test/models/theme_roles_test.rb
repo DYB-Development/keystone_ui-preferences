@@ -22,4 +22,11 @@ class ThemeRolesTest < ActiveSupport::TestCase
 
     assert_empty variables.reject { |variable| css.include?("#{variable}:") }
   end
+
+  test "every variable a shape or type setting sets is defined by keystone_ui-styles, apart from Tailwind's default mono font" do
+    css = File.read(File.join(Gem.loaded_specs.fetch("keystone_ui-styles").full_gem_path, "app/assets/tailwind/keystone_ui_styles/engine.css"))
+    variables = KeystoneUi::Preferences::ThemeRoles::ROLES.values.reject { |role| role[:kind] == :colour }.flat_map { |role| role[:variables] } + KeystoneUi::Preferences::ThemeCss::SHADOWS
+
+    assert_equal [ "--default-mono-font-family" ], variables.reject { |variable| css.include?("#{variable}:") }
+  end
 end
