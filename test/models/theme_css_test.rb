@@ -63,4 +63,10 @@ class ThemeCssTest < ActiveSupport::TestCase
 
     assert_equal [ "--ks-font-weight-normal: 500;", "--ks-font-weight-medium: 500;", "--ks-font-weight-strong: 500;", "--ks-font-weight-heading: 500;" ], declarations(css)
   end
+
+  test "a theme's border width and heading font are written to keystone_ui-styles' border width and heading font" do
+    css = css_for("border-width" => { "light" => "2px" }, "font-heading" => { "light" => "Georgia, serif" })
+
+    assert_equal [ "--ks-border-width: 2px;", "--ks-font-heading: Georgia, serif;" ], declarations(css)
+  end
 end
