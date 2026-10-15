@@ -1,5 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
+import { readFileSync } from "node:fs"
 import ThemeEditorController from "../../app/javascript/keystone_ui/preferences/theme_editor_controller.js"
 
 const ROLES = {
@@ -182,4 +183,15 @@ test("the export is handed to keystone_ui's copy button as the text it copies", 
   editor.connect()
 
   assert.equal(editor.copied(), ":root {\n  --radius: 0.5rem;\n}\n\n.dark {\n}\n")
+})
+
+test("the theme the round trip test pastes back is the export of its fields, written in the editor's roles order", () => {
+  const exportFixture = name => readFileSync(new URL(`../fixtures/export/${name}`, import.meta.url), "utf8")
+  const theme = JSON.parse(exportFixture("theme.json"))
+  const fields = Object.fromEntries(Object.entries(theme).flatMap(([role, sides]) => Object.entries(sides).map(([side, value]) => [`theme[${role}][${side}]`, value])))
+  const editor = editorOn(pageRoot(), fields)
+
+  editor.connect()
+
+  assert.equal(editor.exported(), exportFixture("theme.css"))
 })
