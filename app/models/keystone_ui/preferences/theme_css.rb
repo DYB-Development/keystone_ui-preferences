@@ -8,7 +8,7 @@ module KeystoneUi
       end
 
       def to_s
-        ":root {\n#{lines.join("\n")}\n}"
+        ":root, html:root[data-look] {\n#{lines.join("\n")}\n}"
       end
 
       private

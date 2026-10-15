@@ -22,4 +22,14 @@ class ThemeCssTest < ActiveSupport::TestCase
 
     assert_equal [ "--ks-color-nav-link: #3f3f46;", "--ks-color-nav-link-dark: oklch(0.985 0 0);", "--ks-color-nav-text: #3f3f46;", "--ks-color-nav-text-dark: oklch(0.985 0 0);" ], declarations(css)
   end
+
+  def specificity(selector)
+    [ selector.scan(/#[\w-]+/).size, selector.scan(/\[[^\]]*\]|:[\w-]+|\.[\w-]+/).size, selector.scan(/(?:\A|[\s>+~])[a-z][\w-]*/).size ]
+  end
+
+  test "the theme rule outranks a look's rule on a page that has a look" do
+    selectors = css_for("primary" => { "light" => "#171717" }).lines.first.delete_suffix(" {\n").split(", ")
+
+    assert_equal 1, specificity(selectors.last) <=> specificity(':root[data-look="compact"]')
+  end
 end
