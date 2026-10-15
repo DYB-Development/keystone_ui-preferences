@@ -27,10 +27,10 @@ class AccountAppearancePartialTest < ActionView::TestCase
     css_select("input[type=radio][name=template_name]").map { |option| option["value"] }
   end
 
-  test "the account's section offers Default, the five colour templates and Custom" do
+  test "the account's section offers Default, the five colour templates, the six preset themes and Custom" do
     render_section
 
-    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "" ], template_options
+    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "graphite", "harbor", "fern", "terracotta", "heather", "ledger", "" ], template_options
   end
 
   def save(key, value, members_choose: true)
