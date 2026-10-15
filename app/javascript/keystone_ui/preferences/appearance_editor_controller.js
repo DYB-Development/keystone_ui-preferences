@@ -8,12 +8,10 @@ export default class extends Controller {
   static targets = ["accentPicker", "surfacePicker", "textPicker", "customRadio", "templateLabel"]
 
   #setVariables = new Set()
-  #loadedValues = []
   #heldUrl = null
   #leaveAllowed = false
 
   connect() {
-    this.#loadedValues = this.#themeValues()
     this.colorPickerTargets().forEach(picker => picker.addEventListener("change", () => this.customColorChanged()))
     this.#writeExport()
     this.#drawUnsavedFields()
@@ -168,10 +166,14 @@ export default class extends Controller {
   }
 
   #drawUnsavedFields() {
+    this.#unsavedFields().forEach(field => this.apply({ target: field }))
+  }
+
+  #unsavedFields() {
     const saved = this.#savedTheme()
-    this.element.querySelectorAll("[name^='theme[']").forEach(field => {
+    return [...this.element.querySelectorAll("[name^='theme[']")].filter(field => {
       const [, role, side] = field.name.match(THEME_FIELD)
-      if (field.value !== (saved[role]?.[side] ?? "")) this.apply({ target: field })
+      return field.value !== (saved[role]?.[side] ?? "")
     })
   }
 
@@ -180,11 +182,7 @@ export default class extends Controller {
   }
 
   #hasUnsavedChanges() {
-    return !this.#leaveAllowed && this.#themeValues().some((value, place) => value !== this.#loadedValues[place])
-  }
-
-  #themeValues() {
-    return [...this.element.querySelectorAll("[name^='theme[']")].map(({ value }) => value)
+    return !this.#leaveAllowed && this.#unsavedFields().length > 0
   }
 
   #roles() {

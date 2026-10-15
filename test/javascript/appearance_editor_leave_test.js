@@ -2,6 +2,8 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import AppearanceEditorController from "../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js"
 
+globalThis.CSS ??= { supports: () => true }
+
 function themeOf(values) {
   const theme = {}
   Object.entries(values).filter(([, value]) => value !== "").forEach(([name, value]) => {
@@ -15,9 +17,10 @@ function sectionLoadedWith(values, savedTheme = themeOf(values)) {
   const fields = Object.entries(values).map(([name, value]) => ({ name, value, closest: () => null, dispatchEvent() {} }))
   const visited = []
   const question = { classes: new Set(["hidden"]), classList: { add(name) { question.classes.add(name) }, remove(name) { question.classes.delete(name) } } }
-  const parts = { "[data-saved-theme]": { dataset: { savedTheme: JSON.stringify(savedTheme) } }, "[data-leave-question] [data-modal-target='backdrop']": question }
+  const roles = { primary: { kind: "colour", variables: ["--ks-color-accent"] } }
+  const parts = { "[data-saved-theme]": { dataset: { savedTheme: JSON.stringify(savedTheme) } }, "[data-theme-roles]": { dataset: { themeRoles: JSON.stringify(roles) } }, "[data-leave-question] [data-modal-target='backdrop']": question }
   const element = {
-    ownerDocument: { documentElement: { style: {} }, defaultView: { Turbo: { visit(url) { visited.push(url) } } } },
+    ownerDocument: { documentElement: { style: { setProperty() {}, removeProperty() {} } }, defaultView: { Turbo: { visit(url) { visited.push(url) } } } },
     querySelector: (selector) => parts[selector] ?? fields.find(({ name }) => selector === `[name="${name}"]`) ?? null,
     querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : [])
   }
@@ -127,4 +130,13 @@ test("saving changed theme fields unloads the page without a warning", () => {
   editor.warnBeforeUnload(closing)
 
   assert.equal(closing.warned, false)
+})
+
+test("following a link from a section refilled by a refused save, with nothing changed since, holds the visit", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#1f5fbf" }, { primary: { light: "#000000" } })
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
 })
