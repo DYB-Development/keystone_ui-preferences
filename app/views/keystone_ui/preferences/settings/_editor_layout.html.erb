@@ -1,4 +1,4 @@
-<div data-appearance-editor data-controller="keystone-ui--preferences--appearance-editor" data-action="tab-switcher:change->keystone-ui--preferences--appearance-editor#showPanel">
+<div data-appearance-editor data-controller="keystone-ui--preferences--appearance-editor" data-action="tab-switcher:change->keystone-ui--preferences--appearance-editor#showPanel submit->keystone-ui--preferences--appearance-editor#save turbo:before-visit@document->keystone-ui--preferences--appearance-editor#confirmLeave beforeunload@window->keystone-ui--preferences--appearance-editor#warnBeforeUnload">
   <% if previews %>
     <style>
       [data-editor-panel]:not([data-shown]) { display: none; }
