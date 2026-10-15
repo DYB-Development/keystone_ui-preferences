@@ -217,4 +217,13 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_empty reset_buttons
   end
+
+  test "every one of the account's theme fields sits inside the theme editor script's element, which removes the variables it set when the section is left" do
+    render_section
+
+    fields = css_select("[name^='theme[']")
+    outside = fields.reject { |field| field.ancestors("[data-controller='keystone-ui--preferences--theme-editor']").any? }
+
+    assert_equal [ false, [] ], [ fields.empty?, outside.map { |field| field["name"] } ]
+  end
 end
