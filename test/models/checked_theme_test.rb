@@ -81,4 +81,23 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal({ "light" => "\"Source Serif 4\", \"Segoe UI\", Georgia, serif" }, check("font-serif" => { "light" => "Source Serif 4, 'Segoe UI', \"Georgia\", serif" }).value["theme"]["font-serif"])
   end
+
+  test "each shadow setting is checked as its own kind of value and refused with a reason naming the setting" do
+    values = [
+      [ "shadow-color", "oklch(0 0 0)" ], [ "shadow-color", "black" ],
+      [ "shadow-opacity", "0.1" ], [ "shadow-opacity", "1.5" ],
+      [ "shadow-blur", "3px" ], [ "shadow-blur", "-3px" ],
+      [ "shadow-spread", "-1px" ], [ "shadow-spread", "1vh" ],
+      [ "shadow-offset-x", "0" ], [ "shadow-offset-y", "2" ]
+    ]
+    length = "is not a number followed by px, rem or em, or zero, so it was not saved."
+
+    assert_equal [
+      nil, "The --shadow-color value is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.",
+      nil, "The --shadow-opacity value is not a number from 0 to 1, so it was not saved.",
+      nil, "The --shadow-blur value #{length}",
+      nil, "The --shadow-spread value #{length}",
+      nil, "The --shadow-offset-y value #{length}"
+    ], values.map { |name, value| check(name => { "light" => value }).refusal&.message }
+  end
 end

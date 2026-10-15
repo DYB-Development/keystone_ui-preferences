@@ -40,7 +40,13 @@ module KeystoneUi
         "letter-spacing" => { kind: :letter_spacing, variables: [] },
         "font-sans" => { kind: :font_list, variables: [] },
         "font-serif" => { kind: :font_list, variables: [] },
-        "font-mono" => { kind: :font_list, variables: [] }
+        "font-mono" => { kind: :font_list, variables: [] },
+        "shadow-color" => { kind: :shadow_colour, variables: [] },
+        "shadow-opacity" => { kind: :opacity, variables: [] },
+        "shadow-blur" => { kind: :length, variables: [] },
+        "shadow-spread" => { kind: :signed_length, variables: [] },
+        "shadow-offset-x" => { kind: :signed_length, variables: [] },
+        "shadow-offset-y" => { kind: :signed_length, variables: [] }
       }.freeze
 
       def self.names

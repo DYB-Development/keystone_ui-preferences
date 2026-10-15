@@ -14,9 +14,16 @@ module KeystoneUi
       FONT_NAME = "[A-Za-z0-9-]+(?: [A-Za-z0-9-]+)*"
       FONT = "(?:#{FONT_NAME}|\"#{FONT_NAME}\"|'#{FONT_NAME}')"
       FONT_LIST = /\A#{FONT}(?:\s*,\s*#{FONT})*\z/
-      PATTERNS = { colour: COLOUR, length: LENGTH, letter_spacing: Regexp.union(SIGNED_LENGTH, /\Anormal\z/), font_list: FONT_LIST }.freeze
+      OPACITY = /\A(?:0(?:\.\d+)?|\.\d+|1(?:\.0+)?)\z/
+      PATTERNS = {
+        colour: COLOUR, shadow_colour: COLOUR, length: LENGTH, signed_length: SIGNED_LENGTH, opacity: OPACITY,
+        letter_spacing: Regexp.union(SIGNED_LENGTH, /\Anormal\z/), font_list: FONT_LIST
+      }.freeze
       REASONS = {
+        shadow_colour: "is not hex, rgb(), hsl() or oklch() written with plain numbers",
         length: "is not a number followed by px, rem or em, or zero",
+        signed_length: "is not a number followed by px, rem or em, or zero",
+        opacity: "is not a number from 0 to 1",
         letter_spacing: "is not normal or a number followed by px, rem or em, or zero",
         font_list: "is not a list of font names made of letters, digits, spaces and hyphens"
       }.freeze
