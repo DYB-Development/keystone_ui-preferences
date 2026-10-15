@@ -5,7 +5,7 @@ module KeystoneUi
     class ThemeReader
       BLOCK = %r{(?:\A|(?<=[\};])|(?<=\*/)|@layer\s+[\w-]+\s*\{)\s*(:root|\.dark)\s*\{([^\{\}]*)\}}
       DECLARATION = /--([a-z0-9-]+)\s*:\s*([^;]*)/
-      FETCHES = /url\(|@import/
+      FETCHES = /url\(|@import/i
       SIDES = { ":root" => "light", ".dark" => "dark" }.freeze
 
       def initialize(text)

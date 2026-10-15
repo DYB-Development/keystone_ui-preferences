@@ -48,4 +48,10 @@ class ThemeReaderTest < ActiveSupport::TestCase
 
     assert_equal "The pasted theme contains url( or @import, so it was not saved.", reader.refusal&.message
   end
+
+  test "a paste containing URL( or @IMPORT in capitals is refused with a reason" do
+    refusals = [ "a { background: URL(x.png); }", "@IMPORT 'x.css';" ].map { |text| read(text).refusal&.message }
+
+    assert_equal [ "The pasted theme contains url( or @import, so it was not saved." ] * 2, refusals
+  end
 end
