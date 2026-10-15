@@ -14,6 +14,8 @@ module KeystoneUi
       def values
         @values ||= @text.scan(BLOCK).each_with_object({}) do |(selector, body), values|
           body.scan(DECLARATION).each do |name, value|
+            next unless ThemeRoles::ROLES.key?(name)
+
             (values[name] ||= {})[SIDES.fetch(selector)] = value.strip
           end
         end

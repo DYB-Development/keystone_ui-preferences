@@ -12,4 +12,10 @@ class ThemeReaderTest < ActiveSupport::TestCase
 
     assert_equal({ "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "border" => { "light" => "#e5e5e5" } }, reader.values)
   end
+
+  test "declarations whose names are not shadcn colour roles are ignored" do
+    reader = read(":root {\n  --radius: 0.625rem;\n  --font-sans: Inter;\n  color: red;\n  --ring: #a1a1a1;\n}\n")
+
+    assert_equal({ "ring" => { "light" => "#a1a1a1" } }, reader.values)
+  end
 end
