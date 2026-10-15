@@ -353,10 +353,10 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, theme_field_names
   end
 
-  test "the Theme section keeps the theme fields in a disclosure that starts closed" do
+  test "the theme settings are shown with no closed disclosure around them" do
     render_section
 
-    assert_equal [ [ "theme[background][light]", nil ] ], theme_settings.css("details").map { |disclosure| [ disclosure.at_css("input[name^='theme[']")&.[]("name"), disclosure["open"] ] }
+    assert_empty css_select("details:not([open]) input[name^='theme[']")
   end
 
   test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do
