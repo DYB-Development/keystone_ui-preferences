@@ -293,4 +293,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a colour typed by hand that is not hex, rgb(), hsl() or oklch() is refused with the reason a pasted one gets" do
     assert_equal "The dark --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(theme: { "primary" => { "light" => "#171717", "dark" => "var(--x)" } }).message
   end
+
+  test "a theme setting typed by hand with spaces around it is saved without them, as a pasted one is" do
+    pick(theme: { "radius" => { "light" => " 0.5rem " } })
+
+    assert_equal({ "theme" => { "radius" => { "light" => "0.5rem" } } }, saved_value)
+  end
 end

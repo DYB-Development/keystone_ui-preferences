@@ -49,7 +49,7 @@ module KeystoneUi
       end
 
       def typed_theme
-        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.transform_keys(&:to_s).compact_blank ] }.compact_blank
+        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.to_h { |side, value| [ side.to_s, value.to_s.strip ] }.compact_blank ] }.compact_blank
       end
 
       def keep_typed_theme
