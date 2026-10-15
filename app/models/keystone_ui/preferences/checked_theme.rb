@@ -10,6 +10,7 @@ module KeystoneUi
       COLOUR = Regexp.union(HEX, FUNCTION)
       LENGTH = /\A(?:0|(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em))\z/
       PATTERNS = { colour: COLOUR, length: LENGTH }.freeze
+      REASONS = { length: "is not a number followed by px, rem or em, or zero" }.freeze
       SIDES = %w[light dark].freeze
 
       def initialize(values)
@@ -18,8 +19,9 @@ module KeystoneUi
 
       def refusal
         kept.each do |name, sides|
-          sides.each do |side, colour|
-            return Refusal.new("The #{side} --#{name} colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.") unless colour.to_s.match?(PATTERNS.fetch(ThemeRoles::ROLES.fetch(name)[:kind]))
+          kind = ThemeRoles::ROLES.fetch(name)[:kind]
+          sides.each do |side, value|
+            return reason(kind, name, side) unless value.to_s.match?(PATTERNS.fetch(kind))
           end
         end
         nil
@@ -30,6 +32,12 @@ module KeystoneUi
       end
 
       private
+
+      def reason(kind, name, side)
+        return Refusal.new("The #{side} --#{name} colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.") if kind == :colour
+
+        Refusal.new("The --#{name} value #{REASONS.fetch(kind)}, so it was not saved.")
+      end
 
       def kept
         @kept ||= ThemeRoles.names.each_with_object({}) do |name, kept|

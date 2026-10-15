@@ -35,4 +35,10 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => { "ring" => { "light" => "#a1a1a1" } } }, checked.value)
   end
+
+  test "a length that is not a number followed by px, rem or em, or zero, is refused with a reason naming the setting" do
+    lengths = [ "1vh", "10%", "calc(1px)", "-1px", "1 rem", "0.5", "var(--x)", "1px;" ]
+
+    assert_equal [ "The --radius value is not a number followed by px, rem or em, or zero, so it was not saved." ] * lengths.size, lengths.map { |length| check("radius" => { "light" => length }).refusal&.message }
+  end
 end
