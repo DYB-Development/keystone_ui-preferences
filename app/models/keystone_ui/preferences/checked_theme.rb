@@ -21,6 +21,11 @@ module KeystoneUi
         font_list: "is not a list of font names made of letters, digits, spaces and hyphens"
       }.freeze
       SIDES = %w[light dark].freeze
+      SYSTEM_FONTS = [
+        "system-ui", "ui-sans-serif", "ui-serif", "ui-monospace", "ui-rounded", "sans-serif", "serif", "monospace", "cursive",
+        "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Helvetica Neue", "Arial", "Georgia",
+        "Times New Roman", "Menlo", "Monaco", "Consolas", "Courier New", "SFMono-Regular"
+      ].freeze
 
       def initialize(values)
         @values = values
@@ -28,7 +33,7 @@ module KeystoneUi
 
       def refusal
         kept.each do |name, sides|
-          kind = ThemeRoles::ROLES.fetch(name)[:kind]
+          kind = kind_of(name)
           sides.each do |side, value|
             return reason(kind, name, side) unless value.to_s.match?(PATTERNS.fetch(kind))
           end
@@ -37,13 +42,22 @@ module KeystoneUi
       end
 
       def value
-        { "theme" => kept }
+        { "theme" => kept.to_h { |name, sides| [ name, kind_of(name) == :font_list ? sides.transform_values { |list| offered_fonts(list).join(", ") } : sides ] } }
       end
 
       private
 
       def sides_of(name)
-        ThemeRoles::ROLES.fetch(name)[:kind] == :colour ? SIDES : SIDES.first(1)
+        kind_of(name) == :colour ? SIDES : SIDES.first(1)
+      end
+
+      def kind_of(name)
+        ThemeRoles::ROLES.fetch(name)[:kind]
+      end
+
+      def offered_fonts(list)
+        offered = (KeystoneUi::Preferences.configuration.theme_fonts + SYSTEM_FONTS).map(&:downcase)
+        list.split(",").map(&:strip).select { |font| offered.include?(font.delete("\"'").downcase) }
       end
 
       def reason(kind, name, side)

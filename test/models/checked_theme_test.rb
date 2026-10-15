@@ -3,6 +3,10 @@
 require "test_helper"
 
 class CheckedThemeTest < ActiveSupport::TestCase
+  def teardown
+    KeystoneUi::Preferences.reset_configuration!
+  end
+
   def check(values)
     KeystoneUi::Preferences::CheckedTheme.new(values)
   end
@@ -60,5 +64,11 @@ class CheckedThemeTest < ActiveSupport::TestCase
     refused = "The --font-sans value is not a list of font names made of letters, digits, spaces and hyphens, so it was not saved."
 
     assert_equal [ nil, nil, nil, refused, refused, refused, refused, refused, refused ], lists.map { |list| check("font-sans" => { "light" => list }).refusal&.message }
+  end
+
+  test "a font that is neither one the app offers nor a system font is dropped from the font list" do
+    KeystoneUi::Preferences.configure { |config| config.theme_fonts = [ "Inter" ] }
+
+    assert_equal({ "light" => "inter, \"Segoe UI\", sans-serif" }, check("font-sans" => { "light" => "inter, Comic Neue, \"Segoe UI\", 'Fancy', sans-serif" }).value["theme"]["font-sans"])
   end
 end
