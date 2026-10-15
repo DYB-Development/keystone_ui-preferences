@@ -33,4 +33,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal %w[ks-button-primary ks-button-secondary ks-button-danger], preview.css(".ks-button").map { |button| button["class"].split[1] }
   end
+
+  test "the appearance section's preview shows a form of keystone_ui fields, a text field and a select" do
+    render_section
+
+    assert_equal %w[input select], preview.css(".#{Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES}").map { |field| field.at_css("input, select").name }
+  end
 end

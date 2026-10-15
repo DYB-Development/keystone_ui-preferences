@@ -5,4 +5,8 @@
     <%= ui_button(label: "Cancel", variant: :secondary, type: :button) %>
     <%= ui_button(label: "Delete", variant: :danger, type: :button) %>
   </div>
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    <%= ui_form_field(attribute: "preview_name", label: "Name", value: "Northwind Traders") %>
+    <%= ui_form_field(attribute: "preview_region", label: "Region", type: :select, options: [ [ "North", "north" ], [ "South", "south" ] ], value: "north", required: true) %>
+  </div>
 </div>
