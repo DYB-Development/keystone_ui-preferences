@@ -35,6 +35,7 @@ All notable changes to this project will be documented in this file.
 - The template picker script also sets a colour picker's typed colour field when it sets that picker's colour.
 - The account's Appearance section has the paste box, the six preset theme cards and the theme fields the person's section has, and saves a pasted theme, a preset name or theme fields changed by hand as the account's colours, with the same checks and refusals as a person's.
 - A member with no colours of their own, and every member while the account turns off members choosing their own colours, sees the account's theme or preset.
+- A saved theme holding a value that no longer passes the theme check, or that is not a set of roles each holding light and dark values, draws the account's colours and theme, or the app's defaults when the account has none or its own theme is the one that fails, and writes one warning to the log naming the owner and the first setting that fails, or saying the theme is not a set of roles.
 
 ### Changed
 - keystone_ui-looks 0.4.0 or later is required, the first release with preset themes.

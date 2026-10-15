@@ -41,14 +41,15 @@ module KeystoneUi
       end
 
       def refusal
-        kept.each do |name, sides|
-          kind = kind_of(name)
-          sides.each do |side, value|
-            return reason(kind, name, side) unless value.to_s.match?(PATTERNS.fetch(kind))
-            return Refusal.new("The --#{name} value names no font this app offers, so it was not saved.") if kind == :font_list && offered_fonts(value).empty?
-          end
-        end
-        nil
+        name, side, value = failure
+        return unless name
+        return Refusal.new("The --#{name} value names no font this app offers, so it was not saved.") if matches?(name, value)
+
+        reason(kind_of(name), name, side)
+      end
+
+      def failing_setting
+        failure&.first
       end
 
       def value
@@ -56,6 +57,23 @@ module KeystoneUi
       end
 
       private
+
+      def failure
+        kept.each do |name, sides|
+          sides.each do |side, value|
+            return [ name, side, value ] unless matches?(name, value) && names_offered_font?(name, value)
+          end
+        end
+        nil
+      end
+
+      def matches?(name, value)
+        value.to_s.match?(PATTERNS.fetch(kind_of(name)))
+      end
+
+      def names_offered_font?(name, value)
+        kind_of(name) != :font_list || offered_fonts(value).any?
+      end
 
       def sides_of(name)
         kind_of(name) == :colour ? SIDES : SIDES.first(1)

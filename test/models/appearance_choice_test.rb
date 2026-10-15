@@ -394,4 +394,44 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
   end
+
+  test "a person's saved theme that fails the theme check writes one warning naming the person and the failing setting" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" }, "radius" => { "light" => "1 lightyear" } } })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved a theme whose --radius setting fails the theme check" ], warnings_from { theme_css_for(person, account) }
+  end
+
+  test "a person whose saved theme fails the theme check gets the account's preset theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "radius" => { "light" => "1 lightyear" } } })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "preset_name" => "harbor" })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
+  end
+
+  test "a person whose saved theme fails the theme check gets the account's colours" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "radius" => { "light" => "1 lightyear" } } })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "forest" })
+
+    assert_equal "emerald", colours_for(person, account)[:accent]
+  end
+
+  test "a person's saved theme that is not a set of roles each holding light and dark values writes one warning naming the person and calling the theme malformed" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => "#171717" } })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved a theme that is not a set of roles, so it fails the theme check" ], warnings_from { theme_css_for(person, account) }
+  end
+
+  test "a person whose saved theme fails the theme check and whose account has no colours gets the app's default colours and no theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "radius" => { "light" => "1 lightyear" } } })
+    choice = KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account)
+
+    assert_equal [ { accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, nil ], [ choice.colours, choice.theme_css ]
+  end
+
+  test "a member of an account whose own saved theme fails the theme check gets the app's default colours and no theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "theme" => { "radius" => { "light" => "1 lightyear" } } })
+    choice = KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account)
+
+    assert_equal [ { accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, nil ], [ choice.colours, choice.theme_css ]
+  end
 end

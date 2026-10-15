@@ -107,4 +107,10 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal [ nil, nil, nil, refused, refused, refused, refused, refused ], weights.map { |weight| check("font-weight-heading" => { "light" => weight }).refusal&.message }
   end
+
+  test "the failing setting names the first setting the check refuses, and is nil when every setting passes" do
+    refused = { "primary" => { "light" => "#171717" }, "radius" => { "light" => "1 lightyear" }, "font-mono" => { "light" => "JetBrains Mono" } }
+
+    assert_equal [ "radius", nil ], [ check(refused).failing_setting, check("primary" => { "light" => "#171717" }).failing_setting ]
+  end
 end
