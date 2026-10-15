@@ -199,4 +199,14 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal 0, css_select("[data-controller='tab-switcher'], [data-theme-preview]").size
   end
+
+  def reset_buttons
+    css_select("form button").select { |button| button.text.strip == "Reset" }.map { |button| [ button["type"], button["data-action"] ] }
+  end
+
+  test "the account's Reset button resets the theme fields through the template picker script without saving" do
+    render_section
+
+    assert_equal [ [ "button", "keystone-ui--preferences--theme-settings#reset" ] ], reset_buttons
+  end
 end

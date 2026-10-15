@@ -37,8 +37,9 @@
         <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, id_prefix: "account-appearance" } %>
       <% end %>
 
-      <div>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
         <%= ui_button(label: "Save", type: :submit) %>
+        <%= ui_button(label: "Reset", variant: :secondary, type: :button, data: { action: "keystone-ui--preferences--theme-settings#reset" }) %>
       </div>
     </div>
   <% end %>
