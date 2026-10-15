@@ -528,7 +528,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     expected = roles_in_group_order.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
 
-    assert_equal expected, labelled_controls(theme_settings).select { |_label, name| name.start_with?("theme[") }
+    assert_equal expected, labelled_controls(theme_settings).select { |_label, name| name.to_s.start_with?("theme[") }
   end
 
   test "the paste box is labelled 'Paste a theme'" do
@@ -555,5 +555,13 @@ class AppearancePartialTest < ActionView::TestCase
     end
 
     assert_equal expected, JSON.parse(theme_settings["data-theme-roles"].to_s)
+  end
+
+  test "the theme editor writes its export into a read-only text area labelled Export that has no name, so Save does not send it" do
+    render_section
+
+    exports = theme_settings.css("textarea[data-theme-export]").map { |area| [ theme_settings.at_css("label[for='#{area["id"]}']")&.text&.strip, area.key?("readonly"), area["name"] ] }
+
+    assert_equal [ [ "Export", true, nil ] ], exports
   end
 end
