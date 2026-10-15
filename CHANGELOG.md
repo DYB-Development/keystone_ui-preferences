@@ -30,7 +30,8 @@ All notable changes to this project will be documented in this file.
 - A preset's values are checked as a saved theme's are before they are written, and its written rule is kept in `Rails.cache` under the preset's name and the keystone_ui-looks version.
 - Picking a preset card fills the theme fields with its values through the template picker script, and the fields show a saved preset's values.
 - Theme fields sent holding the picked or the saved preset's values save the picked card, and changing one after picking a preset saves the person's own theme in place of the preset.
-- A saved preset name keystone_ui-looks no longer has writes no theme and writes one warning to the log naming the owner and the preset.
+- A saved preset name keystone_ui-looks no longer has draws the account's colours and theme, or the app's defaults when the account has none or its own preset is the missing one, and writes one warning to the log naming the owner and the preset.
+- A template or preset name the catalogue does not have is refused with a message naming the preset themes, and nothing is saved.
 - The template picker script also sets a colour picker's typed colour field when it sets that picker's colour.
 
 ### Changed
