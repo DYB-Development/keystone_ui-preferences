@@ -307,4 +307,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, saved_value)
   end
+
+  test "theme fields typed by hand are refused with the existing reason, and nothing is saved, when the account sets the colours for everyone" do
+    refusal = pick({ theme: { "primary" => { "light" => "#171717" } } }, account_setting_colours)
+
+    assert_equal [ "Your account sets the colours for everyone, so this was not saved.", nil ], [ refusal.message, saved_value ]
+  end
 end
