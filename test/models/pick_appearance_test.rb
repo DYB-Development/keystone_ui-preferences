@@ -198,4 +198,64 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_nil saved_look
   end
+
+  PASTED_THEME = <<~CSS
+    :root {
+      --radius: 0.625rem;
+      --background: oklch(1 0 0);
+      --primary: oklch(0.205 0 0);
+    }
+
+    .dark {
+      --background: oklch(0.145 0 0);
+      --primary: oklch(0.922 0 0);
+    }
+  CSS
+
+  test "saving a pasted :root block and .dark block keeps every colour role in them as the person's colours" do
+    pick(template_name: "", pasted_theme: PASTED_THEME)
+
+    assert_equal({ "theme" => { "background" => { "light" => "oklch(1 0 0)", "dark" => "oklch(0.145 0 0)" }, "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } } }, saved_value)
+  end
+
+  test "a pasted theme saves when the save sends no template" do
+    pick(pasted_theme: ":root { --ring: #a1a1a1; }")
+
+    assert_equal({ "theme" => { "ring" => { "light" => "#a1a1a1" } } }, saved_value)
+  end
+
+  test "a pasted theme is refused with the existing reason when the account sets the colours for everyone" do
+    assert_equal "Your account sets the colours for everyone, so this was not saved.", pick({ pasted_theme: PASTED_THEME }, account_setting_colours).message
+  end
+
+  test "a pasted theme containing url( saves nothing and leaves the person's colours as they were" do
+    pick(template_name: "forest")
+
+    pick(pasted_theme: "#{PASTED_THEME}\n.logo { background: url(x.png); }")
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
+
+  test "a pasted colour that is not hex, rgb(), hsl() or oklch() is refused with a reason naming the role" do
+    assert_equal "The light --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(pasted_theme: ":root { --primary: var(--x); }").message
+  end
+
+  test "a saved pasted theme holds nothing but checked colours under theme role names" do
+    pick(pasted_theme: <<~CSS)
+      /* exported theme */
+      :root {
+        /* base */ --background: oklch(1 0 0);
+        --font-sans: Inter, sans-serif;
+        --primary:   #171717  ;
+      }
+      .dark { --primary: rgb(250 250 250); --shadow-sm: 0 1px 2px #000; }
+      body { --muted: #ffffff; }
+    CSS
+
+    unchecked = saved_value.except("theme").keys + saved_value["theme"].flat_map do |name, sides|
+      [ (name unless KeystoneUi::Preferences::ThemeRoles.names.include?(name)) ] + sides.map { |side, colour| "#{name} #{side}" unless %w[light dark].include?(side) && colour.match?(KeystoneUi::Preferences::CheckedTheme::COLOUR) }
+    end.compact
+
+    assert_empty unchecked
+  end
 end

@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- The person's Appearance section has a paste box in its Theme section that saves a theme in shadcn/ui's variable names as the person's colours, keeping the 32 shadcn colour roles from a `:root` block and a `.dark` block and ignoring every other declaration, selector and rule.
+- A pasted colour is saved only when it is a hex colour or an `rgb()`, `hsl()` or `oklch()` colour written with plain numbers, and is otherwise refused with a message naming the role.
+- A paste over 20,000 characters, a paste containing `url(` or `@import`, and a paste with no shadcn colour role are refused with a message, and nothing is saved.
+- A pasted theme is saved as `{ "theme": { "<role>": { "light": ..., "dark": ... } } }` under the `colours` key, holding only the checked colours and never the pasted text.
+- The Theme section says a pasted theme is the person's current choice and selects no template for it.
+
+### Changed
+- keystone_ui-styles 0.18.0 or later is required, since each theme role names the `--ks-*` variables it will set.
+
 ### Fixed
 - The boot check's message and the README's steps for moving off keystone_ui-colors remove keystone_ui-colors before running the update generator, since the generator boots the app and the boot check refuses to boot while keystone_ui-colors is loaded.
 

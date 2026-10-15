@@ -294,4 +294,30 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_empty template_options
   end
+
+  def theme_section
+    css_select("h2").find { |title| title.text.strip == "Theme" }.ancestors("div")[2]
+  end
+
+  test "the appearance section's Theme section has a box to paste a theme into" do
+    render_section
+
+    assert_equal [ "pasted_theme" ], theme_section.css("textarea").map { |box| box["name"] }
+  end
+
+  test "the Theme section says a pasted theme is the colours a person chose when they saved one" do
+    save_colours("theme" => { "primary" => { "light" => "#171717" } })
+
+    render_section
+
+    assert_includes theme_section.text, "Your current choice is a pasted theme."
+  end
+
+  test "the appearance section selects no template for a person whose colours are a pasted theme" do
+    save_colours("theme" => { "primary" => { "light" => "#171717" } })
+
+    render_section
+
+    assert_empty selected_template
+  end
 end
