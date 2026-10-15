@@ -1,0 +1,30 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class AppearancePreviewTest < ActionView::TestCase
+  include KeystoneUiHelper
+
+  def person
+    @person ||= User.create!(name: "Rep")
+  end
+
+  def teardown
+    KeystoneUi::Preferences.reset_configuration!
+    KeystoneUi::Preferences::ComponentPreference.delete_all
+  end
+
+  def render_section
+    render partial: "keystone_ui/preferences/settings/appearance", locals: { person: person, account: nil, submit_url: "/settings/appearance" }
+  end
+
+  def preview
+    css_select("[data-theme-preview]")
+  end
+
+  test "the appearance section's preview shows a keystone_ui card" do
+    render_section
+
+    assert_equal 1, preview.css(".#{Keystone::Ui::CardComponent::CARD_CLASSES}").size
+  end
+end
