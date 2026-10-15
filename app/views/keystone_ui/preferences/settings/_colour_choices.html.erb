@@ -68,7 +68,7 @@
     <% end %>
   </div>
   <% if saved.key?("theme") %>
-    <p class="ks-hint">Your current choice is your own theme.</p>
+    <p class="ks-hint"><%= local_assigns.fetch(:own_theme_hint, "Your current choice is your own theme.") %></p>
   <% end %>
   <% if local_assigns[:pastes] %>
     <%= ui_form_field(attribute: "pasted_theme", label: "Paste a theme", type: :textarea, hint: "A :root block and a .dark block in shadcn/ui's variable names, as tweakcn and shadcn's theme pages export them.") %>

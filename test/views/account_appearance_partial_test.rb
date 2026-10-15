@@ -159,4 +159,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| css_select("input[name='#{field}']").first&.[]("value") }
   end
+
+  test "the account's Theme section says the current choice is the account's own theme when it saved one" do
+    save("colours", { "theme" => { "primary" => { "light" => "#171717" } } })
+
+    render_section
+
+    assert_equal [ "The account's current choice is its own theme." ], css_select(".ks-hint").map { |hint| hint.text.strip }.grep(/current choice/)
+  end
 end
