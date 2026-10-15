@@ -85,3 +85,13 @@ test("reset fills every theme field from the chosen preset", () => {
 
   assert.deepEqual(fields.map(({ value }) => value), ["#1f5fbf", "#8ab4f8", "0.5rem"])
 })
+
+test("reset with no preset chosen draws the saved theme on the page, removing what the editor set for a setting the saved theme leaves empty", () => {
+  const root = pageRoot()
+  const { settings } = editorFormOn(root, { "theme[primary][light]": "#ff0000", "theme[primary][dark]": "#ff0000", "theme[radius][light]": "2rem" }, { savedTheme: { primary: { light: "#1f5fbf", dark: "#8ab4f8" } } })
+  settings.selectPreset(presetCard({ primary: { light: "#ff0000", dark: "#ff0000" }, radius: { light: "2rem" } }))
+
+  settings.reset()
+
+  assert.deepEqual(root.variables, { "--ks-color-accent": "#1f5fbf", "--ks-color-accent-dark": "#8ab4f8" })
+})

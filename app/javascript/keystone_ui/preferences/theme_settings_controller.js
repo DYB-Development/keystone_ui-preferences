@@ -44,7 +44,7 @@ export default class extends Controller {
 
   reset() {
     const preset = this.element.querySelector("input[name='template_name'][data-theme]:checked")
-    const theme = JSON.parse(preset.dataset.theme)
+    const theme = JSON.parse(preset ? preset.dataset.theme : this.element.querySelector("[data-saved-theme]").dataset.savedTheme)
 
     this.element.querySelectorAll("[name^='theme[']").forEach(({ name }) => {
       const [, role, side] = name.match(THEME_FIELD)
