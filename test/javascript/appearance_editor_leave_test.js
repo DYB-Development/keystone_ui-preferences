@@ -222,3 +222,12 @@ test("following a link with text in the paste box holds the visit", () => {
 
   assert.equal(leaving.held, true)
 })
+
+test("following a link with only spaces in the paste box is not held", () => {
+  const editor = sectionLoadedWith({}, {}, [{ name: "pasted_theme", value: "  \n", type: "textarea" }])
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, false)
+})
