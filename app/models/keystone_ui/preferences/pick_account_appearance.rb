@@ -41,7 +41,11 @@ module KeystoneUi
       end
 
       def editing?
-        typed_theme.any?
+        typed_theme.any? && typed_theme != saved_colours["theme"]
+      end
+
+      def saved_colours
+        ComponentPreference.find_by(owner: @account, component_key: "colours")&.value.to_h
       end
 
       def typed_theme

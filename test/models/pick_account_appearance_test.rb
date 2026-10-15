@@ -123,4 +123,12 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => { "primary" => { "light" => "#171717" } } }, account_preference("colours").value)
   end
+
+  test "theme fields sent unchanged with a template save the template over the account's saved theme" do
+    pick(template_name: "default", theme: { "primary" => { "light" => "#171717" } })
+
+    pick(template_name: "forest", theme: { "primary" => { "light" => "#171717", "dark" => "" } })
+
+    assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
+  end
 end
