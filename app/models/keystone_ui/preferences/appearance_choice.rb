@@ -50,6 +50,7 @@ module KeystoneUi
         return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
         return template_colours if template_offered?
         return fallback_colours if saved["template_name"].present?
+        return account_colours if saved["preset_name"].present? && !preset_offered?
 
         surface = catalogue_colour("surface", KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
         {
@@ -110,6 +111,10 @@ module KeystoneUi
 
       def fallback_colours
         warn_missing("template", saved["template_name"])
+        account_colours
+      end
+
+      def account_colours
         return default_colours if @account.nil? || colours_choice.preference.owned_by?(@account)
 
         AppearanceChoice.new(person: @account, account: nil).colours

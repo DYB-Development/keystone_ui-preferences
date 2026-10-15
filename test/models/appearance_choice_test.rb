@@ -356,4 +356,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal [ "keystone_ui-preferences: User #{person.id} saved the preset \"retired\", which keystone_ui-looks does not have" ], warnings_from { theme_css_for(person, account) }
   end
+
+  test "a person whose saved preset the catalogue no longer has gets the account's colours" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "forest" })
+
+    assert_equal "emerald", colours_for(person, account)[:accent]
+  end
 end
