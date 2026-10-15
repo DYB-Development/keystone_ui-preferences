@@ -18,4 +18,10 @@ class ThemeSettingsPartialTest < ActionView::TestCase
 
     assert_equal "big\"><b>bold</b>", css_select("input[name='theme[radius][light]']").first["value"]
   end
+
+  test "the setting whose sent value the theme check refuses is followed by the refusal" do
+    render_settings(sent_theme: { "primary" => { "light" => "#123456" }, "radius" => { "light" => "big" } })
+
+    assert_equal [ "The --radius value is not a number followed by px, rem or em, or zero, so it was not saved." ], css_select(".ks-form-field:has(> input[name='theme[radius][light]']) + p.ks-error").map { |error| error.text.strip }
+  end
 end
