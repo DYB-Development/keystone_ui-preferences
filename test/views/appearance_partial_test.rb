@@ -424,6 +424,21 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, settings_by_set("Other")
   end
 
+  test "each font setting suggests the app's theme fonts and then the system fonts the gem offers" do
+    KeystoneUi::Preferences.configure { |config| config.theme_fonts = [ "Inter", "Source Serif 4" ] }
+
+    render_section
+
+    suggestions = %w[font-sans font-serif font-mono font-heading].map do |name|
+      list = theme_settings.at_css("[id='#{theme_settings.at_css("input[name='theme[#{name}][light]']")["list"]}']")
+      list ? list.css("option").map { |option| option["value"] } : []
+    end
+
+    expected = [ "Inter", "Source Serif 4" ] + KeystoneUi::Preferences::CheckedTheme::SYSTEM_FONTS
+
+    assert_equal [ expected ] * 4, suggestions
+  end
+
   test "the theme settings are shown with no closed disclosure around them" do
     render_section
 

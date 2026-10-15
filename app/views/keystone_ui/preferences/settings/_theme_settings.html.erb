@@ -1,5 +1,7 @@
 <% saved_preset = KeystoneUi::Looks::Themes.all.find { |name, _preset| name.to_s == saved["preset_name"] }&.last %>
 <% theme = saved_preset ? saved_preset[:theme] : saved["theme"].to_h %>
+<% id_prefix = local_assigns.fetch(:id_prefix, "appearance") %>
+<% fonts_id = "#{id_prefix}-theme-fonts" %>
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
 <div data-controller="keystone-ui--preferences--theme-editor" data-action="change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply" data-theme-roles="<%= roles.to_json %>" style="display: flex; flex-direction: column; gap: 2rem;">
   <% KeystoneUi::Preferences::ThemeRoles::GROUPS.each do |group, sets| %>
@@ -18,10 +20,10 @@
                 <% if %i[colour shadow_colour].include?(role[:kind]) %>
                   <%= ui_color_picker(name: field_name, value: value, label: label) %>
                 <% else %>
-                  <% field_id = "#{local_assigns.fetch(:id_prefix, "appearance")}-#{field_name.parameterize}" %>
+                  <% field_id = "#{id_prefix}-#{field_name.parameterize}" %>
                   <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
                     <%= label_tag field_id, label, class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
-                    <%= text_field_tag field_name, value, id: field_id, class: Keystone::Ui::InputComponent::BASE_CLASSES %>
+                    <%= text_field_tag field_name, value, id: field_id, class: Keystone::Ui::InputComponent::BASE_CLASSES, list: (fonts_id if role[:kind] == :font_list) %>
                   </div>
                 <% end %>
               <% end %>
@@ -32,4 +34,9 @@
       <% end %>
     <% end %>
   <% end %>
+  <datalist id="<%= fonts_id %>">
+    <% (KeystoneUi::Preferences.configuration.theme_fonts + KeystoneUi::Preferences::CheckedTheme::SYSTEM_FONTS).each do |font| %>
+      <option value="<%= font %>"></option>
+    <% end %>
+  </datalist>
 </div>
