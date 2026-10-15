@@ -32,6 +32,10 @@
         <% end %>
       <% end %>
 
+      <% if offers_colours %>
+        <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, id_prefix: "account-appearance" } %>
+      <% end %>
+
       <div>
         <%= ui_button(label: "Save", type: :submit) %>
       </div>

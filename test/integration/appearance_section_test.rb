@@ -109,4 +109,33 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
       [ "--ks-color-accent: #1f5fbf;", "--ks-color-accent-dark: #6aa3f0;", "--ks-radius-control: 0.625rem;", "--ks-radius-surface: 0.625rem;" ]
     ], [ KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value, css_select("head style").text.lines.map(&:strip).grep(/--ks-(color-accent(-dark)?|radius-[a-z]+):/) ]
   end
+
+  test "a person who opens the grouped editor, changes the radius under Other and saves has it checked and kept" do
+    patch "/settings/appearance", params: { pasted_theme: ":root {\n  --primary: oklch(0.205 0 0);\n  --radius: 0.5rem;\n}\n.dark {\n  --primary: oklch(0.922 0 0);\n}\n" }
+    get "/settings/appearance"
+    groups = css_select("[data-controller='keystone-ui--preferences--theme-editor'] h2").to_h { |title| [ title.text.strip, title.ancestors(".ks-section-sm").first ] }
+    radius = groups.fetch("Other").at_css("input[name='theme[radius][light]']")["name"]
+    fields = css_select("form input[name^='theme[']").map { |field| [ field["name"], field["name"] == radius ? "0.75rem" : field["value"].to_s ] }
+
+    patch "/settings/appearance", params: URI.encode_www_form(fields)
+    follow_redirect!
+
+    assert_equal [
+      %w[Colors Typography Other],
+      { "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.75rem" } } }
+    ], [ groups.keys, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value ]
+  end
+
+  test "a person who types a radius the theme check refuses in the grouped editor is told so, and nothing is saved" do
+    patch "/settings/appearance", params: { pasted_theme: ":root {\n  --primary: oklch(0.205 0 0);\n  --radius: 0.5rem;\n}\n" }
+    get "/settings/appearance"
+    fields = css_select("form input[name^='theme[']").map { |field| [ field["name"], field["name"] == "theme[radius][light]" ? "big" : field["value"].to_s ] }
+
+    patch "/settings/appearance", params: URI.encode_www_form(fields)
+
+    assert_equal [
+      true,
+      { "theme" => { "primary" => { "light" => "oklch(0.205 0 0)" }, "radius" => { "light" => "0.5rem" } } }
+    ], [ response.body.include?("The --radius value is not a number followed by px, rem or em, or zero, so it was not saved."), KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value ]
+  end
 end

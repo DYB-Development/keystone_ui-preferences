@@ -14,6 +14,11 @@ All notable changes to this project will be documented in this file.
 - Leaving the section without saving removes every variable the script set, so the next page is drawn in the saved theme.
 - The install generator copies the theme editor script, and the update generator copies it when the app has none.
 
+### Changed
+- The person's and the account's Appearance sections show the theme fields after the quick choices, with no closed disclosure around them.
+- The theme fields are grouped into Colors, Typography and Other, with each colour role's foreground beside it and its light and dark pickers side by side.
+- Each font field suggests the app's `theme_fonts` and the system fonts the gem offers.
+
 ### Fixed
 - The paste box in the person's and the account's Appearance sections is tied to its "Paste a theme" label, so it can be found by that label and screen readers announce it.
 - Each theme setting typed as text, such as `--radius` or `--font-sans`, is tied to its label.

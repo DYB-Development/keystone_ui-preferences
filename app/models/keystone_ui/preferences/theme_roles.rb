@@ -56,6 +56,31 @@ module KeystoneUi
         "shadow-offset-y" => { kind: :signed_length, variables: [] }
       }.freeze
 
+      GROUPS = {
+        "Colors" => {
+          "Page" => %w[background foreground],
+          "Primary" => %w[primary primary-foreground],
+          "Secondary" => %w[secondary secondary-foreground],
+          "Accent" => %w[accent accent-foreground],
+          "Muted" => %w[muted muted-foreground],
+          "Card" => %w[card card-foreground],
+          "Popover" => %w[popover popover-foreground],
+          "Destructive" => %w[destructive destructive-foreground],
+          "Border, input and ring" => %w[border input ring],
+          "Chart" => %w[chart-1 chart-2 chart-3 chart-4 chart-5],
+          "Sidebar" => %w[sidebar sidebar-foreground sidebar-primary sidebar-primary-foreground sidebar-accent sidebar-accent-foreground sidebar-border sidebar-ring]
+        },
+        "Typography" => {
+          "Fonts" => %w[font-sans font-serif font-mono font-heading],
+          "Font weights" => %w[font-weight-normal font-weight-medium font-weight-strong font-weight-heading],
+          "Letter spacing" => %w[letter-spacing]
+        },
+        "Other" => {
+          "Shape" => %w[radius spacing border-width],
+          "Shadow" => %w[shadow-color shadow-opacity shadow-blur shadow-spread shadow-offset-x shadow-offset-y]
+        }
+      }.freeze
+
       def self.names
         ROLES.keys
       end

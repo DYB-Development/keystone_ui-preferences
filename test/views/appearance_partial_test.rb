@@ -329,30 +329,128 @@ class AppearancePartialTest < ActionView::TestCase
     assert_empty %w[light dark system] - mode_options
   end
 
+  test "the appearance section shows the templates and presets, then Look, then Mode, then the theme settings" do
+    render_section
+
+    order = css_select("input[name=template_name], input[name=look], input[name=mode], input[name^='theme[']").map { |input| input["name"][/\A[a-z_]+/] }
+
+    assert_equal %w[template_name look mode theme], order.chunk_while { |a, b| a == b }.map(&:first)
+  end
+
+  def theme_settings
+    css_select("[data-controller='keystone-ui--preferences--theme-editor']").first
+  end
+
   def theme_field_names
-    theme_section.css("input[name^='theme[']").map { |field| field["name"] }
+    css_select("input[name^='theme[']").map { |field| field["name"] }
+  end
+
+  def roles_in_group_order
+    KeystoneUi::Preferences::ThemeRoles::GROUPS.values.flat_map(&:values).flatten.to_h { |name| [ name, KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name) ] }
   end
 
   test "the Theme section has a field for every theme setting, with a light and a dark field for each colour role" do
     render_section
 
-    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| (role[:kind] == :colour ? %w[light dark] : %w[light]).map { |side| "theme[#{name}][#{side}]" } }
+    expected = roles_in_group_order.flat_map { |name, role| (role[:kind] == :colour ? %w[light dark] : %w[light]).map { |side| "theme[#{name}][#{side}]" } }
 
     assert_equal expected, theme_field_names
   end
 
-  test "the Theme section keeps the theme fields in a disclosure that starts closed" do
+  test "the theme settings are under three groups, Colors, Typography and Other" do
     render_section
 
-    assert_equal [ [ "theme[background][light]", nil ] ], theme_section.css("details").map { |disclosure| [ disclosure.at_css("input[name^='theme[']")&.[]("name"), disclosure["open"] ] }
+    assert_equal %w[Colors Typography Other], theme_settings.css("h2").map { |title| title.text.strip }
+  end
+
+  def theme_group(title)
+    theme_settings.css("h2").find { |heading| heading.text.strip == title }.ancestors(".ks-section-sm").first
+  end
+
+  def settings_by_set(group)
+    theme_group(group).css("fieldset").map { |set| [ set.at_css("legend").text.strip, set.css("input[name^='theme[']").map { |field| field["name"][/\Atheme\[([^\]]+)\]/, 1] }.uniq ] }
+  end
+
+  test "Colors lists each colour role beside its foreground, set by set" do
+    render_section
+
+    expected = [
+      [ "Page", %w[background foreground] ],
+      [ "Primary", %w[primary primary-foreground] ],
+      [ "Secondary", %w[secondary secondary-foreground] ],
+      [ "Accent", %w[accent accent-foreground] ],
+      [ "Muted", %w[muted muted-foreground] ],
+      [ "Card", %w[card card-foreground] ],
+      [ "Popover", %w[popover popover-foreground] ],
+      [ "Destructive", %w[destructive destructive-foreground] ],
+      [ "Border, input and ring", %w[border input ring] ],
+      [ "Chart", %w[chart-1 chart-2 chart-3 chart-4 chart-5] ],
+      [ "Sidebar", %w[sidebar sidebar-foreground sidebar-primary sidebar-primary-foreground sidebar-accent sidebar-accent-foreground sidebar-border sidebar-ring] ]
+    ]
+
+    assert_equal expected, settings_by_set("Colors")
+  end
+
+  test "each colour in Colors has its light value and its dark value side by side" do
+    render_section
+
+    rows = theme_group("Colors").css("[role=group]").map { |row| [ row["aria-label"], row.css("input[type=hidden][name^='theme[']").map { |field| field["name"] } ] }
+
+    expected = KeystoneUi::Preferences::ThemeRoles::GROUPS["Colors"].values.flatten.map { |name| [ "--#{name}", [ "theme[#{name}][light]", "theme[#{name}][dark]" ] ] }
+
+    assert_equal expected, rows
+  end
+
+  test "Typography offers the four fonts, the four font weights and the letter spacing" do
+    render_section
+
+    expected = [
+      [ "Fonts", %w[font-sans font-serif font-mono font-heading] ],
+      [ "Font weights", %w[font-weight-normal font-weight-medium font-weight-strong font-weight-heading] ],
+      [ "Letter spacing", %w[letter-spacing] ]
+    ]
+
+    assert_equal expected, settings_by_set("Typography")
+  end
+
+  test "Other offers the radius, the spacing, the border width and the six shadow settings" do
+    render_section
+
+    expected = [
+      [ "Shape", %w[radius spacing border-width] ],
+      [ "Shadow", %w[shadow-color shadow-opacity shadow-blur shadow-spread shadow-offset-x shadow-offset-y] ]
+    ]
+
+    assert_equal expected, settings_by_set("Other")
+  end
+
+  test "each font setting suggests the app's theme fonts and then the system fonts the gem offers" do
+    KeystoneUi::Preferences.configure { |config| config.theme_fonts = [ "Inter", "Source Serif 4" ] }
+
+    render_section
+
+    suggestions = %w[font-sans font-serif font-mono font-heading].map do |name|
+      list = theme_settings.at_css("[id='#{theme_settings.at_css("input[name='theme[#{name}][light]']")["list"]}']")
+      list ? list.css("option").map { |option| option["value"] } : []
+    end
+
+    expected = [ "Inter", "Source Serif 4" ] + KeystoneUi::Preferences::CheckedTheme::SYSTEM_FONTS
+
+    assert_equal [ expected ] * 4, suggestions
+  end
+
+  test "the theme settings are shown with no closed disclosure around them" do
+    render_section
+
+    assert_empty css_select("details:not([open]) input[name^='theme[']")
   end
 
   test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do
     render_section
 
-    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| { colour: %w[light dark], shadow_colour: %w[light] }.fetch(role[:kind], []).map { |side| "theme[#{name}][#{side}]" } }
+    expected = roles_in_group_order.flat_map { |name, role| { colour: %w[light dark], shadow_colour: %w[light] }.fetch(role[:kind], []).map { |side| "theme[#{name}][#{side}]" } }
 
-    assert_equal expected, theme_section.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
+    assert_equal expected, theme_settings.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
   end
 
   test "the theme fields show the values of the person's saved theme" do
@@ -360,7 +458,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     render_section
 
-    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_settings.at_css("input[name='#{field}']")["value"] }
   end
 
   test "each preset theme's card shows its light primary and secondary colours as swatches, as a template's card shows its accent and surface" do
@@ -384,7 +482,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     render_section
 
-    assert_equal [ "#1f5fbf", "#6aa3f0", "0.625rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+    assert_equal [ "#1f5fbf", "#6aa3f0", "0.625rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_settings.at_css("input[name='#{field}']")["value"] }
   end
 
   test "picking a preset theme hands the template picker script that preset's theme values to fill the theme fields with" do
@@ -413,9 +511,9 @@ class AppearancePartialTest < ActionView::TestCase
   test "each theme setting typed as text is labelled with its setting name" do
     render_section
 
-    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
+    expected = roles_in_group_order.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
 
-    assert_equal expected, labelled_controls(theme_section).select { |_label, name| name.start_with?("theme[") }
+    assert_equal expected, labelled_controls(theme_settings).select { |_label, name| name.start_with?("theme[") }
   end
 
   test "the paste box is labelled 'Paste a theme'" do
@@ -427,7 +525,7 @@ class AppearancePartialTest < ActionView::TestCase
   test "every theme field sits inside the theme editor script, which redraws the page on each change and each keystroke" do
     render_section
 
-    editor = theme_section.at_css("[data-controller='keystone-ui--preferences--theme-editor']")
+    editor = theme_settings
 
     fields = editor ? editor.css("input[name^='theme[']").map { |field| field["name"] } : []
 
@@ -441,6 +539,6 @@ class AppearancePartialTest < ActionView::TestCase
       [ name, { "kind" => role[:kind].to_s, "variables" => role[:variables], "hover" => KeystoneUi::Preferences::ThemeCss::HOVERS[name] }.compact ]
     end
 
-    assert_equal expected, JSON.parse(theme_section.at_css("[data-controller='keystone-ui--preferences--theme-editor']")["data-theme-roles"].to_s)
+    assert_equal expected, JSON.parse(theme_settings["data-theme-roles"].to_s)
   end
 end

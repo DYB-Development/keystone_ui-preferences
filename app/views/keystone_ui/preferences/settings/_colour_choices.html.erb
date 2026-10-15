@@ -3,7 +3,6 @@
   palette_hex = ->(colour, palette) { colour.to_s.start_with?("#") ? colour.to_s : palette.call(colour)[500] }
   templates = { "default" => { accent: configuration.default_accent, surface: configuration.default_surface, text: configuration.default_text, label: "Default" } }
   KeystoneUi::Looks::Templates.all.each { |name, template| templates[name.to_s] = template }
-  saved_preset = KeystoneUi::Looks::Themes.all.find { |name, _preset| name.to_s == saved["preset_name"] }&.last
 %>
 
 <%= ui_section(title: "Theme", spacing: :sm) do %>
@@ -77,7 +76,6 @@
       <%= text_area_tag "pasted_theme", nil, id: "#{id_prefix}-pasted-theme", rows: 3, class: Keystone::Ui::TextareaComponent::BASE_CLASSES %>
       <p class="<%= Keystone::Ui::FormFieldComponent::HINT_CLASSES %>">A :root block and a .dark block in shadcn/ui's variable names, as tweakcn and shadcn's theme pages export them.</p>
     </div>
-    <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { theme: saved_preset ? saved_preset[:theme] : saved["theme"].to_h, id_prefix: id_prefix } %>
   <% end %>
 <% end %>
 

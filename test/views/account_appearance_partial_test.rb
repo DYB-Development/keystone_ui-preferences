@@ -146,6 +146,14 @@ class AccountAppearancePartialTest < ActionView::TestCase
     assert_equal [ [ "This app does not let accounts choose their colours or look." ], 0 ], [ css_select(".ks-alert-message").map { |message| message.text.strip }, css_select("form").size ]
   end
 
+  test "the account's section shows the theme settings under Colors, Typography and Other after the Members switches" do
+    render_section
+
+    order = css_select("input[name=members_choose_look], [data-controller='keystone-ui--preferences--theme-editor'] h2").map { |node| node["name"] || node.text.strip }
+
+    assert_equal %w[members_choose_look Colors Typography Other], order.uniq
+  end
+
   test "the account's section has a box to paste a theme into" do
     render_section
 
