@@ -378,4 +378,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "harbor" ], selected_template
   end
+
+  test "the theme fields show the values of the preset theme the person saved" do
+    save_colours("preset_name" => "harbor")
+
+    render_section
+
+    assert_equal [ "#1f5fbf", "#6aa3f0", "0.625rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+  end
 end
