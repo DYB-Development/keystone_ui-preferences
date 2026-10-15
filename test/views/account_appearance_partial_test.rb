@@ -151,4 +151,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal 1, css_select("textarea[name=pasted_theme]").size
   end
+
+  test "the account's theme fields show the values of the theme the account saved" do
+    save("colours", { "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.5rem" } } })
+
+    render_section
+
+    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| css_select("input[name='#{field}']").first&.[]("value") }
+  end
 end
