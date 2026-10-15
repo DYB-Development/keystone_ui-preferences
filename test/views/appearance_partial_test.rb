@@ -362,4 +362,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
   end
+
+  test "each preset theme's card shows its light primary and secondary colours as swatches, as a template's card shows its accent and surface" do
+    render_section
+
+    swatches = css_select("label:has(input[name=template_name][value=harbor]) span[style*=background-color]").map { |swatch| swatch["style"][/background-color: ([^;]+);/, 1] }
+
+    assert_equal [ "#1f5fbf", "#e3ebf6" ], swatches
+  end
 end
