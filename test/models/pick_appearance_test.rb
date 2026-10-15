@@ -239,4 +239,23 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a pasted colour that is not hex, rgb(), hsl() or oklch() is refused with a reason naming the role" do
     assert_equal "The light --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(pasted_theme: ":root { --primary: var(--x); }").message
   end
+
+  test "a saved pasted theme holds nothing but checked colours under theme role names" do
+    pick(pasted_theme: <<~CSS)
+      /* exported theme */
+      :root {
+        /* base */ --background: oklch(1 0 0);
+        --font-sans: Inter, sans-serif;
+        --primary:   #171717  ;
+      }
+      .dark { --primary: rgb(250 250 250); --shadow-sm: 0 1px 2px #000; }
+      body { --muted: #ffffff; }
+    CSS
+
+    unchecked = saved_value.except("theme").keys + saved_value["theme"].flat_map do |name, sides|
+      [ (name unless KeystoneUi::Preferences::ThemeRoles.names.include?(name)) ] + sides.map { |side, colour| "#{name} #{side}" unless %w[light dark].include?(side) && colour.match?(KeystoneUi::Preferences::CheckedTheme::COLOUR) }
+    end.compact
+
+    assert_empty unchecked
+  end
 end
