@@ -45,7 +45,11 @@ module KeystoneUi
       end
 
       def editing?
-        typed_theme.any? && typed_theme != preference.value.to_h["theme"]
+        typed_theme.any? && [ preference.value.to_h["theme"], preset_theme(@values[:template_name]) ].exclude?(typed_theme)
+      end
+
+      def preset_theme(name)
+        KeystoneUi::Looks::Themes[name][:theme] if KeystoneUi::Looks::Themes.names.map(&:to_s).include?(name.to_s)
       end
 
       def typed_theme

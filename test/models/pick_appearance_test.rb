@@ -319,4 +319,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "preset_name" => "harbor" }, saved_value)
   end
+
+  test "a preset saves its name when the theme fields hold that preset's values, as they do once its card is picked" do
+    pick(template_name: "harbor", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "preset_name" => "harbor" }, saved_value)
+  end
 end
