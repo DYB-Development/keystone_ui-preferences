@@ -33,10 +33,11 @@ function pageRoot() {
   }
 }
 
-function editorOn(root, values = {}) {
+function editorOn(root, values = {}, savedTheme = null) {
   const fields = Object.fromEntries(Object.entries(values).map(([name, value]) => [`[name="${name}"]`, { name, value }]))
-  const parts = { ...fields, "[data-theme-roles]": { dataset: { themeRoles: JSON.stringify(ROLES) } }, "[data-theme-export]": { value: "" }, "[data-controller~='clipboard']": { dataset: {} } }
-  const element = { ownerDocument: { documentElement: root }, querySelector: selector => parts[selector] ?? null, querySelectorAll: () => [] }
+  const saved = savedTheme && { "[data-saved-theme]": { dataset: { savedTheme: JSON.stringify(savedTheme) } } }
+  const parts = { ...fields, ...saved, "[data-theme-roles]": { dataset: { themeRoles: JSON.stringify(ROLES) } }, "[data-theme-export]": { value: "" }, "[data-controller~='clipboard']": { dataset: {} } }
+  const element = { ownerDocument: { documentElement: root }, querySelector: selector => parts[selector] ?? null, querySelectorAll: selector => (selector === "[name^='theme[']" ? Object.values(fields) : []) }
   const editor = new AppearanceEditorController({ scope: { element } })
   editor.exported = () => parts["[data-theme-export]"].value
   editor.field = name => parts[`[name="${name}"]`]
@@ -194,4 +195,13 @@ test("the theme the round trip test pastes back is the export of its fields, wri
   editor.connect()
 
   assert.equal(editor.exported(), exportFixture("theme.css"))
+})
+
+test("opening the editor with fields holding values apart from the saved theme, as after a refused save, draws those values on the page", () => {
+  const root = pageRoot()
+  const editor = editorOn(root, { "theme[primary][light]": "#000000", "theme[radius][light]": "0.5rem" }, { primary: { light: "#000000" } })
+
+  editor.connect()
+
+  assert.deepEqual(root.variables, { "--ks-radius-control": "0.5rem", "--ks-radius-surface": "0.5rem" })
 })

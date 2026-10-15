@@ -2,7 +2,16 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import AppearanceEditorController from "../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js"
 
-function sectionLoadedWith(values, savedTheme = {}) {
+function themeOf(values) {
+  const theme = {}
+  Object.entries(values).filter(([, value]) => value !== "").forEach(([name, value]) => {
+    const [, role, side] = name.match(/^theme\[([^\]]+)\]\[(light|dark)\]$/)
+    theme[role] = { ...theme[role], [side]: value }
+  })
+  return theme
+}
+
+function sectionLoadedWith(values, savedTheme = themeOf(values)) {
   const fields = Object.entries(values).map(([name, value]) => ({ name, value, closest: () => null, dispatchEvent() {} }))
   const visited = []
   const question = { classes: new Set(["hidden"]), classList: { add(name) { question.classes.add(name) }, remove(name) { question.classes.delete(name) } } }

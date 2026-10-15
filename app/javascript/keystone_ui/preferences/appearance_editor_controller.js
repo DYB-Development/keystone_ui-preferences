@@ -16,6 +16,7 @@ export default class extends Controller {
     this.#loadedValues = this.#themeValues()
     this.colorPickerTargets().forEach(picker => picker.addEventListener("change", () => this.customColorChanged()))
     this.#writeExport()
+    this.#drawUnsavedFields()
   }
 
   confirmLeave(event) {
@@ -164,6 +165,18 @@ export default class extends Controller {
     const css = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
     exported.value = css
     this.element.querySelector("[data-controller~='clipboard']").dataset.clipboardText = css
+  }
+
+  #drawUnsavedFields() {
+    const saved = this.#savedTheme()
+    this.element.querySelectorAll("[name^='theme[']").forEach(field => {
+      const [, role, side] = field.name.match(THEME_FIELD)
+      if (field.value !== (saved[role]?.[side] ?? "")) this.apply({ target: field })
+    })
+  }
+
+  #savedTheme() {
+    return JSON.parse(this.element.querySelector("[data-saved-theme]")?.dataset.savedTheme ?? "{}")
   }
 
   #hasUnsavedChanges() {
