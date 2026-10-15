@@ -257,4 +257,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_nil theme_css_for(person, account)
   end
+
+  test "a saved theme's written rule is kept in the Rails cache under the colours row's versioned cache key" do
+    row = KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" } } })
+
+    css = theme_css_for(person, account)
+
+    assert_equal css, Rails.cache.read([ row.cache_key_with_version, "theme_css" ])
+  end
 end
