@@ -1,7 +1,7 @@
 [
   {
     "value": "default",
-    "data-action": "keystone-ui--preferences--theme-settings#selectTemplate",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectTemplate",
     "data-accent-hex": "#3b82f6",
     "data-surface-hex": "#71717a",
     "data-text-hex": "#18181b",
@@ -9,7 +9,7 @@
   },
   {
     "value": "ocean",
-    "data-action": "keystone-ui--preferences--theme-settings#selectTemplate",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectTemplate",
     "data-accent-hex": "#3b82f6",
     "data-surface-hex": "#64748b",
     "data-text-hex": "#0c4a6e",
@@ -17,7 +17,7 @@
   },
   {
     "value": "forest",
-    "data-action": "keystone-ui--preferences--theme-settings#selectTemplate",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectTemplate",
     "data-accent-hex": "#10b981",
     "data-surface-hex": "#78716c",
     "data-text-hex": "#064e3b",
@@ -25,7 +25,7 @@
   },
   {
     "value": "twilight",
-    "data-action": "keystone-ui--preferences--theme-settings#selectTemplate",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectTemplate",
     "data-accent-hex": "#8b5cf6",
     "data-surface-hex": "#71717a",
     "data-text-hex": "#ede9fe",
@@ -33,7 +33,7 @@
   },
   {
     "value": "coral",
-    "data-action": "keystone-ui--preferences--theme-settings#selectTemplate",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectTemplate",
     "data-accent-hex": "#f43f5e",
     "data-surface-hex": "#737373",
     "data-text-hex": "#4c0519",
@@ -41,7 +41,7 @@
   },
   {
     "value": "arctic",
-    "data-action": "keystone-ui--preferences--theme-settings#selectTemplate",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectTemplate",
     "data-accent-hex": "#06b6d4",
     "data-surface-hex": "#6b7280",
     "data-text-hex": "#164e63",
@@ -49,7 +49,7 @@
   },
   {
     "value": "graphite",
-    "data-action": "keystone-ui--preferences--theme-settings#selectPreset",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectPreset",
     "data-accent-hex": null,
     "data-surface-hex": null,
     "data-text-hex": null,
@@ -57,7 +57,7 @@
   },
   {
     "value": "harbor",
-    "data-action": "keystone-ui--preferences--theme-settings#selectPreset",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectPreset",
     "data-accent-hex": null,
     "data-surface-hex": null,
     "data-text-hex": null,
@@ -65,7 +65,7 @@
   },
   {
     "value": "fern",
-    "data-action": "keystone-ui--preferences--theme-settings#selectPreset",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectPreset",
     "data-accent-hex": null,
     "data-surface-hex": null,
     "data-text-hex": null,
@@ -73,7 +73,7 @@
   },
   {
     "value": "terracotta",
-    "data-action": "keystone-ui--preferences--theme-settings#selectPreset",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectPreset",
     "data-accent-hex": null,
     "data-surface-hex": null,
     "data-text-hex": null,
@@ -81,7 +81,7 @@
   },
   {
     "value": "heather",
-    "data-action": "keystone-ui--preferences--theme-settings#selectPreset",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectPreset",
     "data-accent-hex": null,
     "data-surface-hex": null,
     "data-text-hex": null,
@@ -89,7 +89,7 @@
   },
   {
     "value": "ledger",
-    "data-action": "keystone-ui--preferences--theme-settings#selectPreset",
+    "data-action": "keystone-ui--preferences--appearance-editor#selectPreset",
     "data-accent-hex": null,
     "data-surface-hex": null,
     "data-text-hex": null,

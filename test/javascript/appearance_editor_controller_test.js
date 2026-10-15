@@ -1,7 +1,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
-import ThemeEditorController from "../../app/javascript/keystone_ui/preferences/theme_editor_controller.js"
+import AppearanceEditorController from "../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js"
 
 const ROLES = {
   "primary": { kind: "colour", variables: ["--ks-color-accent"], hover: "--ks-color-accent-hover" },
@@ -35,9 +35,9 @@ function pageRoot() {
 
 function editorOn(root, values = {}) {
   const fields = Object.fromEntries(Object.entries(values).map(([name, value]) => [`[name="${name}"]`, { name, value }]))
-  const parts = { ...fields, "[data-theme-export]": { value: "" }, "[data-controller~='clipboard']": { dataset: {} } }
-  const element = { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(ROLES) }, querySelector: selector => parts[selector] ?? null }
-  const editor = new ThemeEditorController({ scope: { element } })
+  const parts = { ...fields, "[data-theme-roles]": { dataset: { themeRoles: JSON.stringify(ROLES) } }, "[data-theme-export]": { value: "" }, "[data-controller~='clipboard']": { dataset: {} } }
+  const element = { ownerDocument: { documentElement: root }, querySelector: selector => parts[selector] ?? null }
+  const editor = new AppearanceEditorController({ scope: { element } })
   editor.exported = () => parts["[data-theme-export]"].value
   editor.field = name => parts[`[name="${name}"]`]
   editor.copied = () => parts["[data-controller~='clipboard']"].dataset.clipboardText

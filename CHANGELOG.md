@@ -32,6 +32,8 @@ All notable changes to this project will be documented in this file.
 - The person's and the account's Appearance sections show the theme fields after the quick choices, with no closed disclosure around them.
 - The theme fields are grouped into Colors, Typography and Other, with each colour role's foreground beside it and its light and dark pickers side by side.
 - Each font field suggests the app's `theme_fonts` and the system fonts the gem offers.
+- One appearance editor script, registered as `keystone-ui--preferences--appearance-editor`, now fills, draws, resets and exports the theme fields in both Appearance sections in place of the template picker and theme editor scripts, so an app must register it for the sections to work.
+- The install generator copies only the appearance editor script, and the update generator copies it into an app that has none and leaves the template picker and theme editor scripts an app copied before, which the app may remove with their registrations.
 
 ### Fixed
 - The paste box in the person's and the account's Appearance sections is tied to its "Paste a theme" label, so it can be found by that label and screen readers announce it.

@@ -149,7 +149,7 @@ class AccountAppearancePartialTest < ActionView::TestCase
   test "the account's section shows the theme settings under Colors, Typography and Other after the Members switches" do
     render_section
 
-    order = css_select("input[name=members_choose_look], [data-controller='keystone-ui--preferences--theme-editor'] h2").map { |node| node["name"] || node.text.strip }
+    order = css_select("input[name=members_choose_look], [data-theme-roles] h2").map { |node| node["name"] || node.text.strip }
 
     assert_equal %w[members_choose_look Colors Typography Other], order.uniq
   end
@@ -207,7 +207,7 @@ class AccountAppearancePartialTest < ActionView::TestCase
   test "the account's Reset button resets the theme fields through the template picker script without saving" do
     render_section
 
-    assert_equal [ [ "button", "keystone-ui--preferences--theme-settings#reset" ] ], reset_buttons
+    assert_equal [ [ "button", "keystone-ui--preferences--appearance-editor#reset" ] ], reset_buttons
   end
 
   test "the account's section has no Reset button when the app turns off account colours" do
@@ -222,8 +222,24 @@ class AccountAppearancePartialTest < ActionView::TestCase
     render_section
 
     fields = css_select("[name^='theme[']")
-    outside = fields.reject { |field| field.ancestors("[data-controller='keystone-ui--preferences--theme-editor']").any? }
+    outside = fields.reject { |field| field.ancestors("[data-controller='keystone-ui--preferences--appearance-editor']").any? }
 
     assert_equal [ false, [] ], [ fields.empty?, outside.map { |field| field["name"] } ]
+  end
+
+  test "every account template card and preset card hands the template picker script the same values the person's cards hand it" do
+    render_section
+
+    cards = css_select("input[type=radio][name=template_name]").map { |option| %w[value data-action data-accent-hex data-surface-hex data-text-hex data-theme].to_h { |attribute| [ attribute, option[attribute] ] } }
+
+    assert_equal JSON.parse(File.read(File.expand_path("../fixtures/pinned/cards.json", __dir__))), cards
+  end
+
+  test "the template picker script finds the account's accent, surface and text colour pickers, each card to outline and the Custom card" do
+    render_section
+
+    targets = %w[accentPicker surfacePicker textPicker templateLabel customRadio].map { |target| css_select("[data-keystone-ui--preferences--appearance-editor-target=#{target}]").size }
+
+    assert_equal [ 1, 1, 1, 13, 1 ], targets
   end
 end
