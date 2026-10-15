@@ -19,6 +19,12 @@ class ThemeReaderTest < ActiveSupport::TestCase
     assert_equal({ "ring" => { "light" => "#a1a1a1" } }, reader.values)
   end
 
+  test "a :root block's --radius is read as the theme's radius" do
+    reader = read(":root {\n  --primary: #171717;\n  --radius: 0.625rem;\n}\n")
+
+    assert_equal({ "light" => "0.625rem" }, reader.values["radius"])
+  end
+
   test "colour roles set by any selector or rule other than a :root block and a .dark block are ignored" do
     reader = read(<<~CSS)
       :root { --border: #e5e5e5; }

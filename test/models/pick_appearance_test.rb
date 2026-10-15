@@ -212,10 +212,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
     }
   CSS
 
-  test "saving a pasted :root block and .dark block keeps every colour role in them as the person's colours" do
+  test "saving a pasted :root block and .dark block keeps every theme setting in them as the person's colours" do
     pick(template_name: "", pasted_theme: PASTED_THEME)
 
-    assert_equal({ "theme" => { "background" => { "light" => "oklch(1 0 0)", "dark" => "oklch(0.145 0 0)" }, "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } } }, saved_value)
+    assert_equal({ "theme" => { "background" => { "light" => "oklch(1 0 0)", "dark" => "oklch(0.145 0 0)" }, "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.625rem" } } }, saved_value)
   end
 
   test "a pasted theme saves when the save sends no template" do

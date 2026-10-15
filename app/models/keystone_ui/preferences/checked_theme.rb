@@ -8,6 +8,8 @@ module KeystoneUi
       HEX = /\A#(?:\h{3}|\h{4}|\h{6}|\h{8})\z/
       FUNCTION = /\A(?:rgba?|hsla?|oklch)\(\s*#{NUMBER}#{GAP}#{NUMBER}#{GAP}#{NUMBER}(?:\s*[\/,]\s*#{NUMBER})?\s*\)\z/
       COLOUR = Regexp.union(HEX, FUNCTION)
+      LENGTH = /\A(?:0|(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em))\z/
+      PATTERNS = { colour: COLOUR, length: LENGTH }.freeze
       SIDES = %w[light dark].freeze
 
       def initialize(values)
@@ -17,7 +19,7 @@ module KeystoneUi
       def refusal
         kept.each do |name, sides|
           sides.each do |side, colour|
-            return Refusal.new("The #{side} --#{name} colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.") unless colour.to_s.match?(COLOUR)
+            return Refusal.new("The #{side} --#{name} colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.") unless colour.to_s.match?(PATTERNS.fetch(ThemeRoles::ROLES.fetch(name)[:kind]))
           end
         end
         nil
