@@ -23,6 +23,9 @@ All notable changes to this project will be documented in this file.
 - A Copy button beside the export copies it through keystone_ui's clipboard script with no request to the server, and where the browser refuses to copy it tells the person to select the text instead.
 - An exported theme pasted back into the paste box and saved keeps every value it held, and a value holding a semicolon or a curly brace is left out of the export.
 - The account's Appearance section shows the theme preview, the Edit and Preview tabs on a phone-width screen and the Reset button the person's section has, and shows none of them while the app turns off account colours.
+- Following a link out of the person's or the account's Appearance section after changing a theme field holds the Turbo visit and asks on the page, through keystone_ui's modal, whether to leave without saving or to stay.
+- Closing or reloading the page after changing a theme field asks the browser to show its own leave-page warning.
+- Leaving with no theme field changed, after resetting to the saved theme, or by saving asks nothing.
 
 ### Changed
 - The gem requires keystone_ui-styles 0.23.0 or later, so the preview's light side stays light and a dark value changes only the dark side while the page itself is drawn dark.

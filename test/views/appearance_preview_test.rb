@@ -88,7 +88,24 @@ class AppearancePreviewTest < ActionView::TestCase
     settings = css_select("[data-controller='keystone-ui--preferences--appearance-editor']").first
     panels = css_select("[data-editor-panel]")
 
-    assert_equal [ "tab-switcher:change->keystone-ui--preferences--appearance-editor#showPanel", [ true, false ] ], [ settings&.[]("data-action"), panels.map { |panel| panel.key?("data-shown") } ]
+    assert_equal [ "tab-switcher:change->keystone-ui--preferences--appearance-editor#showPanel", [ true, false ] ], [ settings&.[]("data-action").to_s.split.first, panels.map { |panel| panel.key?("data-shown") } ]
+  end
+
+  test "Turbo visits, page unloads and Save in the appearance section are handed to the appearance editor script, which asks before unsaved changes are lost" do
+    render_section
+
+    actions = css_select("[data-controller='keystone-ui--preferences--appearance-editor']").first&.[]("data-action").to_s.split
+
+    assert_equal [ "submit->keystone-ui--preferences--appearance-editor#save", "turbo:before-visit@document->keystone-ui--preferences--appearance-editor#confirmLeave", "beforeunload@window->keystone-ui--preferences--appearance-editor#warnBeforeUnload" ], actions.drop(1)
+  end
+
+  test "the appearance section holds a hidden question on the page offering to leave without saving or to stay" do
+    render_section
+
+    question = css_select("[data-appearance-editor] [data-leave-question] [data-modal-target='backdrop'].hidden")
+    choices = question.css("button").filter_map { |button| [ button.text.strip, button["data-action"] ] unless button["aria-label"] == "Close" }
+
+    assert_equal [ [ "Leave without saving", "keystone-ui--preferences--appearance-editor#leave" ], [ "Stay", "modal#close" ] ], choices
   end
 
   def section_style

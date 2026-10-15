@@ -36,7 +36,7 @@ function pageRoot() {
 function editorOn(root, values = {}) {
   const fields = Object.fromEntries(Object.entries(values).map(([name, value]) => [`[name="${name}"]`, { name, value }]))
   const parts = { ...fields, "[data-theme-roles]": { dataset: { themeRoles: JSON.stringify(ROLES) } }, "[data-theme-export]": { value: "" }, "[data-controller~='clipboard']": { dataset: {} } }
-  const element = { ownerDocument: { documentElement: root }, querySelector: selector => parts[selector] ?? null }
+  const element = { ownerDocument: { documentElement: root }, querySelector: selector => parts[selector] ?? null, querySelectorAll: () => [] }
   const editor = new AppearanceEditorController({ scope: { element } })
   editor.exported = () => parts["[data-theme-export]"].value
   editor.field = name => parts[`[name="${name}"]`]
