@@ -16,6 +16,9 @@ All notable changes to this project will be documented in this file.
 - The person's Appearance section shows a preview of keystone_ui's card, buttons in each style, a form, a table, a line chart and a sidebar navigation list, drawn once on a light side and once on a dark side from sample data the gem holds.
 - Unsaved theme changes show in the preview, with a chart colour redrawing its line chart and a sidebar colour changing its navigation list.
 - On a phone-width screen the person's Appearance section shows an Edit tab and a Preview tab from keystone_ui's tab switcher, and the template picker script shows the picked tab's panel, so an app that copied the script before this release replaces its copy with the gem's.
+- Picking a preset card in the person's or the account's Appearance section draws the preset on the whole page before saving, and on the preview in the person's section, so an app that copied the template picker script before this release replaces its copy with the gem's.
+- The person's Appearance section has a Reset button that fills every theme field, the page and the preview from the picked preset card, or from the saved theme when no preset card is picked, and saves nothing.
+- Emptying a theme field removes the variables the theme editor script set for it, so the page draws that setting from the saved theme again.
 
 ### Changed
 - The gem requires keystone_ui-styles 0.23.0 or later, so the preview's light side stays light and a dark value changes only the dark side while the page itself is drawn dark.

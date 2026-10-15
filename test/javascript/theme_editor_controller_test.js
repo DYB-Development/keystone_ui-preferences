@@ -123,3 +123,14 @@ test("leaving the theme fields removes every variable the editor set, so the nex
 
   assert.deepEqual(root.variables, {})
 })
+
+test("emptying a field removes the variables the editor set for its role and side, so the page shows the saved theme for it again", () => {
+  const root = pageRoot()
+  const editor = editorOn(root)
+  editor.apply(change("theme[primary][light]", "#1f5fbf"))
+  editor.apply(change("theme[primary][dark]", "#1f5fbf"))
+
+  editor.apply(change("theme[primary][light]", ""))
+
+  assert.deepEqual(root.variables, { "--ks-color-accent-dark": "#1f5fbf", "--ks-color-accent-hover-dark": "color-mix(in oklab, #1f5fbf 85%, white)" })
+})

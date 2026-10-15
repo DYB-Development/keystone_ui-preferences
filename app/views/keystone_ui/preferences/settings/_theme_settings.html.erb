@@ -3,7 +3,7 @@
 <% id_prefix = local_assigns.fetch(:id_prefix, "appearance") %>
 <% fonts_id = "#{id_prefix}-theme-fonts" %>
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
-<div data-controller="keystone-ui--preferences--theme-editor" data-action="change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply" data-theme-roles="<%= roles.to_json %>" style="display: flex; flex-direction: column; gap: 2rem;">
+<div data-controller="keystone-ui--preferences--theme-editor" data-action="change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply" data-theme-roles="<%= roles.to_json %>" data-saved-theme="<%= theme.to_json %>" style="display: flex; flex-direction: column; gap: 2rem;">
   <% KeystoneUi::Preferences::ThemeRoles::GROUPS.each do |group, sets| %>
     <%= ui_section(title: group, spacing: :sm) do %>
       <% sets.each do |set, names| %>
