@@ -250,4 +250,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_nil theme_css_for(person, account)
   end
+
+  test "a person's saved theme is not written when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" } } })
+
+    assert_nil theme_css_for(person, account)
+  end
 end

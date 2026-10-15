@@ -36,7 +36,7 @@ module KeystoneUi
       end
 
       def theme_css
-        return unless saved.key?("theme")
+        return unless configuration.account_colors && saved.key?("theme")
 
         checked = CheckedTheme.new(saved["theme"])
         ThemeCss.new(checked.value["theme"]).to_s unless checked.refusal
