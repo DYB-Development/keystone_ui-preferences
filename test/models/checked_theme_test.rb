@@ -17,4 +17,10 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => values }, check(values).value)
   end
+
+  test "a colour that is not hex, rgb(), hsl() or oklch() written with plain numbers is refused with a reason naming the role" do
+    checked = check("border" => { "light" => "#e5e5e5" }, "primary" => { "light" => "#171717", "dark" => "red" })
+
+    assert_equal "The dark --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", checked.refusal&.message
+  end
 end
