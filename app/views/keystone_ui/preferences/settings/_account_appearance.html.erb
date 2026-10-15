@@ -14,7 +14,7 @@
   <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
     <div style="display: flex; flex-direction: column; gap: 2rem;">
       <% if offers_colours %>
-        <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn } %>
+        <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true } %>
       <% end %>
 
       <% if offers_look %>
