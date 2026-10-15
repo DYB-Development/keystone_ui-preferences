@@ -39,6 +39,10 @@ class KeystoneUi::Preferences::Generators::UpdateGeneratorTest < ActiveSupport::
     assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_copy_keystone_ui_colors_theme_preferences.rb").first.to_s), "class CopyKeystoneUiColorsThemePreferences"
   end
 
+  test "copies the theme editor script into the app's Stimulus controllers" do
+    assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js")
+  end
+
   private
 
   def migration

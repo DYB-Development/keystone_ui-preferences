@@ -33,6 +33,10 @@ module KeystoneUi
 
           create_file copy, File.read(File.expand_path("../../../../../app/javascript/keystone_ui/preferences/theme_settings_controller.js", __dir__))
         end
+
+        def copy_theme_editor_script
+          create_file "app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js", File.read(File.expand_path("../../../../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__))
+        end
       end
     end
   end
