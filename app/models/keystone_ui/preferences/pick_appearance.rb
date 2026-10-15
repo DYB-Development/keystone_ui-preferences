@@ -12,11 +12,10 @@ module KeystoneUi
       def call
         return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
         return Refusal.new("Choose the app's own look or one of the looks it offers.") unless look_offered?
-        return keep_mode_and_look unless @values.key?(:template_name) || pasting? || editing?
+        return keep_mode_and_look unless @values.key?(:template_name) || sent_theme.sent?
         return Refusal.new("This app sets the colours for everyone, so this was not saved.") unless KeystoneUi::Preferences.configuration.account_colors
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
-        return keep_theme if pasting?
-        return keep_typed_theme if editing?
+        return keep_checked(sent_theme.checked) if sent_theme.sent?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
 
         chosen = ChosenColours.new(@values)
@@ -40,31 +39,8 @@ module KeystoneUi
         LayoutChoice.new(person: @person, account: @account, component_key: "colours").members_choose?
       end
 
-      def pasting?
-        @values[:pasted_theme].present?
-      end
-
-      def editing?
-        typed_theme.any? && [ preference.value.to_h["theme"], preset_theme(preference.value.to_h["preset_name"]), preset_theme(@values[:template_name]) ].exclude?(typed_theme)
-      end
-
-      def preset_theme(name)
-        KeystoneUi::Looks::Themes[name][:theme] if KeystoneUi::Looks::Themes.names.map(&:to_s).include?(name.to_s)
-      end
-
-      def typed_theme
-        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.to_h { |side, value| [ side.to_s, value.to_s.strip ] }.compact_blank ] }.compact_blank
-      end
-
-      def keep_typed_theme
-        keep_checked(CheckedTheme.new(typed_theme))
-      end
-
-      def keep_theme
-        reader = ThemeReader.new(@values[:pasted_theme])
-        return reader.refusal if reader.refusal
-
-        keep_checked(CheckedTheme.new(reader.values))
+      def sent_theme
+        @sent_theme ||= SentTheme.new(@values) { preference.value.to_h }
       end
 
       def keep_checked(checked)
