@@ -4,11 +4,13 @@ import ThemeEditorController from "../../app/javascript/keystone_ui/preferences/
 
 const ROLES = {
   "primary": { kind: "colour", variables: ["--ks-color-accent"], hover: "--ks-color-accent-hover" },
-  "popover-foreground": { kind: "colour", variables: ["--ks-color-on-overlay", "--ks-color-on-overlay-muted"] }
+  "popover-foreground": { kind: "colour", variables: ["--ks-color-on-overlay", "--ks-color-on-overlay-muted"] },
+  "radius": { kind: "length", variables: ["--ks-radius-control", "--ks-radius-surface"] }
 }
 
 const DRAWABLE = {
-  "color": ["#1f5fbf"]
+  "color": ["#1f5fbf"],
+  "width": ["0.5rem"]
 }
 
 globalThis.CSS = { supports: (property, value) => (DRAWABLE[property] ?? []).includes(value) }
@@ -63,4 +65,12 @@ test("changing a colour whose role has a hover colour also sets the hover colour
   editorOn(root).apply(change("theme[primary][light]", "#1f5fbf"))
 
   assert.equal(root.variables["--ks-color-accent-hover"], "color-mix(in oklab, #1f5fbf 85%, white)")
+})
+
+test("changing a radius, spacing or border width sets each of its role's variables on the page's root element", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("theme[radius][light]", "0.5rem"))
+
+  assert.deepEqual(root.variables, { "--ks-radius-control": "0.5rem", "--ks-radius-surface": "0.5rem" })
 })
