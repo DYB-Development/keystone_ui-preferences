@@ -313,4 +313,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal [ "Your account sets the colours for everyone, so this was not saved.", nil ], [ refusal.message, saved_value ]
   end
+
+  test "saving a preset theme keeps only its name as the person's colours" do
+    pick(template_name: "harbor")
+
+    assert_equal({ "preset_name" => "harbor" }, saved_value)
+  end
 end
