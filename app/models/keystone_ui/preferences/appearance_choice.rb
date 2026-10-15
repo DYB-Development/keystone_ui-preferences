@@ -79,7 +79,7 @@ module KeystoneUi
       def refused_theme_css
         row = colours_choice.preference
         Rails.logger.warn("keystone_ui-preferences: #{row.owner_type} #{row.owner_id} saved a theme whose --#{refused_setting} setting fails the theme check")
-        nil
+        account_theme_css
       end
 
       def refused_setting
