@@ -40,6 +40,13 @@ module KeystoneUi
 
           create_file copy, File.read(File.expand_path("../../../../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__))
         end
+
+        def copy_appearance_editor_script
+          copy = "app/javascript/controllers/keystone_ui/preferences/appearance_editor_controller.js"
+          return if File.exist?(File.join(destination_root, copy))
+
+          create_file copy, File.read(File.expand_path("../../../../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js", __dir__))
+        end
       end
     end
   end
