@@ -51,3 +51,15 @@ test("choosing to leave without saving visits the page the held visit was going 
 
   assert.deepEqual(editor.visited, ["/settings/layouts"])
 })
+
+test("the visit made after choosing to leave is not held again", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  editor.change("theme[primary][light]", "#1f5fbf")
+  editor.confirmLeave(visit("/settings/layouts"))
+  editor.leave()
+  const leaving = visit("/settings/layouts")
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, false)
+})

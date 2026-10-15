@@ -10,6 +10,7 @@ export default class extends Controller {
   #setVariables = new Set()
   #loadedValues = []
   #heldUrl = null
+  #leaveAllowed = false
 
   connect() {
     this.#loadedValues = this.#themeValues()
@@ -26,6 +27,7 @@ export default class extends Controller {
   }
 
   leave() {
+    this.#leaveAllowed = true
     this.element.ownerDocument.defaultView.Turbo.visit(this.#heldUrl)
   }
 
@@ -157,7 +159,7 @@ export default class extends Controller {
   }
 
   #hasUnsavedChanges() {
-    return this.#themeValues().some((value, place) => value !== this.#loadedValues[place])
+    return !this.#leaveAllowed && this.#themeValues().some((value, place) => value !== this.#loadedValues[place])
   }
 
   #themeValues() {
