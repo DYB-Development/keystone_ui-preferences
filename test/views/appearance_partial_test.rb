@@ -470,6 +470,12 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ saved_theme ], css_select("[data-saved-theme]").map { |element| JSON.parse(element["data-saved-theme"]) }
   end
 
+  test "the appearance section's Reset button resets the theme fields through the template picker script without saving" do
+    render_section
+
+    assert_equal [ [ "button", "keystone-ui--preferences--theme-settings#reset" ] ], css_select("form button").select { |button| button.text.strip == "Reset" }.map { |button| [ button["type"], button["data-action"] ] }
+  end
+
   test "each preset theme's card shows its light primary and secondary colours as swatches, as a template's card shows its accent and surface" do
     render_section
 
