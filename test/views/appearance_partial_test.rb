@@ -320,4 +320,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_empty selected_template
   end
+
+  test "the appearance section offers Light, Dark and System to a person with a saved theme" do
+    save_colours("theme" => { "primary" => { "light" => "#171717", "dark" => "#e5e5e5" } })
+
+    render_section
+
+    assert_empty %w[light dark system] - mode_options
+  end
 end
