@@ -8,7 +8,7 @@ module KeystoneUi
       end
 
       def refusal
-        return Refusal.new("Choose Default, one of the colour templates or Custom.") unless template_offered?
+        return Refusal.new("Choose Default, one of the colour templates, one of the preset themes or Custom.") unless template_offered?
 
         Refusal.new("Choose each colour as a six-digit hex value, such as #1d4ed8.") unless colours_offered?
       end

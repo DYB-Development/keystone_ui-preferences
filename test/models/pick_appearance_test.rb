@@ -57,7 +57,7 @@ class PickAppearanceTest < ActiveSupport::TestCase
   end
 
   test "a template that is not in the catalogue is refused with a reason" do
-    assert_equal "Choose Default, one of the colour templates or Custom.", pick(template_name: "jungle").message
+    assert_equal "Choose Default, one of the colour templates, one of the preset themes or Custom.", pick(template_name: "jungle").message
   end
 
   test "a refused template leaves the person's saved colours as they were" do
@@ -341,5 +341,11 @@ class PickAppearanceTest < ActiveSupport::TestCase
     pick(template_name: "harbor", theme: edited)
 
     assert_equal({ "theme" => edited }, saved_value)
+  end
+
+  test "a preset name the catalogue does not have is refused with the reason naming the preset themes, and nothing is saved" do
+    refusal = pick(template_name: "retired")
+
+    assert_equal [ "Choose Default, one of the colour templates, one of the preset themes or Custom.", nil ], [ refusal.message, saved_value ]
   end
 end

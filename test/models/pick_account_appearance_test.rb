@@ -37,7 +37,7 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
   end
 
   test "a template that is not in the catalogue is refused with a reason" do
-    assert_equal "Choose Default, one of the colour templates or Custom.", pick(template_name: "sunset").message
+    assert_equal "Choose Default, one of the colour templates, one of the preset themes or Custom.", pick(template_name: "sunset").message
   end
 
   test "a save with no account to save it on is refused with a reason" do
