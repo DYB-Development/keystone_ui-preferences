@@ -26,39 +26,17 @@ module KeystoneUi
       private
 
       def colours_sent?
-        @values.key?(:template_name) || pasting? || editing?
-      end
-
-      def pasting?
-        @values[:pasted_theme].present?
+        @values.key?(:template_name) || sent_theme.sent?
       end
 
       def chosen_colours
-        return pasted_theme if pasting?
-        return CheckedTheme.new(typed_theme) if editing?
+        return sent_theme.checked if sent_theme.sent?
 
         ChosenColours.new(@values) if colours_sent?
       end
 
-      def editing?
-        typed_theme.any? && [ saved_colours["theme"], preset_theme(saved_colours["preset_name"]), preset_theme(@values[:template_name]) ].exclude?(typed_theme)
-      end
-
-      def preset_theme(name)
-        KeystoneUi::Looks::Themes[name][:theme] if KeystoneUi::Looks::Themes.names.map(&:to_s).include?(name.to_s)
-      end
-
-      def saved_colours
-        @saved_colours ||= ComponentPreference.find_by(owner: @account, component_key: "colours")&.value.to_h
-      end
-
-      def typed_theme
-        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.to_h { |side, value| [ side.to_s, value.to_s.strip ] }.compact_blank ] }.compact_blank
-      end
-
-      def pasted_theme
-        reader = ThemeReader.new(@values[:pasted_theme])
-        reader.refusal ? reader : CheckedTheme.new(reader.values)
+      def sent_theme
+        @sent_theme ||= SentTheme.new(@values) { ComponentPreference.find_by(owner: @account, component_key: "colours")&.value.to_h }
       end
 
       def look_offered?
