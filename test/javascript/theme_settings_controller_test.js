@@ -127,3 +127,23 @@ test("picking a template card fills the accent, surface and text pickers with th
 
   assert.deepEqual(pickers.map((picker) => picker.shown()), [["#10b981", "#10b981", "#10b981", "#10b981"], ["#78716c", "#78716c", "#78716c", "#78716c"], ["#064e3b", "#064e3b", "#064e3b", "#064e3b"]])
 })
+
+function cardLabel(template, border) {
+  const classes = new Set([border])
+  const span = { classList: { add: (name) => classes.add(name), remove: (name) => classes.delete(name) } }
+  return { dataset: { template }, querySelector: (selector) => (selector === "span" ? span : null), classes }
+}
+
+function bordersOf(labels) {
+  return labels.map(({ classes }) => [...classes].sort())
+}
+
+test("picking a template card outlines that card and clears the outline from every other card", () => {
+  const settings = new ThemeSettingsController({ scope: { element: {} } })
+  const labels = [cardLabel("default", "border-accent-500"), cardLabel("forest", "border-transparent"), cardLabel("custom", "border-transparent")]
+  Object.assign(settings, { accentPickerTarget: colourPicker(), surfacePickerTarget: colourPicker(), textPickerTarget: colourPicker(), templateLabelTargets: labels })
+
+  settings.selectTemplate(templateCard("#10b981", "#78716c", "#064e3b"))
+
+  assert.deepEqual(bordersOf(labels), [["border-transparent"], ["border-accent-500"], ["border-transparent"]])
+})
