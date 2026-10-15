@@ -42,7 +42,10 @@ All notable changes to this project will be documented in this file.
 - The paste box in the person's and the account's Appearance sections is tied to its "Paste a theme" label, so it can be found by that label and screen readers announce it.
 - Each theme setting typed as text, such as `--radius` or `--font-sans`, is tied to its label.
 - The account's Appearance fields carry ids apart from the person's, so the two sections can share a page.
-- A save the theme check refuses in the person's or the account's Appearance section shows the theme values that were sent in the theme fields instead of the saved ones, and a refused paste stays in the paste box, while the page is still drawn in the saved theme.
+- A save the theme check refuses in the person's or the account's Appearance section shows the theme values that were sent in the theme fields instead of the saved ones, and a refused paste stays in the paste box.
+- When an Appearance section opens with theme fields that differ from the saved theme, as after a refused save, the appearance editor script draws those values on the page, so an app that copied the script before this release replaces its copy with the gem's.
+- Leaving an Appearance section warns whenever a theme field differs from the saved theme, so leaving after a refused save warns, where it used to compare against the values the page opened with.
+- A sent colour the theme check refuses is shown in a plain text field instead of the colour picker, so it reaches no style attribute on the page.
 - The refusal is also written under the theme setting it names, unless the save carried a pasted theme, which is what the check read.
 - Opening an Appearance section with theme values in its address still shows the saved theme.
 
