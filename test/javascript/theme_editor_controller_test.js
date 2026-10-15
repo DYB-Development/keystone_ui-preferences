@@ -6,13 +6,15 @@ const ROLES = {
   "primary": { kind: "colour", variables: ["--ks-color-accent"], hover: "--ks-color-accent-hover" },
   "popover-foreground": { kind: "colour", variables: ["--ks-color-on-overlay", "--ks-color-on-overlay-muted"] },
   "radius": { kind: "length", variables: ["--ks-radius-control", "--ks-radius-surface"] },
-  "letter-spacing": { kind: "letter_spacing", variables: ["--ks-letter-spacing"] }
+  "letter-spacing": { kind: "letter_spacing", variables: ["--ks-letter-spacing"] },
+  "font-mono": { kind: "font_list", variables: ["--ks-font-mono", "--default-mono-font-family"] }
 }
 
 const DRAWABLE = {
   "color": ["#1f5fbf"],
   "width": ["0.5rem"],
-  "letter-spacing": ["-0.02em"]
+  "letter-spacing": ["-0.02em"],
+  "font-family": ["Menlo, monospace"]
 }
 
 globalThis.CSS = { supports: (property, value) => (DRAWABLE[property] ?? []).includes(value) }
@@ -83,4 +85,12 @@ test("changing the letter spacing sets its variable on the page's root element",
   editorOn(root).apply(change("theme[letter-spacing][light]", "-0.02em"))
 
   assert.deepEqual(root.variables, { "--ks-letter-spacing": "-0.02em" })
+})
+
+test("changing a font sets each of its role's variables on the page's root element", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("theme[font-mono][light]", "Menlo, monospace"))
+
+  assert.deepEqual(root.variables, { "--ks-font-mono": "Menlo, monospace", "--default-mono-font-family": "Menlo, monospace" })
 })
