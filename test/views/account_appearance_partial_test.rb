@@ -145,4 +145,10 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "This app does not let accounts choose their colours or look." ], 0 ], [ css_select(".ks-alert-message").map { |message| message.text.strip }, css_select("form").size ]
   end
+
+  test "the account's section has no box to paste a theme into" do
+    render_section
+
+    assert_empty css_select("textarea[name=pasted_theme]")
+  end
 end
