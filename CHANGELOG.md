@@ -22,11 +22,12 @@ All notable changes to this project will be documented in this file.
 - The person's and the account's Appearance sections show the theme fields' current values, saved or not, as a `:root` block and a `.dark` block in shadcn/ui's variable names, in a read-only Export text area that Save does not send.
 - A Copy button beside the export copies it through keystone_ui's clipboard script with no request to the server, and where the browser refuses to copy it tells the person to select the text instead.
 - An exported theme pasted back into the paste box and saved keeps every value it held, and a value holding a semicolon or a curly brace is left out of the export.
+- The account's Appearance section shows the theme preview, the Edit and Preview tabs on a phone-width screen and the Reset button the person's section has, and shows none of them while the app turns off account colours.
 
 ### Changed
 - The gem requires keystone_ui-styles 0.23.0 or later, so the preview's light side stays light and a dark value changes only the dark side while the page itself is drawn dark.
 - The gem requires keystone_ui 0.47.0 or later, whose line chart takes light or dark from the nearest `data-theme` and redraws when the theme's variables change.
-- The template picker script sits on an element around the person's Appearance form and its tabs instead of on the form itself.
+- The template picker script sits on an element around the person's and the account's Appearance forms and their tabs instead of on each form itself.
 - On a screen 64rem wide or wider the person's Appearance fields and the preview sit side by side.
 - The person's and the account's Appearance sections show the theme fields after the quick choices, with no closed disclosure around them.
 - The theme fields are grouped into Colors, Typography and Other, with each colour role's foreground beside it and its light and dark pickers side by side.
