@@ -190,3 +190,14 @@ test("following a link after picking another Look holds the visit", () => {
 
   assert.equal(leaving.held, true)
 })
+
+test("following a link after picking another Mode and then the saved Mode again is not held", () => {
+  const editor = sectionLoadedWith({}, {}, [card("mode", "light", true), card("mode", "dark")])
+  editor.pick("mode", "dark")
+  editor.pick("mode", "light")
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, false)
+})
