@@ -258,4 +258,29 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_empty unchecked
   end
+
+  test "saving a pasted theme also keeps its radius, spacing, shadow settings, sans and mono fonts and letter spacing" do
+    pick(pasted_theme: <<~CSS)
+      :root {
+        --primary: oklch(0.205 0 0);
+        --font-sans: Inter, sans-serif;
+        --font-mono: Menlo, monospace;
+        --radius: 0.5rem;
+        --shadow-color: oklch(0 0 0);
+        --shadow-opacity: 0.1;
+        --shadow-blur: 3px;
+        --shadow-spread: 0px;
+        --shadow-offset-x: 0;
+        --shadow-offset-y: 1px;
+        --letter-spacing: -0.025em;
+        --spacing: 0.25rem;
+      }
+    CSS
+
+    assert_equal({
+      "font-sans" => "sans-serif", "font-mono" => "Menlo, monospace", "radius" => "0.5rem",
+      "shadow-color" => "oklch(0 0 0)", "shadow-opacity" => "0.1", "shadow-blur" => "3px", "shadow-spread" => "0px", "shadow-offset-x" => "0", "shadow-offset-y" => "1px",
+      "letter-spacing" => "-0.025em", "spacing" => "0.25rem"
+    }, saved_value["theme"].except("primary").transform_values { |sides| sides["light"] })
+  end
 end

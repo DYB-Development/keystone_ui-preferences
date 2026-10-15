@@ -37,6 +37,7 @@ module KeystoneUi
         "sidebar-border" => { kind: :colour, variables: %w[--ks-color-nav-border] },
         "sidebar-ring" => { kind: :colour, variables: [] },
         "radius" => { kind: :length, variables: [] },
+        "spacing" => { kind: :length, variables: [] },
         "letter-spacing" => { kind: :letter_spacing, variables: [] },
         "font-sans" => { kind: :font_list, variables: [] },
         "font-serif" => { kind: :font_list, variables: [] },
