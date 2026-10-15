@@ -112,3 +112,14 @@ test("changing a colour's dark value sets only the dark variables, and the dark 
 
   assert.deepEqual(root.variables, { "--ks-color-accent-dark": "#1f5fbf", "--ks-color-accent-hover-dark": "color-mix(in oklab, #1f5fbf 85%, white)" })
 })
+
+test("leaving the theme fields removes every variable the editor set, so the next page is drawn in the saved theme", () => {
+  const root = pageRoot()
+  const editor = editorOn(root)
+  editor.apply(change("theme[primary][light]", "#1f5fbf"))
+  editor.apply(change("theme[radius][light]", "0.5rem"))
+
+  editor.disconnect()
+
+  assert.deepEqual(root.variables, {})
+})
