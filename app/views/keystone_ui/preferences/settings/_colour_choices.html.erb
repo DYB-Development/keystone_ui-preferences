@@ -45,6 +45,7 @@
       <span>Custom</span>
     <% end %>
   </div>
+  <%= ui_form_field(attribute: "pasted_theme", label: "Paste a theme", type: :textarea, hint: "A :root block and a .dark block in shadcn/ui's variable names, as tweakcn and shadcn's theme pages export them.") %>
 <% end %>
 
 <%= ui_section(title: "Accent Color", spacing: :sm) do %>

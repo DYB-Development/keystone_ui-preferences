@@ -294,4 +294,14 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_empty template_options
   end
+
+  def theme_section
+    css_select("h2").find { |title| title.text.strip == "Theme" }.ancestors("div")[2]
+  end
+
+  test "the appearance section's Theme section has a box to paste a theme into" do
+    render_section
+
+    assert_equal [ "pasted_theme" ], theme_section.css("textarea").map { |box| box["name"] }
+  end
 end
