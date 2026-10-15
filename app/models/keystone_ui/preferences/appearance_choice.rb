@@ -37,7 +37,7 @@ module KeystoneUi
 
       def theme_css
         return unless configuration.account_colors
-        return written(KeystoneUi::Looks::Themes[saved["preset_name"]][:theme]) if saved.key?("preset_name")
+        return preset_css if saved.key?("preset_name")
         return unless saved.key?("theme")
 
         Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION, own_look? ]) { written_theme }
@@ -58,6 +58,10 @@ module KeystoneUi
           background: surface.start_with?("#") ? surface : configuration.default_background,
           text: (saved["text"] if saved["text"].to_s.match?(HEX)) || configuration.default_text
         }
+      end
+
+      def preset_css
+        Rails.cache.fetch([ "preset_css", saved["preset_name"], KeystoneUi::Looks::VERSION, ThemeCss::VERSION, own_look? ]) { written(KeystoneUi::Looks::Themes[saved["preset_name"]][:theme]) }
       end
 
       def written_theme

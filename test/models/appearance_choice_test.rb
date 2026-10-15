@@ -318,4 +318,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
   end
+
+  test "a preset's written rule is kept in the Rails cache under the preset's name, the keystone_ui-looks version and whether the person saved a look" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "harbor" })
+
+    css = theme_css_for(person, account)
+
+    assert_equal css, Rails.cache.read([ "preset_css", "harbor", KeystoneUi::Looks::VERSION, KeystoneUi::Preferences::ThemeCss::VERSION, false ])
+  end
 end
