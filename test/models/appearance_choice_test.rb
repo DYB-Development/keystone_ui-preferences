@@ -394,4 +394,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
   end
+
+  test "a person's saved theme that fails the theme check writes one warning naming the person and the failing setting" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" }, "radius" => { "light" => "1 lightyear" } } })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved a theme whose --radius setting fails the theme check" ], warnings_from { theme_css_for(person, account) }
+  end
 end

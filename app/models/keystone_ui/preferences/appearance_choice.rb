@@ -40,6 +40,7 @@ module KeystoneUi
         return unless configuration.account_colors
         return preset_css if saved.key?("preset_name")
         return unless saved.key?("theme")
+        return refused_theme_css if refused_setting
 
         Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION, own_look? ]) { written_theme }
       end
@@ -73,6 +74,16 @@ module KeystoneUi
 
       def preset_offered?
         KeystoneUi::Looks::Themes.names.map(&:to_s).include?(saved["preset_name"].to_s)
+      end
+
+      def refused_theme_css
+        row = colours_choice.preference
+        Rails.logger.warn("keystone_ui-preferences: #{row.owner_type} #{row.owner_id} saved a theme whose --#{refused_setting} setting fails the theme check")
+        nil
+      end
+
+      def refused_setting
+        @refused_setting ||= CheckedTheme.new(saved["theme"]).failing_setting if theme_shaped?(saved["theme"])
       end
 
       def written_theme
