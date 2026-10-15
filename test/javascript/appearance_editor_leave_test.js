@@ -85,3 +85,17 @@ test("following a link after resetting the changed fields to the saved theme is 
 
   assert.equal(leaving.held, false)
 })
+
+function unload() {
+  return { warned: false, preventDefault() { this.warned = true } }
+}
+
+test("closing or reloading the page after changing a theme field asks the browser to warn first", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  editor.change("theme[primary][light]", "#1f5fbf")
+  const closing = unload()
+
+  editor.warnBeforeUnload(closing)
+
+  assert.equal(closing.warned, true)
+})

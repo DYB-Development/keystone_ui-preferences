@@ -26,6 +26,10 @@ export default class extends Controller {
     this.element.querySelector("[data-leave-question] [data-modal-target='backdrop']").classList.remove("hidden")
   }
 
+  warnBeforeUnload(event) {
+    if (this.#hasUnsavedChanges()) event.preventDefault()
+  }
+
   leave() {
     this.#leaveAllowed = true
     this.element.ownerDocument.defaultView.Turbo.visit(this.#heldUrl)
