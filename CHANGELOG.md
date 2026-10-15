@@ -19,6 +19,9 @@ All notable changes to this project will be documented in this file.
 - Picking a preset card in the person's or the account's Appearance section draws the preset on the whole page before saving, and on the preview in the person's section, so an app that copied the template picker script before this release replaces its copy with the gem's.
 - The person's Appearance section has a Reset button that fills every theme field, the page and the preview from the picked preset card, or from the saved theme when no preset card is picked, and saves nothing.
 - Emptying a theme field removes the variables the theme editor script set for it, so the page draws that setting from the saved theme again.
+- The person's and the account's Appearance sections show the theme fields' current values, saved or not, as a `:root` block and a `.dark` block in shadcn/ui's variable names, in a read-only Export text area that Save does not send.
+- A Copy button beside the export copies it through keystone_ui's clipboard script with no request to the server, and where the browser refuses to copy it tells the person to select the text instead.
+- An exported theme pasted back into the paste box and saved keeps every value it held, and a value holding a semicolon or a curly brace is left out of the export.
 
 ### Changed
 - The gem requires keystone_ui-styles 0.23.0 or later, so the preview's light side stays light and a dark value changes only the dark side while the page itself is drawn dark.
