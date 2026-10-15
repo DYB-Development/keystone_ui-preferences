@@ -108,3 +108,14 @@ test("closing or reloading the page with no theme field changed is not warned ab
 
   assert.equal(closing.warned, false)
 })
+
+test("saving changed theme fields unloads the page without a warning", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  editor.change("theme[primary][light]", "#1f5fbf")
+  editor.save()
+  const closing = unload()
+
+  editor.warnBeforeUnload(closing)
+
+  assert.equal(closing.warned, false)
+})

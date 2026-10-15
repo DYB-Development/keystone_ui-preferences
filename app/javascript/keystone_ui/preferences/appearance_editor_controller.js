@@ -30,6 +30,10 @@ export default class extends Controller {
     if (this.#hasUnsavedChanges()) event.preventDefault()
   }
 
+  save() {
+    this.#leaveAllowed = true
+  }
+
   leave() {
     this.#leaveAllowed = true
     this.element.ownerDocument.defaultView.Turbo.visit(this.#heldUrl)
