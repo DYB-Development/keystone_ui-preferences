@@ -42,6 +42,9 @@ All notable changes to this project will be documented in this file.
 - The paste box in the person's and the account's Appearance sections is tied to its "Paste a theme" label, so it can be found by that label and screen readers announce it.
 - Each theme setting typed as text, such as `--radius` or `--font-sans`, is tied to its label.
 - The account's Appearance fields carry ids apart from the person's, so the two sections can share a page.
+- A save the theme check refuses in the person's or the account's Appearance section shows the theme values that were sent in the theme fields instead of the saved ones, and a refused paste stays in the paste box, while the page is still drawn in the saved theme.
+- The refusal is also written under the theme setting it names, unless the save carried a pasted theme, which is what the check read.
+- Opening an Appearance section with theme values in its address still shows the saved theme.
 
 ## [0.8.0] - 2026-10-15
 
