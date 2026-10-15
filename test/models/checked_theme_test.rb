@@ -54,4 +54,11 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal [ nil, nil, nil, nil, refused, refused, refused ], spacings.map { |spacing| check("letter-spacing" => { "light" => spacing }).refusal&.message }
   end
+
+  test "a font list is kept only as comma-separated names of letters, digits, spaces and hyphens, each optionally quoted, and is otherwise refused with a reason naming the setting" do
+    lists = [ "Inter, sans-serif", "\"Segoe UI\", Roboto, -apple-system", "'JetBrains Mono', monospace", "Inter; color: red", "Inter,", "\"Inter", "Comic_Sans", "", "Inter!" ]
+    refused = "The --font-sans value is not a list of font names made of letters, digits, spaces and hyphens, so it was not saved."
+
+    assert_equal [ nil, nil, nil, refused, refused, refused, refused, refused, refused ], lists.map { |list| check("font-sans" => { "light" => list }).refusal&.message }
+  end
 end

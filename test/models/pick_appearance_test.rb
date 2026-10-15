@@ -240,7 +240,7 @@ class PickAppearanceTest < ActiveSupport::TestCase
     assert_equal "The light --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(pasted_theme: ":root { --primary: var(--x); }").message
   end
 
-  test "a saved pasted theme holds nothing but checked colours under theme role names" do
+  test "a saved pasted theme holds nothing but checked values under theme role names" do
     pick(pasted_theme: <<~CSS)
       /* exported theme */
       :root {
@@ -253,7 +253,7 @@ class PickAppearanceTest < ActiveSupport::TestCase
     CSS
 
     unchecked = saved_value.except("theme").keys + saved_value["theme"].flat_map do |name, sides|
-      [ (name unless KeystoneUi::Preferences::ThemeRoles.names.include?(name)) ] + sides.map { |side, colour| "#{name} #{side}" unless %w[light dark].include?(side) && colour.match?(KeystoneUi::Preferences::CheckedTheme::COLOUR) }
+      [ (name unless KeystoneUi::Preferences::ThemeRoles.names.include?(name)) ] + sides.map { |side, value| "#{name} #{side}" unless %w[light dark].include?(side) && value.match?(KeystoneUi::Preferences::CheckedTheme::PATTERNS.fetch(KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name)[:kind])) }
     end.compact
 
     assert_empty unchecked

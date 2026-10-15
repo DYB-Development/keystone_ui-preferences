@@ -11,10 +11,14 @@ module KeystoneUi
       UNSIGNED_LENGTH = '(?:0|(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em))'
       LENGTH = /\A#{UNSIGNED_LENGTH}\z/
       SIGNED_LENGTH = /\A-?#{UNSIGNED_LENGTH}\z/
-      PATTERNS = { colour: COLOUR, length: LENGTH, letter_spacing: Regexp.union(SIGNED_LENGTH, /\Anormal\z/) }.freeze
+      FONT_NAME = "[A-Za-z0-9-]+(?: [A-Za-z0-9-]+)*"
+      FONT = "(?:#{FONT_NAME}|\"#{FONT_NAME}\"|'#{FONT_NAME}')"
+      FONT_LIST = /\A#{FONT}(?:\s*,\s*#{FONT})*\z/
+      PATTERNS = { colour: COLOUR, length: LENGTH, letter_spacing: Regexp.union(SIGNED_LENGTH, /\Anormal\z/), font_list: FONT_LIST }.freeze
       REASONS = {
         length: "is not a number followed by px, rem or em, or zero",
-        letter_spacing: "is not normal or a number followed by px, rem or em, or zero"
+        letter_spacing: "is not normal or a number followed by px, rem or em, or zero",
+        font_list: "is not a list of font names made of letters, digits, spaces and hyphens"
       }.freeze
       SIDES = %w[light dark].freeze
 
