@@ -305,12 +305,12 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ "pasted_theme" ], theme_section.css("textarea").map { |box| box["name"] }
   end
 
-  test "the Theme section says a pasted theme is the colours a person chose when they saved one" do
+  test "the Theme section says the current choice is the person's own theme when they saved one" do
     save_colours("theme" => { "primary" => { "light" => "#171717" } })
 
     render_section
 
-    assert_includes theme_section.text, "Your current choice is a pasted theme."
+    assert_includes theme_section.text, "Your current choice is your own theme."
   end
 
   test "the appearance section selects no template for a person whose colours are a pasted theme" do
