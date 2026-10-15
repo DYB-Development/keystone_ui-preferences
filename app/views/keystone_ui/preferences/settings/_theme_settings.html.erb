@@ -1,3 +1,5 @@
+<% saved_preset = KeystoneUi::Looks::Themes.all.find { |name, _preset| name.to_s == saved["preset_name"] }&.last %>
+<% theme = saved_preset ? saved_preset[:theme] : saved["theme"].to_h %>
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
 <div data-controller="keystone-ui--preferences--theme-editor" data-action="change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply" data-theme-roles="<%= roles.to_json %>">
 <%= ui_disclosure do |disclosure| %>

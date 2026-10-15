@@ -329,8 +329,20 @@ class AppearancePartialTest < ActionView::TestCase
     assert_empty %w[light dark system] - mode_options
   end
 
+  test "the appearance section shows the templates and presets, then Look, then Mode, then the theme settings" do
+    render_section
+
+    order = css_select("input[name=template_name], input[name=look], input[name=mode], input[name^='theme[']").map { |input| input["name"][/\A[a-z_]+/] }
+
+    assert_equal %w[template_name look mode theme], order.chunk_while { |a, b| a == b }.map(&:first)
+  end
+
+  def theme_settings
+    css_select("[data-controller='keystone-ui--preferences--theme-editor']").first
+  end
+
   def theme_field_names
-    theme_section.css("input[name^='theme[']").map { |field| field["name"] }
+    css_select("input[name^='theme[']").map { |field| field["name"] }
   end
 
   test "the Theme section has a field for every theme setting, with a light and a dark field for each colour role" do
@@ -344,7 +356,7 @@ class AppearancePartialTest < ActionView::TestCase
   test "the Theme section keeps the theme fields in a disclosure that starts closed" do
     render_section
 
-    assert_equal [ [ "theme[background][light]", nil ] ], theme_section.css("details").map { |disclosure| [ disclosure.at_css("input[name^='theme[']")&.[]("name"), disclosure["open"] ] }
+    assert_equal [ [ "theme[background][light]", nil ] ], theme_settings.css("details").map { |disclosure| [ disclosure.at_css("input[name^='theme[']")&.[]("name"), disclosure["open"] ] }
   end
 
   test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do
@@ -352,7 +364,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| { colour: %w[light dark], shadow_colour: %w[light] }.fetch(role[:kind], []).map { |side| "theme[#{name}][#{side}]" } }
 
-    assert_equal expected, theme_section.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
+    assert_equal expected, theme_settings.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
   end
 
   test "the theme fields show the values of the person's saved theme" do
@@ -360,7 +372,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     render_section
 
-    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_settings.at_css("input[name='#{field}']")["value"] }
   end
 
   test "each preset theme's card shows its light primary and secondary colours as swatches, as a template's card shows its accent and surface" do
@@ -384,7 +396,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     render_section
 
-    assert_equal [ "#1f5fbf", "#6aa3f0", "0.625rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+    assert_equal [ "#1f5fbf", "#6aa3f0", "0.625rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_settings.at_css("input[name='#{field}']")["value"] }
   end
 
   test "picking a preset theme hands the template picker script that preset's theme values to fill the theme fields with" do
@@ -415,7 +427,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     expected = KeystoneUi::Preferences::ThemeRoles::ROLES.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
 
-    assert_equal expected, labelled_controls(theme_section).select { |_label, name| name.start_with?("theme[") }
+    assert_equal expected, labelled_controls(theme_settings).select { |_label, name| name.start_with?("theme[") }
   end
 
   test "the paste box is labelled 'Paste a theme'" do
@@ -427,7 +439,7 @@ class AppearancePartialTest < ActionView::TestCase
   test "every theme field sits inside the theme editor script, which redraws the page on each change and each keystroke" do
     render_section
 
-    editor = theme_section.at_css("[data-controller='keystone-ui--preferences--theme-editor']")
+    editor = theme_settings
 
     fields = editor ? editor.css("input[name^='theme[']").map { |field| field["name"] } : []
 
@@ -441,6 +453,6 @@ class AppearancePartialTest < ActionView::TestCase
       [ name, { "kind" => role[:kind].to_s, "variables" => role[:variables], "hover" => KeystoneUi::Preferences::ThemeCss::HOVERS[name] }.compact ]
     end
 
-    assert_equal expected, JSON.parse(theme_section.at_css("[data-controller='keystone-ui--preferences--theme-editor']")["data-theme-roles"].to_s)
+    assert_equal expected, JSON.parse(theme_settings["data-theme-roles"].to_s)
   end
 end
