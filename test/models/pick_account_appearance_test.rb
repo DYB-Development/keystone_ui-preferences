@@ -109,4 +109,12 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal "This app does not let accounts choose their colours.", pick(pasted_theme: PASTED_THEME).message
   end
+
+  test "a pasted theme containing url( is refused and leaves the account's colours as they were" do
+    pick(template_name: "forest")
+
+    pick(pasted_theme: "#{PASTED_THEME}\n.logo { background: url(x.png); }")
+
+    assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
+  end
 end
