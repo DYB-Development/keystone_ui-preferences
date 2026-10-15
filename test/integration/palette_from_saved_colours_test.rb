@@ -44,6 +44,6 @@ class PaletteFromSavedColoursTest < ActionDispatch::IntegrationTest
 
     get "/palette"
 
-    assert_equal KeystoneUi::Preferences::PaletteCss.new(accent: "emerald", surface: "stone", background: "#ecfdf5", text: "#064e3b").to_s, css_select("head style").text
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(palette: { accent: "emerald", surface: "stone", background: "#ecfdf5", text: "#064e3b" }).to_s, css_select("head style").text
   end
 end
