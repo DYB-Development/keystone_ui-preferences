@@ -33,6 +33,10 @@ module KeystoneUi
 
       private
 
+      def sides_of(name)
+        ThemeRoles::ROLES.fetch(name)[:kind] == :colour ? SIDES : SIDES.first(1)
+      end
+
       def reason(kind, name, side)
         return Refusal.new("The #{side} --#{name} colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.") if kind == :colour
 
@@ -41,7 +45,7 @@ module KeystoneUi
 
       def kept
         @kept ||= ThemeRoles.names.each_with_object({}) do |name, kept|
-          sides = @values.to_h[name].to_h.slice(*SIDES)
+          sides = @values.to_h[name].to_h.slice(*sides_of(name))
           kept[name] = sides if sides.any?
         end
       end

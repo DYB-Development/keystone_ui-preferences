@@ -41,4 +41,10 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal [ "The --radius value is not a number followed by px, rem or em, or zero, so it was not saved." ] * lengths.size, lengths.map { |length| check("radius" => { "light" => length }).refusal&.message }
   end
+
+  test "a shape or type setting keeps only its light value" do
+    checked = check("radius" => { "light" => "0", "dark" => "1rem" })
+
+    assert_equal({ "theme" => { "radius" => { "light" => "0" } } }, checked.value)
+  end
 end
