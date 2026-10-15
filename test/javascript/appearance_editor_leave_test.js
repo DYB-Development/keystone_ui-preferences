@@ -155,3 +155,18 @@ test("following a link after picking another colour card holds the visit", () =>
 
   assert.equal(leaving.held, true)
 })
+
+function picker(name, value) {
+  return { name, value, type: "hidden" }
+}
+
+test("following a link after changing the Custom accent, surface or text picker holds the visit", () => {
+  const choices = [picker("accent", "#3b82f6")]
+  const editor = sectionLoadedWith({}, {}, choices)
+  choices[0].value = "#ef4444"
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
+})
