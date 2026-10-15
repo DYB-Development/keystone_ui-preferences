@@ -10,8 +10,9 @@
 <% if !offers_colours && !offers_look %>
   <%= ui_alert(message: "This app does not let accounts choose their colours or look.") %>
 <% else %>
+<% editor = capture do %>
 <%= ui_panel(padding: :lg) do %>
-  <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
+  <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
     <div style="display: flex; flex-direction: column; gap: 2rem;">
       <% if offers_colours %>
         <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true, presets: true, own_theme_hint: "The account's current choice is its own theme.", id_prefix: "account-appearance" } %>
@@ -42,4 +43,7 @@
     </div>
   <% end %>
 <% end %>
+<% end %>
+
+<%= render partial: "keystone_ui/preferences/settings/editor_layout", locals: { editor: editor, previews: true } %>
 <% end %>

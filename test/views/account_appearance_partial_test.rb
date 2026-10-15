@@ -183,4 +183,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_empty ids.select { |id| ids.count(id) > 1 }.uniq
   end
+
+  test "the account's section offers the Edit and Preview tabs over the editor and the preview drawn on a light and a dark side" do
+    render_section
+
+    tabs = css_select("[data-controller='tab-switcher'] [data-tab-switcher-target='tab']").map { |tab| tab.text.strip }
+
+    assert_equal [ [ "Edit", "Preview" ], %w[light dark] ], [ tabs, css_select("[data-theme-preview] [data-theme]").map { |side| side["data-theme"] } ]
+  end
 end
