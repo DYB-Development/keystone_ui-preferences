@@ -44,7 +44,10 @@ module KeystoneUi
       end
 
       def keep_theme
-        preference.update!(value: CheckedTheme.new(ThemeReader.new(@values[:pasted_theme]).values).value)
+        reader = ThemeReader.new(@values[:pasted_theme])
+        return reader.refusal if reader.refusal
+
+        preference.update!(value: CheckedTheme.new(reader.values).value)
         keep_mode_and_look
       end
 

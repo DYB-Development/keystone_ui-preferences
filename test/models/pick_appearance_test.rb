@@ -227,4 +227,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
   test "a pasted theme is refused with the existing reason when the account sets the colours for everyone" do
     assert_equal "Your account sets the colours for everyone, so this was not saved.", pick({ pasted_theme: PASTED_THEME }, account_setting_colours).message
   end
+
+  test "a pasted theme containing url( saves nothing and leaves the person's colours as they were" do
+    pick(template_name: "forest")
+
+    pick(pasted_theme: "#{PASTED_THEME}\n.logo { background: url(x.png); }")
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
 end
