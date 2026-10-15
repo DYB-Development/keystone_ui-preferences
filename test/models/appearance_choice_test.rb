@@ -244,4 +244,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
   end
+
+  test "a saved theme holding a colour that fails the theme check is not written" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#000;} body{display:none" } } })
+
+    assert_nil theme_css_for(person, account)
+  end
 end

@@ -36,7 +36,10 @@ module KeystoneUi
       end
 
       def theme_css
-        ThemeCss.new(saved["theme"]).to_s if saved.key?("theme")
+        return unless saved.key?("theme")
+
+        checked = CheckedTheme.new(saved["theme"])
+        ThemeCss.new(checked.value["theme"]).to_s unless checked.refusal
       end
 
       private
