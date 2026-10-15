@@ -49,7 +49,7 @@ module KeystoneUi
       end
 
       def saved_colours
-        ComponentPreference.find_by(owner: @account, component_key: "colours")&.value.to_h
+        @saved_colours ||= ComponentPreference.find_by(owner: @account, component_key: "colours")&.value.to_h
       end
 
       def typed_theme
