@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file.
 - A paste over 20,000 characters, a paste containing `url(` or `@import`, and a paste with no shadcn colour role are refused with a message, and nothing is saved.
 - A pasted theme is saved as `{ "theme": { "<role>": { "light": ..., "dark": ... } } }` under the `colours` key, holding only the checked colours and never the pasted text.
 - The Theme section says a pasted theme is the person's current choice and selects no template for it.
+- `keystone_palette_style_tag` writes a saved theme on every page as a `:root, html:root[data-look]` rule after the palette, setting each theme role's `--ks-*` variables from its light value and their `-dark` partners from its dark value, so a theme's colours win over a look's colours.
+- A role with no dark value keeps today's dark colour, and the accent, neutral and danger hover colours are derived from `primary`, `secondary` and `destructive` with `color-mix`.
+- A saved theme is checked again before it is written, and a theme holding a colour that fails the check, or that is not a set of roles each holding light and dark colours, is not written.
+- The written theme rule is kept in `Rails.cache` under the colours row's versioned cache key and the writer's version.
 
 ### Changed
 - keystone_ui-styles 0.18.0 or later is required, since each theme role names the `--ks-*` variables it will set.

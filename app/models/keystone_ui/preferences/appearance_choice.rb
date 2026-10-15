@@ -35,6 +35,12 @@ module KeystoneUi
         !colours[:background].casecmp?(WHITE)
       end
 
+      def theme_css
+        return unless configuration.account_colors && saved.key?("theme")
+
+        Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION ]) { written_theme }
+      end
+
       private
 
       def chosen_colours
@@ -50,6 +56,17 @@ module KeystoneUi
           background: surface.start_with?("#") ? surface : configuration.default_background,
           text: (saved["text"] if saved["text"].to_s.match?(HEX)) || configuration.default_text
         }
+      end
+
+      def written_theme
+        return unless theme_shaped?(saved["theme"])
+
+        checked = CheckedTheme.new(saved["theme"])
+        ThemeCss.new(checked.value["theme"]).to_s unless checked.refusal
+      end
+
+      def theme_shaped?(theme)
+        theme.is_a?(Hash) && theme.values.all?(Hash)
       end
 
       def saved_look(owner)

@@ -65,4 +65,11 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal({ "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } } }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value)
   end
+
+  test "a person who pastes a theme in the appearance section sees every page set the theme's light and dark values" do
+    patch "/settings/appearance", params: { pasted_theme: ":root {\n  --background: oklch(1 0 0);\n}\n.dark {\n  --background: oklch(0.145 0 0);\n}\n" }
+    get "/palette"
+
+    assert_equal [ "--ks-color-page: oklch(1 0 0);", "--ks-color-page-dark: oklch(0.145 0 0);" ], css_select("head style").text.lines.map(&:strip).grep(/--ks-color-page/)
+  end
 end

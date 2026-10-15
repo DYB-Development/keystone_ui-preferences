@@ -38,4 +38,12 @@ class PaletteFromSavedColoursTest < ActionDispatch::IntegrationTest
 
     assert_empty queries
   end
+
+  test "a person who saved a template before themes existed gets a style tag holding only the palette it held before" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "template_name" => "forest" })
+
+    get "/palette"
+
+    assert_equal KeystoneUi::Preferences::PaletteCss.new(accent: "emerald", surface: "stone", background: "#ecfdf5", text: "#064e3b").to_s, css_select("head style").text
+  end
 end

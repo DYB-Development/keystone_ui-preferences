@@ -233,4 +233,65 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "sharp", look_for(person, account)
   end
+
+  def theme_css_for(person, account = nil)
+    KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account).theme_css
+  end
+
+  test "a person's saved theme is written as a theme rule" do
+    theme = { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => theme })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
+  end
+
+  test "a saved theme holding a colour that fails the theme check is not written" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#000;} body{display:none" } } })
+
+    assert_nil theme_css_for(person, account)
+  end
+
+  test "a person's saved theme is not written when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" } } })
+
+    assert_nil theme_css_for(person, account)
+  end
+
+  test "a saved theme's written rule is kept in the Rails cache under the colours row's versioned cache key" do
+    row = KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" } } })
+
+    css = theme_css_for(person, account)
+
+    assert_equal css, Rails.cache.read([ row.cache_key_with_version, "theme_css", KeystoneUi::Preferences::ThemeCss::VERSION ])
+  end
+
+  test "a saved theme that is not a set of roles each holding light and dark colours is not written" do
+    themes = [ "oklch(0.205 0 0)", { "primary" => "#171717" }, { "primary" => [ "#171717" ] } ]
+
+    written = themes.map do |theme|
+      KeystoneUi::Preferences::ComponentPreference.where(owner: person, component_key: "colours").delete_all
+      Rails.cache.clear
+      KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => theme })
+      theme_css_for(person, account)
+    end
+
+    assert_equal [ nil, nil, nil ], written
+  end
+
+  test "a theme rule cached by another version of the writer is written again" do
+    row = KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" } } })
+    writer = KeystoneUi::Preferences::ThemeCss
+    earlier = writer::VERSION
+    Rails.cache.write([ row.cache_key_with_version, "theme_css", earlier ], "written by an earlier writer")
+    writer.send(:remove_const, :VERSION)
+    writer.const_set(:VERSION, "#{earlier}-next")
+
+    css = theme_css_for(person, account)
+
+    assert_equal writer.new(row.value["theme"]).to_s, css
+  ensure
+    writer.send(:remove_const, :VERSION)
+    writer.const_set(:VERSION, earlier)
+  end
 end
