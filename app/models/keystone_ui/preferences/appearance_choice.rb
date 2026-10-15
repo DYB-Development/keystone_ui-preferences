@@ -53,6 +53,7 @@ module KeystoneUi
         return template_colours if template_offered?
         return fallback_colours if saved["template_name"].present?
         return account_colours if saved["preset_name"].present? && !preset_offered?
+        return account_colours if refused_setting
 
         surface = catalogue_colour("surface", KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
         {

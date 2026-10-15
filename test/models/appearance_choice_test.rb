@@ -407,4 +407,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
   end
+
+  test "a person whose saved theme fails the theme check gets the account's colours" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "radius" => { "light" => "1 lightyear" } } })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "forest" })
+
+    assert_equal "emerald", colours_for(person, account)[:accent]
+  end
 end
