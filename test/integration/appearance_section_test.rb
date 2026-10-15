@@ -82,4 +82,19 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "--ks-radius-control: 0.5rem;", "--ks-radius-surface: 0.5rem;", "--ks-font-body: Inter, sans-serif;" ], css_select("head style").text.lines.map(&:strip).grep(/--ks-(radius|font)/)
   end
+
+  test "a person who changes one theme field in the appearance section has only that setting changed, on the next page too" do
+    patch "/settings/appearance", params: { pasted_theme: ":root {\n  --primary: oklch(0.205 0 0);\n  --radius: 0.5rem;\n}\n.dark {\n  --primary: oklch(0.922 0 0);\n}\n" }
+    get "/settings/appearance"
+    fields = css_select("form input[name^='theme[']").map { |field| [ field["name"], field["value"].to_s ] }
+    fields = fields.map { |name, value| [ name, name == "theme[radius][light]" ? "0.75rem" : value ] }
+
+    patch "/settings/appearance", params: URI.encode_www_form(fields)
+    get "/palette"
+
+    assert_equal [
+      { "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.75rem" } } },
+      [ "--ks-color-accent: oklch(0.205 0 0);", "--ks-color-accent-dark: oklch(0.922 0 0);", "--ks-radius-control: 0.75rem;", "--ks-radius-surface: 0.75rem;" ]
+    ], [ KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value, css_select("head style").text.lines.map(&:strip).grep(/--ks-(color-accent(-dark)?|radius-[a-z]+):/) ]
+  end
 end

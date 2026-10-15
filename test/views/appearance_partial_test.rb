@@ -305,12 +305,12 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ "pasted_theme" ], theme_section.css("textarea").map { |box| box["name"] }
   end
 
-  test "the Theme section says a pasted theme is the colours a person chose when they saved one" do
+  test "the Theme section says the current choice is the person's own theme when they saved one" do
     save_colours("theme" => { "primary" => { "light" => "#171717" } })
 
     render_section
 
-    assert_includes theme_section.text, "Your current choice is a pasted theme."
+    assert_includes theme_section.text, "Your current choice is your own theme."
   end
 
   test "the appearance section selects no template for a person whose colours are a pasted theme" do
@@ -327,5 +327,39 @@ class AppearancePartialTest < ActionView::TestCase
     render_section
 
     assert_empty %w[light dark system] - mode_options
+  end
+
+  def theme_field_names
+    theme_section.css("input[name^='theme[']").map { |field| field["name"] }
+  end
+
+  test "the Theme section has a field for every theme setting, with a light and a dark field for each colour role" do
+    render_section
+
+    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| (role[:kind] == :colour ? %w[light dark] : %w[light]).map { |side| "theme[#{name}][#{side}]" } }
+
+    assert_equal expected, theme_field_names
+  end
+
+  test "the Theme section keeps the theme fields in a disclosure that starts closed" do
+    render_section
+
+    assert_equal [ [ "theme[background][light]", nil ] ], theme_section.css("details").map { |disclosure| [ disclosure.at_css("input[name^='theme[']")&.[]("name"), disclosure["open"] ] }
+  end
+
+  test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do
+    render_section
+
+    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| { colour: %w[light dark], shadow_colour: %w[light] }.fetch(role[:kind], []).map { |side| "theme[#{name}][#{side}]" } }
+
+    assert_equal expected, theme_section.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
+  end
+
+  test "the theme fields show the values of the person's saved theme" do
+    save_colours("theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.5rem" } })
+
+    render_section
+
+    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
   end
 end

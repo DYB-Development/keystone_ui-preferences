@@ -283,4 +283,34 @@ class PickAppearanceTest < ActiveSupport::TestCase
       "letter-spacing" => "-0.025em", "spacing" => "0.25rem"
     }, saved_value["theme"].except("primary").transform_values { |sides| sides["light"] })
   end
+
+  test "a theme setting typed by hand is saved as the person's theme, leaving out the fields left blank" do
+    pick(theme: { "primary" => { "light" => "#171717", "dark" => "" }, "radius" => { "light" => "" } })
+
+    assert_equal({ "theme" => { "primary" => { "light" => "#171717" } } }, saved_value)
+  end
+
+  test "a colour typed by hand that is not hex, rgb(), hsl() or oklch() is refused with the reason a pasted one gets" do
+    assert_equal "The dark --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(theme: { "primary" => { "light" => "#171717", "dark" => "var(--x)" } }).message
+  end
+
+  test "a theme setting typed by hand with spaces around it is saved without them, as a pasted one is" do
+    pick(theme: { "radius" => { "light" => " 0.5rem " } })
+
+    assert_equal({ "theme" => { "radius" => { "light" => "0.5rem" } } }, saved_value)
+  end
+
+  test "theme fields sent unchanged with a template save the template over the person's saved theme" do
+    pick(theme: { "primary" => { "light" => "#171717" } })
+
+    pick(template_name: "forest", theme: { "primary" => { "light" => "#171717", "dark" => "" } })
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
+
+  test "theme fields typed by hand are refused with the existing reason, and nothing is saved, when the account sets the colours for everyone" do
+    refusal = pick({ theme: { "primary" => { "light" => "#171717" } } }, account_setting_colours)
+
+    assert_equal [ "Your account sets the colours for everyone, so this was not saved.", nil ], [ refusal.message, saved_value ]
+  end
 end

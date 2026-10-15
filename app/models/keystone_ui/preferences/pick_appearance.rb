@@ -12,10 +12,11 @@ module KeystoneUi
       def call
         return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
         return Refusal.new("Choose the app's own look or one of the looks it offers.") unless look_offered?
-        return keep_mode_and_look unless @values.key?(:template_name) || pasting?
+        return keep_mode_and_look unless @values.key?(:template_name) || pasting? || editing?
         return Refusal.new("This app sets the colours for everyone, so this was not saved.") unless KeystoneUi::Preferences.configuration.account_colors
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return keep_theme if pasting?
+        return keep_typed_theme if editing?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
 
         chosen = ChosenColours.new(@values)
@@ -43,11 +44,26 @@ module KeystoneUi
         @values[:pasted_theme].present?
       end
 
+      def editing?
+        typed_theme.any? && typed_theme != preference.value.to_h["theme"]
+      end
+
+      def typed_theme
+        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.to_h { |side, value| [ side.to_s, value.to_s.strip ] }.compact_blank ] }.compact_blank
+      end
+
+      def keep_typed_theme
+        keep_checked(CheckedTheme.new(typed_theme))
+      end
+
       def keep_theme
         reader = ThemeReader.new(@values[:pasted_theme])
         return reader.refusal if reader.refusal
 
-        checked = CheckedTheme.new(reader.values)
+        keep_checked(CheckedTheme.new(reader.values))
+      end
+
+      def keep_checked(checked)
         return checked.refusal if checked.refusal
 
         preference.update!(value: checked.value)

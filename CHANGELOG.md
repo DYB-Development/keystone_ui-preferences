@@ -9,7 +9,7 @@ All notable changes to this project will be documented in this file.
 - A pasted colour is saved only when it is a hex colour or an `rgb()`, `hsl()` or `oklch()` colour written with plain numbers, and is otherwise refused with a message naming the role.
 - A paste over 20,000 characters, a paste containing `url(` or `@import`, and a paste with no shadcn colour role are refused with a message, and nothing is saved.
 - A pasted theme is saved as `{ "theme": { "<role>": { "light": ..., "dark": ... } } }` under the `colours` key, holding only the checked colours and never the pasted text.
-- The Theme section says a pasted theme is the person's current choice and selects no template for it.
+- The Theme section says a saved theme, pasted or typed by hand, is the person's own theme and selects no template for it.
 - `keystone_palette_style_tag` writes a saved theme on every page as a `:root, html:root[data-look]` rule after the palette, setting each theme role's `--ks-*` variables from its light value and their `-dark` partners from its dark value, so a theme's colours win over a look's colours.
 - A role with no dark value keeps today's dark colour, and the accent, neutral and danger hover colours are derived from `primary`, `secondary` and `destructive` with `color-mix`.
 - A saved theme is checked again before it is written, and a theme holding a colour that fails the check, or that is not a set of roles each holding light and dark colours, is not written.
@@ -22,9 +22,13 @@ All notable changes to this project will be documented in this file.
 - A theme's mono font is also written to Tailwind's `--default-mono-font-family`, which keystone_ui-styles draws code with.
 - For a person who saved a look of their own, the look's shape and type win over the theme's while the theme's colours still win over the look's.
 - The cached theme rule's key includes whether the person saved a look of their own, and the writer's version is now 2.
+- The person's Theme section has a disclosure, closed at first, listing every theme setting as its own field, with a light and a dark colour picker for each colour role, filled with the person's saved theme.
+- Changing a theme field and saving keeps the fields as the person's theme, leaving out any field left blank, and checks and refuses each value exactly as a pasted one.
+- The theme fields are saved only when they differ from the saved theme, so a template, the Accent, Surface and Text pickers and a paste save as before.
 
 ### Changed
 - keystone_ui-styles 0.18.0 or later is required, since each theme role names the `--ks-*` variables it will set.
+- keystone_ui 0.43.0 or later is required, the first release whose colour picker takes a typed `rgb()`, `hsl()` or `oklch()` colour.
 
 ### Fixed
 - The boot check's message and the README's steps for moving off keystone_ui-colors remove keystone_ui-colors before running the update generator, since the generator boots the app and the boot check refuses to boot while keystone_ui-colors is loaded.
