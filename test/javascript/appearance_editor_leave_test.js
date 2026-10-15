@@ -180,3 +180,13 @@ test("following a link after picking another Mode holds the visit", () => {
 
   assert.equal(leaving.held, true)
 })
+
+test("following a link after picking another Look holds the visit", () => {
+  const editor = sectionLoadedWith({}, {}, [card("look", "", true), card("look", "rounded")])
+  editor.pick("look", "rounded")
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
+})
