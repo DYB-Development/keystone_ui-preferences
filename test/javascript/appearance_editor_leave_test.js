@@ -13,7 +13,7 @@ function themeOf(values) {
   return theme
 }
 
-function sectionLoadedWith(values, savedTheme = themeOf(values)) {
+function sectionLoadedWith(values, savedTheme = themeOf(values), choices = []) {
   const fields = Object.entries(values).map(([name, value]) => ({ name, value, closest: () => null, dispatchEvent() {} }))
   const visited = []
   const question = { classes: new Set(["hidden"]), classList: { add(name) { question.classes.add(name) }, remove(name) { question.classes.delete(name) } } }
@@ -22,11 +22,12 @@ function sectionLoadedWith(values, savedTheme = themeOf(values)) {
   const element = {
     ownerDocument: { documentElement: { style: { setProperty() {}, removeProperty() {} } }, defaultView: { Turbo: { visit(url) { visited.push(url) } } } },
     querySelector: (selector) => parts[selector] ?? fields.find(({ name }) => selector === `[name="${name}"]`) ?? null,
-    querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : [])
+    querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : choices.filter(({ name }) => selector.includes(`[name='${name}']`)))
   }
   const editor = new AppearanceEditorController({ scope: { element } })
   editor.connect()
   editor.change = (name, value) => { fields.find((field) => field.name === name).value = value }
+  editor.pick = (name, value) => choices.filter((choice) => choice.name === name).forEach((choice) => { choice.checked = choice.value === value })
   editor.questionShown = () => !question.classes.has("hidden")
   editor.visited = visited
   return editor
@@ -134,6 +135,20 @@ test("saving changed theme fields unloads the page without a warning", () => {
 
 test("following a link from a section refilled by a refused save, with nothing changed since, holds the visit", () => {
   const editor = sectionLoadedWith({ "theme[primary][light]": "#1f5fbf" }, { primary: { light: "#000000" } })
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
+})
+
+function card(name, value, checked = false) {
+  return { name, value, type: "radio", checked }
+}
+
+test("following a link after picking another colour card holds the visit", () => {
+  const editor = sectionLoadedWith({}, {}, [card("template_name", "default", true), card("template_name", "ocean")])
+  editor.pick("template_name", "ocean")
   const leaving = visit()
 
   editor.confirmLeave(leaving)

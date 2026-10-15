@@ -2,16 +2,19 @@ import { Controller } from "@hotwired/stimulus"
 
 const THEME_FIELD = /^theme\[([^\]]+)\]\[(light|dark)\]$/
 const ENDS_DECLARATION = /[;{}]/
+const QUICK_CHOICES = "[name='template_name']"
 const PROPERTY_FOR_KIND = { colour: "color", length: "width", letter_spacing: "letter-spacing", font_list: "font-family", weight: "font-weight" }
 
 export default class extends Controller {
   static targets = ["accentPicker", "surfacePicker", "textPicker", "customRadio", "templateLabel"]
 
   #setVariables = new Set()
+  #loadedChoices = []
   #heldUrl = null
   #leaveAllowed = false
 
   connect() {
+    this.#loadedChoices = this.#quickChoices()
     this.colorPickerTargets().forEach(picker => picker.addEventListener("change", () => this.customColorChanged()))
     this.#writeExport()
     this.#drawUnsavedFields()
@@ -182,7 +185,15 @@ export default class extends Controller {
   }
 
   #hasUnsavedChanges() {
-    return !this.#leaveAllowed && this.#unsavedFields().length > 0
+    return !this.#leaveAllowed && (this.#unsavedFields().length > 0 || this.#quickChoicesChanged())
+  }
+
+  #quickChoicesChanged() {
+    return this.#quickChoices().some((choice, place) => choice !== this.#loadedChoices[place])
+  }
+
+  #quickChoices() {
+    return [...this.element.querySelectorAll(QUICK_CHOICES)].map(field => field.checked)
   }
 
   #roles() {
