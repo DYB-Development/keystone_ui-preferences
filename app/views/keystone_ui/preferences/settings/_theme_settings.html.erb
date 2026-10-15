@@ -1,5 +1,6 @@
 <% saved_preset = KeystoneUi::Looks::Themes.all.find { |name, _preset| name.to_s == saved["preset_name"] }&.last %>
 <% theme = saved_preset ? saved_preset[:theme] : saved["theme"].to_h %>
+<% shown = local_assigns[:sent_theme] || theme %>
 <% id_prefix = local_assigns.fetch(:id_prefix, "appearance") %>
 <% fonts_id = "#{id_prefix}-theme-fonts" %>
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
@@ -15,7 +16,7 @@
               <% if role[:kind] == :colour %><div role="group" aria-label="--<%= name %>" style="display: flex; flex-wrap: wrap; gap: 1rem;"><% end %>
               <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
                 <% field_name = "theme[#{name}][#{side}]" %>
-                <% value = theme.dig(name, side).to_s %>
+                <% value = shown.dig(name, side).to_s %>
                 <% label = role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}" %>
                 <% if %i[colour shadow_colour].include?(role[:kind]) %>
                   <%= ui_color_picker(name: field_name, value: value, label: label) %>
