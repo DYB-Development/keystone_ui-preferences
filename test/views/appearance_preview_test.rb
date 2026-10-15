@@ -108,6 +108,13 @@ class AppearancePreviewTest < ActionView::TestCase
     assert_equal [ [ "Leave without saving", "keystone-ui--preferences--appearance-editor#leave" ], [ "Stay", "modal#close" ] ], choices
   end
 
+  test "the appearance section holds the question on leaving without saving when it offers no colours, so a changed Mode or Look still asks first" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+    render_section
+
+    assert_equal 1, css_select("[data-appearance-editor] [data-leave-question] [data-modal-target='backdrop'].hidden").size
+  end
+
   def section_style
     css_select("[data-controller='keystone-ui--preferences--appearance-editor'] style").text.squish
   end
