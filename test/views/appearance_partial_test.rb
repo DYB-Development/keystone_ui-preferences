@@ -124,7 +124,7 @@ class AppearancePartialTest < ActionView::TestCase
   test "the appearance section's form sits inside the template picker script" do
     render_section
 
-    assert_equal 1, css_select("[data-controller='keystone-ui--preferences--theme-settings'] form").size
+    assert_equal 1, css_select("[data-controller='keystone-ui--preferences--appearance-editor'] form").size
   end
 
   test "picking a template hands the template picker script that template's accent, surface and text colour" do
@@ -132,13 +132,13 @@ class AppearancePartialTest < ActionView::TestCase
 
     forest = css_select("input[type=radio][name=template_name][value=forest]").first
 
-    assert_equal [ "keystone-ui--preferences--theme-settings#selectTemplate", "#10b981", "#78716c", "#064e3b" ], %w[data-action data-accent-hex data-surface-hex data-text-hex].map { |attribute| forest[attribute] }
+    assert_equal [ "keystone-ui--preferences--appearance-editor#selectTemplate", "#10b981", "#78716c", "#064e3b" ], %w[data-action data-accent-hex data-surface-hex data-text-hex].map { |attribute| forest[attribute] }
   end
 
   test "the template picker script finds the accent, surface and text colour pickers" do
     render_section
 
-    targets = %w[accentPicker surfacePicker textPicker].map { |target| css_select("[data-keystone-ui--preferences--theme-settings-target=#{target}] input[type=hidden]").map { |input| input["name"] } }
+    targets = %w[accentPicker surfacePicker textPicker].map { |target| css_select("[data-keystone-ui--preferences--appearance-editor-target=#{target}] input[type=hidden]").map { |input| input["name"] } }
 
     assert_equal [ [ "accent" ], [ "surface" ], [ "text" ] ], targets
   end
@@ -146,13 +146,13 @@ class AppearancePartialTest < ActionView::TestCase
   test "the template picker script finds each template's option, each preset theme's option and the Custom option to highlight" do
     render_section
 
-    assert_equal %w[default ocean forest twilight coral arctic graphite harbor fern terracotta heather ledger custom], css_select("label[data-keystone-ui--preferences--theme-settings-target=templateLabel]").map { |label| label["data-template"] }
+    assert_equal %w[default ocean forest twilight coral arctic graphite harbor fern terracotta heather ledger custom], css_select("label[data-keystone-ui--preferences--appearance-editor-target=templateLabel]").map { |label| label["data-template"] }
   end
 
   test "the template picker script finds the Custom option to select when a colour picker changes" do
     render_section
 
-    assert_equal [ "" ], css_select("input[data-keystone-ui--preferences--theme-settings-target=customRadio]").map { |input| input["value"] }
+    assert_equal [ "" ], css_select("input[data-keystone-ui--preferences--appearance-editor-target=customRadio]").map { |input| input["value"] }
   end
 
   test "the appearance section saves with a full page load, as the other sections do in a Hotwire Native web view" do
@@ -338,7 +338,7 @@ class AppearancePartialTest < ActionView::TestCase
   end
 
   def theme_settings
-    css_select("[data-controller='keystone-ui--preferences--theme-editor']").first
+    css_select("[data-theme-roles]").first
   end
 
   def theme_field_names
@@ -473,7 +473,7 @@ class AppearancePartialTest < ActionView::TestCase
   test "the appearance section's Reset button resets the theme fields through the template picker script without saving" do
     render_section
 
-    assert_equal [ [ "button", "keystone-ui--preferences--theme-settings#reset" ] ], css_select("form button").select { |button| button.text.strip == "Reset" }.map { |button| [ button["type"], button["data-action"] ] }
+    assert_equal [ [ "button", "keystone-ui--preferences--appearance-editor#reset" ] ], css_select("form button").select { |button| button.text.strip == "Reset" }.map { |button| [ button["type"], button["data-action"] ] }
   end
 
   test "each preset theme's card shows its light primary and secondary colours as swatches, as a template's card shows its accent and surface" do
@@ -505,7 +505,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     harbor = css_select("input[type=radio][name=template_name][value=harbor]").first
 
-    assert_equal [ "keystone-ui--preferences--theme-settings#selectPreset", KeystoneUi::Looks::Themes[:harbor][:theme] ], [ harbor["data-action"], JSON.parse(harbor["data-theme"].to_s) ]
+    assert_equal [ "keystone-ui--preferences--appearance-editor#selectPreset", KeystoneUi::Looks::Themes[:harbor][:theme] ], [ harbor["data-action"], JSON.parse(harbor["data-theme"].to_s) ]
   end
 
   test "every template card and preset card hands the template picker script the same values as before the writers were joined" do
@@ -544,7 +544,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     fields = editor ? editor.css("input[name^='theme[']").map { |field| field["name"] } : []
 
-    assert_equal [ "change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply", theme_field_names ], [ editor&.[]("data-action"), fields ]
+    assert_equal [ "change->keystone-ui--preferences--appearance-editor#apply input->keystone-ui--preferences--appearance-editor#apply", theme_field_names ], [ editor&.[]("data-action"), fields ]
   end
 
   test "the theme editor script is handed each theme setting's kind and variables and the hover variable the theme writer derives from it" do

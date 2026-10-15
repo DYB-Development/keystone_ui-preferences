@@ -15,13 +15,13 @@
         value: name,
         selected: saved["template_name"] == name,
         input_data: {
-          action: "keystone-ui--preferences--theme-settings#selectTemplate",
+          action: "keystone-ui--preferences--appearance-editor#selectTemplate",
           "accent-hex": accent_hex,
           "surface-hex": surface_hex,
           "text-hex": template[:text]
         },
         label_data: {
-          "keystone-ui--preferences--theme-settings-target": "templateLabel",
+          "keystone-ui--preferences--appearance-editor-target": "templateLabel",
           template: name
         }
       ) do %>
@@ -37,11 +37,11 @@
           value: name.to_s,
           selected: saved["preset_name"] == name.to_s,
           input_data: {
-            action: "keystone-ui--preferences--theme-settings#selectPreset",
+            action: "keystone-ui--preferences--appearance-editor#selectPreset",
             theme: preset[:theme].to_json
           },
           label_data: {
-            "keystone-ui--preferences--theme-settings-target": "templateLabel",
+            "keystone-ui--preferences--appearance-editor-target": "templateLabel",
             template: name.to_s
           }
         ) do %>
@@ -56,10 +56,10 @@
       value: "",
       selected: saved["template_name"].blank? && !saved.key?("theme") && !saved.key?("preset_name"),
       input_data: {
-        "keystone-ui--preferences--theme-settings-target": "customRadio"
+        "keystone-ui--preferences--appearance-editor-target": "customRadio"
       },
       label_data: {
-        "keystone-ui--preferences--theme-settings-target": "templateLabel",
+        "keystone-ui--preferences--appearance-editor-target": "templateLabel",
         template: "custom"
       }
     ) do %>
@@ -80,19 +80,19 @@
 <% end %>
 
 <%= ui_section(title: "Accent Color", spacing: :sm) do %>
-  <div data-keystone-ui--preferences--theme-settings-target="accentPicker">
+  <div data-keystone-ui--preferences--appearance-editor-target="accentPicker">
     <%= ui_color_picker(name: "accent", value: palette_hex.call(drawn[:accent], KeystoneUi::Looks::Palettes.method(:accent))) %>
   </div>
 <% end %>
 
 <%= ui_section(title: "Surface", spacing: :sm) do %>
-  <div data-keystone-ui--preferences--theme-settings-target="surfacePicker">
+  <div data-keystone-ui--preferences--appearance-editor-target="surfacePicker">
     <%= ui_color_picker(name: "surface", value: palette_hex.call(drawn[:surface], KeystoneUi::Looks::Palettes.method(:surface))) %>
   </div>
 <% end %>
 
 <%= ui_section(title: "Text Color", spacing: :sm) do %>
-  <div data-keystone-ui--preferences--theme-settings-target="textPicker">
+  <div data-keystone-ui--preferences--appearance-editor-target="textPicker">
     <%= ui_color_picker(name: "text", value: drawn[:text]) %>
   </div>
 <% end %>

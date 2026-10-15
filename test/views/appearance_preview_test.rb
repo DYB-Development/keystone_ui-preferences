@@ -85,14 +85,14 @@ class AppearancePreviewTest < ActionView::TestCase
   test "picking a tab hands its place to the theme settings script, which starts with the Edit panel shown" do
     render_section
 
-    settings = css_select("[data-controller='keystone-ui--preferences--theme-settings']").first
+    settings = css_select("[data-controller='keystone-ui--preferences--appearance-editor']").first
     panels = css_select("[data-editor-panel]")
 
-    assert_equal [ "tab-switcher:change->keystone-ui--preferences--theme-settings#showPanel", [ true, false ] ], [ settings&.[]("data-action"), panels.map { |panel| panel.key?("data-shown") } ]
+    assert_equal [ "tab-switcher:change->keystone-ui--preferences--appearance-editor#showPanel", [ true, false ] ], [ settings&.[]("data-action"), panels.map { |panel| panel.key?("data-shown") } ]
   end
 
   def section_style
-    css_select("[data-controller='keystone-ui--preferences--theme-settings'] style").text.squish
+    css_select("[data-controller='keystone-ui--preferences--appearance-editor'] style").text.squish
   end
 
   test "below a wide screen the appearance section draws only the panel of the picked tab" do
