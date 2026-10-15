@@ -36,6 +36,7 @@ module KeystoneUi
           kind = kind_of(name)
           sides.each do |side, value|
             return reason(kind, name, side) unless value.to_s.match?(PATTERNS.fetch(kind))
+            return Refusal.new("The --#{name} value names no font this app offers, so it was not saved.") if kind == :font_list && offered_fonts(value).empty?
           end
         end
         nil

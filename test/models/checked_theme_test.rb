@@ -71,4 +71,8 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal({ "light" => "inter, \"Segoe UI\", sans-serif" }, check("font-sans" => { "light" => "inter, Comic Neue, \"Segoe UI\", 'Fancy', sans-serif" }).value["theme"]["font-sans"])
   end
+
+  test "a font list naming no font the app offers and no system font is refused with a reason naming the setting" do
+    assert_equal "The --font-mono value names no font this app offers, so it was not saved.", check("font-mono" => { "light" => "JetBrains Mono, Fira Code" }).refusal&.message
+  end
 end
