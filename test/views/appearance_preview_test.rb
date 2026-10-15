@@ -75,4 +75,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal [ [ [ "data", "label" ], [ "data", "label" ] ] ], chart_series.map { |datasets| datasets.map { |dataset| dataset.keys.sort } }
   end
+
+  test "the appearance section offers an Edit tab and a Preview tab from keystone_ui's tab switcher" do
+    render_section
+
+    assert_equal [ "Edit", "Preview" ], css_select("[data-controller='tab-switcher'] [data-tab-switcher-target='tab']").map { |tab| tab.text.strip }
+  end
 end
