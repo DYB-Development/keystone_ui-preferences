@@ -37,7 +37,7 @@ export default class extends Controller {
     const roles = Object.keys(JSON.parse(this.element.dataset.themeRoles))
     const block = side => roles.flatMap(role => {
       const field = this.element.querySelector(`[name="theme[${role}][${side}]"]`)
-      return field ? [`  --${role}: ${field.value};\n`] : []
+      return field?.value ? [`  --${role}: ${field.value};\n`] : []
     }).join("")
     this.element.querySelector("[data-theme-export]").value = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
   }

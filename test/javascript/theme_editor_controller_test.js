@@ -159,3 +159,11 @@ test("changing a field writes its unsaved value into the export", () => {
 
   assert.equal(editor.exported(), ":root {\n  --primary: #6aa3f0;\n}\n\n.dark {\n}\n")
 })
+
+test("an empty field is left out of the export", () => {
+  const editor = editorOn(pageRoot(), { "theme[primary][light]": "#1f5fbf", "theme[primary][dark]": "", "theme[radius][light]": "" })
+
+  editor.connect()
+
+  assert.equal(editor.exported(), ":root {\n  --primary: #1f5fbf;\n}\n\n.dark {\n}\n")
+})
