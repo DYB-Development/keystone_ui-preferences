@@ -34,3 +34,11 @@ test("changing a colour's light value sets each of its role's variables on the p
 
   assert.deepEqual(root.variables, { "--ks-color-on-overlay": "#1f5fbf", "--ks-color-on-overlay-muted": "#1f5fbf" })
 })
+
+test("changing a field that is not a theme setting sets nothing on the page's root element", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("", "#1f5fbf"))
+
+  assert.deepEqual(root.variables, {})
+})
