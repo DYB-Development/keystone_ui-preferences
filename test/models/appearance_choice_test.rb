@@ -370,4 +370,28 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
   end
+
+  test "a member with no colours of their own gets the account's saved theme rule" do
+    theme = { "primary" => { "light" => "#171717", "dark" => "#fafafa" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "theme" => theme })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
+  end
+
+  test "a member who saved a look of their own gets the account's theme's shape and type in a rule their look outranks" do
+    theme = { "primary" => { "light" => "#171717" }, "radius" => { "light" => "0.5rem" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "theme" => theme }, members_choose: false)
+    save_look(person, "rounded")
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme, own_look: true).to_s, theme_css_for(person, account)
+  end
+
+  test "a member with no look of their own gets the shape and type of the account's theme over the account's look, when their saved preset is one the catalogue no longer has" do
+    theme = { "primary" => { "light" => "#171717" }, "radius" => { "light" => "0.5rem" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "theme" => theme })
+    save_look(account, "sharp")
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
+  end
 end

@@ -27,10 +27,10 @@ class AccountAppearancePartialTest < ActionView::TestCase
     css_select("input[type=radio][name=template_name]").map { |option| option["value"] }
   end
 
-  test "the account's section offers Default, the five colour templates and Custom" do
+  test "the account's section offers Default, the five colour templates, the six preset themes and Custom" do
     render_section
 
-    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "" ], template_options
+    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "graphite", "harbor", "fern", "terracotta", "heather", "ledger", "" ], template_options
   end
 
   def save(key, value, members_choose: true)
@@ -146,9 +146,25 @@ class AccountAppearancePartialTest < ActionView::TestCase
     assert_equal [ [ "This app does not let accounts choose their colours or look." ], 0 ], [ css_select(".ks-alert-message").map { |message| message.text.strip }, css_select("form").size ]
   end
 
-  test "the account's section has no box to paste a theme into" do
+  test "the account's section has a box to paste a theme into" do
     render_section
 
-    assert_empty css_select("textarea[name=pasted_theme]")
+    assert_equal 1, css_select("textarea[name=pasted_theme]").size
+  end
+
+  test "the account's theme fields show the values of the theme the account saved" do
+    save("colours", { "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.5rem" } } })
+
+    render_section
+
+    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| css_select("input[name='#{field}']").first&.[]("value") }
+  end
+
+  test "the account's Theme section says the current choice is the account's own theme when it saved one" do
+    save("colours", { "theme" => { "primary" => { "light" => "#171717" } } })
+
+    render_section
+
+    assert_equal [ "The account's current choice is its own theme." ], css_select(".ks-hint").map { |hint| hint.text.strip }.grep(/current choice/)
   end
 end

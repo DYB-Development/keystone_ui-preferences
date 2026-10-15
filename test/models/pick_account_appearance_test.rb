@@ -95,4 +95,54 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_nil account_preference("look")
   end
+
+  PASTED_THEME = ":root {\n  --radius: 0.625rem;\n  --primary: oklch(0.205 0 0);\n}\n.dark {\n  --primary: oklch(0.922 0 0);\n}\n"
+
+  test "saving a pasted theme keeps every checked theme setting in it as the account's colours" do
+    pick(template_name: "default", pasted_theme: PASTED_THEME)
+
+    assert_equal({ "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.625rem" } } }, account_preference("colours").value)
+  end
+
+  test "a pasted theme is refused with a reason when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    assert_equal "This app does not let accounts choose their colours.", pick(pasted_theme: PASTED_THEME).message
+  end
+
+  test "a pasted theme containing url( is refused and leaves the account's colours as they were" do
+    pick(template_name: "forest")
+
+    pick(pasted_theme: "#{PASTED_THEME}\n.logo { background: url(x.png); }")
+
+    assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
+  end
+
+  test "a theme setting typed by hand is saved as the account's theme, leaving out the fields left blank" do
+    pick(template_name: "default", theme: { "primary" => { "light" => "#171717", "dark" => "" }, "radius" => { "light" => "" } })
+
+    assert_equal({ "theme" => { "primary" => { "light" => "#171717" } } }, account_preference("colours").value)
+  end
+
+  test "theme fields sent unchanged with a template save the template over the account's saved theme" do
+    pick(template_name: "default", theme: { "primary" => { "light" => "#171717" } })
+
+    pick(template_name: "forest", theme: { "primary" => { "light" => "#171717", "dark" => "" } })
+
+    assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
+  end
+
+  test "a preset saves its name as the account's colours when the theme fields hold that preset's values, as they do once its card is picked" do
+    pick(template_name: "harbor", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "preset_name" => "harbor" }, account_preference("colours").value)
+  end
+
+  test "theme fields sent unchanged with a template save the template over the account's saved preset" do
+    pick(template_name: "harbor")
+
+    pick(template_name: "forest", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
+  end
 end

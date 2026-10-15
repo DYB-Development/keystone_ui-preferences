@@ -15,7 +15,7 @@ module KeystoneUi
 
         return Refusal.new("This app does not let accounts choose their colours.") if colours_sent? && !KeystoneUi::Preferences.configuration.account_colors
 
-        chosen = ChosenColours.new(@values) if colours_sent?
+        chosen = chosen_colours
         return chosen.refusal if chosen&.refusal
 
         keep("colours", (chosen ? { value: chosen.value } : {}).merge(switch(:members_choose)))
@@ -26,7 +26,39 @@ module KeystoneUi
       private
 
       def colours_sent?
-        @values.key?(:template_name)
+        @values.key?(:template_name) || pasting? || editing?
+      end
+
+      def pasting?
+        @values[:pasted_theme].present?
+      end
+
+      def chosen_colours
+        return pasted_theme if pasting?
+        return CheckedTheme.new(typed_theme) if editing?
+
+        ChosenColours.new(@values) if colours_sent?
+      end
+
+      def editing?
+        typed_theme.any? && [ saved_colours["theme"], preset_theme(saved_colours["preset_name"]), preset_theme(@values[:template_name]) ].exclude?(typed_theme)
+      end
+
+      def preset_theme(name)
+        KeystoneUi::Looks::Themes[name][:theme] if KeystoneUi::Looks::Themes.names.map(&:to_s).include?(name.to_s)
+      end
+
+      def saved_colours
+        @saved_colours ||= ComponentPreference.find_by(owner: @account, component_key: "colours")&.value.to_h
+      end
+
+      def typed_theme
+        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.to_h { |side, value| [ side.to_s, value.to_s.strip ] }.compact_blank ] }.compact_blank
+      end
+
+      def pasted_theme
+        reader = ThemeReader.new(@values[:pasted_theme])
+        reader.refusal ? reader : CheckedTheme.new(reader.values)
       end
 
       def look_offered?
