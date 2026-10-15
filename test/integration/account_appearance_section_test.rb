@@ -52,4 +52,17 @@ class AccountAppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal [ "--ks-color-page: oklch(1 0 0);", "--ks-color-page-dark: oklch(0.145 0 0);" ], css_select("head style").text.lines.map(&:strip).grep(/--ks-color-page/)
   end
+
+  test "an admin finds the preview and Reset in the account's section, and a member who may not choose sees the theme setting the admin changes and saves" do
+    ApplicationController.signed_in_user = admin
+    get "/settings/account_appearance"
+    found = [ css_select("[data-theme-preview] [data-theme]").size, css_select("form button").map { |button| button.text.strip }.include?("Reset") ]
+    patch "/settings/account_appearance", params: { template_name: "default", members_choose: "0", theme: { primary: { light: "#123456", dark: "#abcdef" } } }
+    follow_redirect!
+
+    ApplicationController.signed_in_user = member
+    get "/palette"
+
+    assert_equal [ [ 2, true ], [ "--ks-color-accent: #123456;", "--ks-color-accent-dark: #abcdef;" ] ], [ found, css_select("head style").text.lines.map(&:strip).grep(/--ks-color-accent(-dark)?:/) ]
+  end
 end
