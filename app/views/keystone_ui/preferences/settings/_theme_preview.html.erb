@@ -1,3 +1,8 @@
 <div data-theme-preview>
   <%= ui_card(title: "Quarterly review", summary: "Revenue grew in every region this quarter.", link: "#", cta: "Open") %>
+  <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+    <%= ui_button(label: "Save", type: :button) %>
+    <%= ui_button(label: "Cancel", variant: :secondary, type: :button) %>
+    <%= ui_button(label: "Delete", variant: :danger, type: :button) %>
+  </div>
 </div>

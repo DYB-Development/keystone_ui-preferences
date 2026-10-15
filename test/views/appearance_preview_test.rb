@@ -27,4 +27,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal 1, preview.css(".#{Keystone::Ui::CardComponent::CARD_CLASSES}").size
   end
+
+  test "the appearance section's preview shows a keystone_ui button in each style" do
+    render_section
+
+    assert_equal %w[ks-button-primary ks-button-secondary ks-button-danger], preview.css(".ks-button").map { |button| button["class"].split[1] }
+  end
 end
