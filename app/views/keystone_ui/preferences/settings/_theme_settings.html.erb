@@ -1,7 +1,10 @@
-<div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-  <% KeystoneUi::Preferences::ThemeRoles::ROLES.each do |name, role| %>
-    <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
-      <%= ui_form_field(attribute: "theme[#{name}][#{side}]", label: role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}") %>
+<%= ui_disclosure do |disclosure| %>
+  <% disclosure.with_summary { "Change each theme setting" } %>
+  <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+    <% KeystoneUi::Preferences::ThemeRoles::ROLES.each do |name, role| %>
+      <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
+        <%= ui_form_field(attribute: "theme[#{name}][#{side}]", label: role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}") %>
+      <% end %>
     <% end %>
-  <% end %>
-</div>
+  </div>
+<% end %>
