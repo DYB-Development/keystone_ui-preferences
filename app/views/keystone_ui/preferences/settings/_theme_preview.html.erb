@@ -9,4 +9,8 @@
     <%= ui_form_field(attribute: "preview_name", label: "Name", value: "Northwind Traders") %>
     <%= ui_form_field(attribute: "preview_region", label: "Region", type: :select, options: [ [ "North", "north" ], [ "South", "south" ] ], value: "north", required: true) %>
   </div>
+  <%= ui_data_table(
+        items: [ { customer: "Northwind Traders", region: "North", total: "$12,400" }, { customer: "Harbor Supply", region: "South", total: "$8,950" }, { customer: "Fern & Co", region: "North", total: "$4,120" } ],
+        columns: [ { customer: "Customer" }, { region: "Region" }, { total: "Total" } ]
+      ) %>
 </div>

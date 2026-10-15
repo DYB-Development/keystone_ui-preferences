@@ -39,4 +39,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal %w[input select], preview.css(".#{Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES}").map { |field| field.at_css("input, select").name }
   end
+
+  test "the appearance section's preview shows a keystone_ui table headed Customer, Region and Total" do
+    render_section
+
+    assert_equal [ "Customer", "Region", "Total" ], preview.css(".ks-table thead th").map { |cell| cell.text.strip }
+  end
 end
