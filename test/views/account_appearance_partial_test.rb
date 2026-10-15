@@ -183,4 +183,47 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_empty ids.select { |id| ids.count(id) > 1 }.uniq
   end
+
+  test "the account's section offers the Edit and Preview tabs over the editor and the preview drawn on a light and a dark side" do
+    render_section
+
+    tabs = css_select("[data-controller='tab-switcher'] [data-tab-switcher-target='tab']").map { |tab| tab.text.strip }
+
+    assert_equal [ [ "Edit", "Preview" ], %w[light dark] ], [ tabs, css_select("[data-theme-preview] [data-theme]").map { |side| side["data-theme"] } ]
+  end
+
+  test "the account's section shows no tabs and no preview when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_equal 0, css_select("[data-controller='tab-switcher'], [data-theme-preview]").size
+  end
+
+  def reset_buttons
+    css_select("form button").select { |button| button.text.strip == "Reset" }.map { |button| [ button["type"], button["data-action"] ] }
+  end
+
+  test "the account's Reset button resets the theme fields through the template picker script without saving" do
+    render_section
+
+    assert_equal [ [ "button", "keystone-ui--preferences--theme-settings#reset" ] ], reset_buttons
+  end
+
+  test "the account's section has no Reset button when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_empty reset_buttons
+  end
+
+  test "every one of the account's theme fields sits inside the theme editor script's element, which removes the variables it set when the section is left" do
+    render_section
+
+    fields = css_select("[name^='theme[']")
+    outside = fields.reject { |field| field.ancestors("[data-controller='keystone-ui--preferences--theme-editor']").any? }
+
+    assert_equal [ false, [] ], [ fields.empty?, outside.map { |field| field["name"] } ]
+  end
 end
