@@ -6,8 +6,9 @@ module KeystoneUi
       class Error < StandardError; end
 
       MESSAGE = "keystone_ui-preferences and keystone_ui-colors both save colours, modes and looks, so the app cannot load both. " \
-        "Run bin/rails generate keystone_ui:preferences:update first, so the migration copying keystone_ui-colors' saved choices is in db/migrate, " \
-        "then remove keystone_ui-colors from the Gemfile and run bin/rails db:migrate."
+        "Remove keystone_ui-colors from the Gemfile and change every KeystoneUi::Colors name the app uses first, " \
+        "then run bin/rails generate keystone_ui:preferences:update, so the migration copying keystone_ui-colors' saved choices is in db/migrate, " \
+        "and then run bin/rails db:migrate."
 
       def initialize(colors_loaded:)
         @colors_loaded = colors_loaded
