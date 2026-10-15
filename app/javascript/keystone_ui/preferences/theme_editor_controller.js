@@ -8,9 +8,10 @@ export default class extends Controller {
     if (!field || !CSS.supports("color", value)) return
 
     const [, role] = field
-    const roles = JSON.parse(this.element.dataset.themeRoles)
+    const { variables, hover } = JSON.parse(this.element.dataset.themeRoles)[role]
     const style = this.element.ownerDocument.documentElement.style
 
-    roles[role].variables.forEach(variable => style.setProperty(variable, value))
+    variables.forEach(variable => style.setProperty(variable, value))
+    if (hover) style.setProperty(hover, `color-mix(in oklab, ${value} 85%, white)`)
   }
 }

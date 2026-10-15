@@ -56,3 +56,11 @@ test("changing a colour to one the browser cannot draw leaves the page's root el
 
   assert.deepEqual(root.variables, {})
 })
+
+test("changing a colour whose role has a hover colour also sets the hover colour the theme writer derives from it", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("theme[primary][light]", "#1f5fbf"))
+
+  assert.equal(root.variables["--ks-color-accent-hover"], "color-mix(in oklab, #1f5fbf 85%, white)")
+})
