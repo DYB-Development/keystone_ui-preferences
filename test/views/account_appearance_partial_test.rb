@@ -226,4 +226,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ false, [] ], [ fields.empty?, outside.map { |field| field["name"] } ]
   end
+
+  test "every account template card and preset card hands the template picker script the same values the person's cards hand it" do
+    render_section
+
+    cards = css_select("input[type=radio][name=template_name]").map { |option| %w[value data-action data-accent-hex data-surface-hex data-text-hex data-theme].to_h { |attribute| [ attribute, option[attribute] ] } }
+
+    assert_equal JSON.parse(File.read(File.expand_path("../fixtures/pinned/cards.json", __dir__))), cards
+  end
 end
