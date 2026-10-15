@@ -69,4 +69,15 @@ class ThemeCssTest < ActiveSupport::TestCase
 
     assert_equal [ "--ks-border-width: 2px;", "--ks-font-heading: Georgia, serif;" ], declarations(css)
   end
+
+  SHADOW = {
+    "shadow-color" => { "light" => "oklch(0 0 0)" }, "shadow-opacity" => { "light" => "0.1" }, "shadow-blur" => { "light" => "3px" },
+    "shadow-spread" => { "light" => "-1px" }, "shadow-offset-x" => { "light" => "0" }, "shadow-offset-y" => { "light" => "1px" }
+  }.freeze
+
+  test "a theme's six shadow settings are written as one shadow on surfaces, overlays and menus" do
+    shadow = "0 1px 3px -1px color-mix(in srgb, oklch(0 0 0) calc(0.1 * 100%), transparent)"
+
+    assert_equal [ "--ks-shadow-surface: #{shadow};", "--ks-shadow-overlay: #{shadow};", "--ks-shadow-menu: #{shadow};" ], declarations(css_for(SHADOW))
+  end
 end
