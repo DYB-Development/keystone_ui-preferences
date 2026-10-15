@@ -46,4 +46,11 @@ class PinnedStyleTagTest < ActionDispatch::IntegrationTest
 
     assert_equal pinned("preset_harbor"), style_tag
   end
+
+  test "a saved preset writes the same style tag as before the writers were joined for a person who saved a look of their own" do
+    save_colours({ "preset_name" => "harbor" })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "look", value: { "look" => "rounded" })
+
+    assert_equal pinned("preset_harbor_own_look"), style_tag
+  end
 end
