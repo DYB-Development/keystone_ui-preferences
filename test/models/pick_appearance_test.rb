@@ -235,4 +235,8 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, saved_value)
   end
+
+  test "a pasted colour that is not hex, rgb(), hsl() or oklch() is refused with a reason naming the role" do
+    assert_equal "The light --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(pasted_theme: ":root { --primary: var(--x); }").message
+  end
 end
