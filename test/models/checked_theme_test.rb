@@ -100,4 +100,11 @@ class CheckedThemeTest < ActiveSupport::TestCase
       nil, "The --shadow-offset-y value #{length}"
     ], values.map { |name, value| check(name => { "light" => value }).refusal&.message }
   end
+
+  test "a font weight is kept only as a whole hundred from 100 to 900, and is otherwise refused with a reason naming the setting" do
+    weights = [ "100", "600", "900", "950", "450", "1000", "bold", "0" ]
+    refused = "The --font-weight-heading value is not a font weight from 100 to 900 in hundreds, so it was not saved."
+
+    assert_equal [ nil, nil, nil, refused, refused, refused, refused, refused ], weights.map { |weight| check("font-weight-heading" => { "light" => weight }).refusal&.message }
+  end
 end
