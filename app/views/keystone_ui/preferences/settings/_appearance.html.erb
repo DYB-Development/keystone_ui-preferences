@@ -35,7 +35,7 @@
         <% end %>
 
         <% if chooses_colours %>
-          <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, sent_theme: sent[:theme] } %>
+          <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved, sent_theme: sent[:theme], sent_paste: sent[:pasted_theme] } %>
         <% end %>
 
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">

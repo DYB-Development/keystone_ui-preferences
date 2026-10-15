@@ -1,7 +1,7 @@
 <% saved_preset = KeystoneUi::Looks::Themes.all.find { |name, _preset| name.to_s == saved["preset_name"] }&.last %>
 <% theme = saved_preset ? saved_preset[:theme] : saved["theme"].to_h %>
 <% shown = local_assigns[:sent_theme] || theme %>
-<% check = KeystoneUi::Preferences::CheckedTheme.new(local_assigns[:sent_theme].to_h) %>
+<% check = KeystoneUi::Preferences::CheckedTheme.new(local_assigns[:sent_paste].present? ? {} : local_assigns[:sent_theme].to_h) %>
 <% id_prefix = local_assigns.fetch(:id_prefix, "appearance") %>
 <% fonts_id = "#{id_prefix}-theme-fonts" %>
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
