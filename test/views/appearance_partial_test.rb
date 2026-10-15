@@ -312,4 +312,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_includes theme_section.text, "Your current choice is a pasted theme."
   end
+
+  test "the appearance section selects no template for a person whose colours are a pasted theme" do
+    save_colours("theme" => { "primary" => { "light" => "#171717" } })
+
+    render_section
+
+    assert_empty selected_template
+  end
 end

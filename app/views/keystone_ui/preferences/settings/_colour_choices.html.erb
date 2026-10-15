@@ -33,7 +33,7 @@
     <%= ui_option_card(
       name: "template_name",
       value: "",
-      selected: saved["template_name"].blank?,
+      selected: saved["template_name"].blank? && !saved.key?("theme"),
       input_data: {
         "keystone-ui--preferences--theme-settings-target": "customRadio"
       },
