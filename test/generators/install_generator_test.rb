@@ -46,12 +46,8 @@ class KeystoneUi::Preferences::Generators::InstallGeneratorTest < ActiveSupport:
     assert_includes migration, "t.references :owner, polymorphic: true, null: false, index: false"
   end
 
-  test "copies the template picker script into the app's Stimulus controllers" do
-    assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_settings_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js")
-  end
-
-  test "copies the theme editor script into the app's Stimulus controllers" do
-    assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js")
+  test "copies one script for the Appearance sections and no other" do
+    assert_equal [ "appearance_editor_controller.js" ], Dir.children("#{destination}/app/javascript/controllers/keystone_ui/preferences")
   end
 
   test "copies the appearance editor script into the app's Stimulus controllers" do
