@@ -11,6 +11,10 @@ module KeystoneUi
         @text = text.to_s
       end
 
+      def refusal
+        Refusal.new("The pasted theme contains url( or @import, so it was not saved.") if @text.include?("url(")
+      end
+
       def values
         @values ||= @text.scan(BLOCK).each_with_object({}) do |(selector, body), values|
           body.scan(DECLARATION).each do |name, value|

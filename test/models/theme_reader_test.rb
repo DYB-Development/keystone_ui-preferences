@@ -36,4 +36,10 @@ class ThemeReaderTest < ActiveSupport::TestCase
 
     assert_equal({ "ring" => { "light" => "#a1a1a1", "dark" => "#737373" } }, reader.values)
   end
+
+  test "a paste containing url( anywhere is refused with a reason" do
+    reader = read(":root { --primary: #171717; }\n.logo { background: url(https://example.com/x.png); }\n")
+
+    assert_equal "The pasted theme contains url( or @import, so it was not saved.", reader.refusal&.message
+  end
 end
