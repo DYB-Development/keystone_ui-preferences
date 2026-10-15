@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-15
+
 ### Added
 - The person's Appearance section has a paste box in its Theme section that saves a theme in shadcn/ui's variable names as the person's colours, keeping the 32 shadcn colour roles from a `:root` block and a `.dark` block and ignoring every other declaration, selector and rule.
 - A pasted colour is saved only when it is a hex colour or an `rgb()`, `hsl()` or `oklch()` colour written with plain numbers, and is otherwise refused with a message naming the role.
