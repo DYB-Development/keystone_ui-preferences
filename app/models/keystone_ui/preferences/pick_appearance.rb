@@ -45,7 +45,7 @@ module KeystoneUi
       end
 
       def editing?
-        typed_theme.any?
+        typed_theme.any? && typed_theme != preference.value.to_h["theme"]
       end
 
       def typed_theme

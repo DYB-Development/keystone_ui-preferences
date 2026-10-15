@@ -299,4 +299,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => { "radius" => { "light" => "0.5rem" } } }, saved_value)
   end
+
+  test "theme fields sent unchanged with a template save the template over the person's saved theme" do
+    pick(theme: { "primary" => { "light" => "#171717" } })
+
+    pick(template_name: "forest", theme: { "primary" => { "light" => "#171717", "dark" => "" } })
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
 end
