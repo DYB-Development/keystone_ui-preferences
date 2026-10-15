@@ -345,12 +345,22 @@ class AppearancePartialTest < ActionView::TestCase
     css_select("input[name^='theme[']").map { |field| field["name"] }
   end
 
+  def roles_in_group_order
+    KeystoneUi::Preferences::ThemeRoles::GROUPS.values.flat_map(&:values).flatten.to_h { |name| [ name, KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name) ] }
+  end
+
   test "the Theme section has a field for every theme setting, with a light and a dark field for each colour role" do
     render_section
 
-    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| (role[:kind] == :colour ? %w[light dark] : %w[light]).map { |side| "theme[#{name}][#{side}]" } }
+    expected = roles_in_group_order.flat_map { |name, role| (role[:kind] == :colour ? %w[light dark] : %w[light]).map { |side| "theme[#{name}][#{side}]" } }
 
     assert_equal expected, theme_field_names
+  end
+
+  test "the theme settings are under three groups, Colors, Typography and Other" do
+    render_section
+
+    assert_equal %w[Colors Typography Other], theme_settings.css("h2").map { |title| title.text.strip }
   end
 
   test "the theme settings are shown with no closed disclosure around them" do
@@ -362,7 +372,7 @@ class AppearancePartialTest < ActionView::TestCase
   test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do
     render_section
 
-    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| { colour: %w[light dark], shadow_colour: %w[light] }.fetch(role[:kind], []).map { |side| "theme[#{name}][#{side}]" } }
+    expected = roles_in_group_order.flat_map { |name, role| { colour: %w[light dark], shadow_colour: %w[light] }.fetch(role[:kind], []).map { |side| "theme[#{name}][#{side}]" } }
 
     assert_equal expected, theme_settings.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
   end
@@ -425,7 +435,7 @@ class AppearancePartialTest < ActionView::TestCase
   test "each theme setting typed as text is labelled with its setting name" do
     render_section
 
-    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
+    expected = roles_in_group_order.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
 
     assert_equal expected, labelled_controls(theme_settings).select { |_label, name| name.start_with?("theme[") }
   end

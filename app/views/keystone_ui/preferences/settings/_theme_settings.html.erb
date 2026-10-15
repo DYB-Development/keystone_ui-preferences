@@ -2,8 +2,11 @@
 <% theme = saved_preset ? saved_preset[:theme] : saved["theme"].to_h %>
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
 <div data-controller="keystone-ui--preferences--theme-editor" data-action="change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply" data-theme-roles="<%= roles.to_json %>">
+  <% KeystoneUi::Preferences::ThemeRoles::GROUPS.each do |group, sets| %>
+  <%= ui_section(title: group, spacing: :sm) do %>
   <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-    <% KeystoneUi::Preferences::ThemeRoles::ROLES.each do |name, role| %>
+    <% sets.values.flatten.each do |name| %>
+      <% role = KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name) %>
       <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
         <% field_name = "theme[#{name}][#{side}]" %>
         <% value = theme.dig(name, side).to_s %>
@@ -20,4 +23,6 @@
       <% end %>
     <% end %>
   </div>
+  <% end %>
+  <% end %>
 </div>
