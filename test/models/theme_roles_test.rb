@@ -36,4 +36,10 @@ class ThemeRolesTest < ActiveSupport::TestCase
 
     assert_empty variables.reject { |variable| css.include?("#{variable}:") }
   end
+
+  test "every theme setting sits in exactly one of the editor's groups" do
+    grouped = KeystoneUi::Preferences::ThemeRoles::GROUPS.values.flat_map(&:values).flatten
+
+    assert_equal KeystoneUi::Preferences::ThemeRoles.names.sort, grouped.sort
+  end
 end
