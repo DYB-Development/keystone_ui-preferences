@@ -61,7 +61,7 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
 
   test "a person who pastes a :root block and a .dark block in the appearance section has their checked colour roles saved" do
     get "/settings/appearance"
-    patch "/settings/appearance", params: { pasted_theme: ":root {\n  --radius: 0.5rem;\n  --primary: oklch(0.205 0 0);\n}\n.dark {\n  --primary: oklch(0.922 0 0);\n}\n" }
+    patch "/settings/appearance", params: { pasted_theme: ":root {\n  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.05);\n  --primary: oklch(0.205 0 0);\n}\n.dark {\n  --primary: oklch(0.922 0 0);\n}\n" }
 
     assert_equal({ "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } } }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value)
   end
