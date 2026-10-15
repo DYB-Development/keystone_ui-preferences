@@ -22,9 +22,13 @@ All notable changes to this project will be documented in this file.
 - A theme's mono font is also written to Tailwind's `--default-mono-font-family`, which keystone_ui-styles draws code with.
 - For a person who saved a look of their own, the look's shape and type win over the theme's while the theme's colours still win over the look's.
 - The cached theme rule's key includes whether the person saved a look of their own, and the writer's version is now 2.
+- The person's Theme section has a disclosure, closed at first, listing every theme setting as its own field, with a light and a dark colour picker for each colour role, filled with the person's saved theme.
+- Changing a theme field and saving keeps the fields as the person's theme, leaving out any field left blank, and checks and refuses each value exactly as a pasted one.
+- The theme fields are saved only when they differ from the saved theme, so a template, the Accent, Surface and Text pickers and a paste save as before.
 
 ### Changed
 - keystone_ui-styles 0.18.0 or later is required, since each theme role names the `--ks-*` variables it will set.
+- keystone_ui 0.43.0 or later is required, the first release whose colour picker takes a typed `rgb()`, `hsl()` or `oklch()` colour.
 
 ### Fixed
 - The boot check's message and the README's steps for moving off keystone_ui-colors remove keystone_ui-colors before running the update generator, since the generator boots the app and the boot check refuses to boot while keystone_ui-colors is loaded.
