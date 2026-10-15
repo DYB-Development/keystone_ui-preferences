@@ -15,8 +15,12 @@ module KeystoneUi
 
       def lines
         @theme.flat_map do |role, sides|
-          ThemeRoles::ROLES.fetch(role)[:variables].map { |variable| "  #{variable}: #{sides["light"]};" }
+          ThemeRoles::ROLES.fetch(role)[:variables].flat_map { |variable| declarations(variable, sides) }
         end
+      end
+
+      def declarations(variable, sides)
+        { variable => sides["light"], "#{variable}-dark" => sides["dark"] }.compact.map { |name, value| "  #{name}: #{value};" }
       end
     end
   end
