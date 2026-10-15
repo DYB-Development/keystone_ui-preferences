@@ -6,7 +6,7 @@ A page gives a `ui_data_table` a `key:`. This gem saves each signed-in person's 
 
 ## Installation
 
-Add the gem and run its install generator, which copies a migration for its table and the template picker script the appearance section uses:
+Add the gem and run its install generator, which copies a migration for its table and the template picker and theme editor scripts the appearance section uses:
 
 ```ruby
 gem "keystone_ui-preferences"
@@ -18,14 +18,16 @@ bin/rails generate keystone_ui:preferences:install
 bin/rails db:migrate
 ```
 
-The script lands at `app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js`. Register it in `app/javascript/controllers/index.js`:
+The scripts land at `app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js` and `app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js`. Register them in `app/javascript/controllers/index.js`:
 
 ```js
 import ThemeSettingsController from "./keystone_ui/preferences/theme_settings_controller"
+import ThemeEditorController from "./keystone_ui/preferences/theme_editor_controller"
 application.register("keystone-ui--preferences--theme-settings", ThemeSettingsController)
+application.register("keystone-ui--preferences--theme-editor", ThemeEditorController)
 ```
 
-After updating the gem, run its update generator to copy any migrations added since it was installed, and the template picker script when the app does not have it yet:
+After updating the gem, run its update generator to copy any migrations added since it was installed, and the template picker and theme editor scripts when the app does not have them yet:
 
 ```bash
 bin/rails generate keystone_ui:preferences:update
@@ -197,6 +199,8 @@ Shape and type settings are kept from the `:root` block only, as `{ "radius": { 
 Each refusal below saves nothing and says why. A paste over 20,000 characters is refused before any of it is read. A paste containing `url(` or `@import` anywhere is refused. A paste with no shadcn colour role in a `:root` or `.dark` block is refused. A colour that fails the check is refused with a message naming the role and whether it is the light or dark value. A shape or type value that fails its check is refused with a message naming the setting, and so is a font list left with no font the app offers. A paste is refused with the same message as other colours while the account sets the colours for everyone.
 
 Under the paste box, a disclosure that starts closed lists every theme setting as its own field, named by its shadcn variable. Each colour role has a light and a dark keystone_ui colour picker, and the shadow colour has one, so a colour can be typed as hex, `rgb()`, `hsl()` or `oklch()`. Every other setting is a text field. The fields show the person's saved theme, so after a paste they hold the values that were read. Changing a field and pressing Save saves the fields as the person's theme, so a theme edited by hand stays the person's own. A field left blank leaves that setting out of the theme. Each value is checked and refused exactly as a pasted one is, with spaces around it removed first. The fields are saved only when they differ from the saved theme, so picking a template or changing the Accent, Surface or Text picker saves as before, and a paste sent in the same save wins over the fields. The disclosure needs no script, but the colour pickers need keystone_ui's colour picker script to take a typed colour.
+
+Each change to a theme field is drawn on the whole page before saving, through the theme editor script the install generator copies. The script sets the setting's `--ks-*` variables on the page's root element, taking the list of which setting sets which variables from the same theme roles list the palette style tag writes from, so the page looks as it will after Save. A colour also sets the hover colour the style tag derives from `primary`, `secondary` and `destructive`, and a dark value sets only the `-dark` variables, so it shows only where the page is drawn dark. Colours, corner radius, spacing, border width, letter spacing, fonts and font weights are drawn this way, and the shadow settings show only after Save. A value the browser cannot draw leaves the page as it was, and it is still sent and checked on Save. Leaving the section without saving removes every variable the script set, so the next page, a Turbo visit included, is drawn in the saved theme. The script saves nothing and sends no request, so Save works as before, and without the script the fields still save.
 
 The preset themes are option cards after the templates, each showing its light primary and secondary colours as swatches, and the person's saved preset is selected. Picking a preset card fills the theme fields with that preset's values, through the template picker script, and once a preset is saved the fields show its values. Theme fields sent unchanged, holding the picked or the saved preset's values, save the picked card as before. Changing a field after picking a preset saves the fields as the person's own theme in place of the preset. Without the script, picking a card and pressing Save still saves the preset.
 
