@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- The boot check's message and the README's steps for moving off keystone_ui-colors remove keystone_ui-colors before running the update generator, since the generator boots the app and the boot check refuses to boot while keystone_ui-colors is loaded.
+
 ## [0.7.0] - 2026-10-15
 
 ### Added
