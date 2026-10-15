@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
 - On a phone-width screen the person's Appearance section shows an Edit tab and a Preview tab from keystone_ui's tab switcher, and the template picker script shows the picked tab's panel, so an app that copied the script before this release replaces its copy with the gem's.
 
 ### Changed
+- The gem requires keystone_ui-styles 0.23.0 or later, so the preview's light side stays light and a dark value changes only the dark side while the page itself is drawn dark.
 - The gem requires keystone_ui 0.47.0 or later, whose line chart takes light or dark from the nearest `data-theme` and redraws when the theme's variables change.
 - The template picker script sits on an element around the person's Appearance form and its tabs instead of on the form itself.
 - On a screen 64rem wide or wider the person's Appearance fields and the preview sit side by side.
