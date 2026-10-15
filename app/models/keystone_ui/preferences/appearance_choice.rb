@@ -64,7 +64,7 @@ module KeystoneUi
       def preset_css
         unless preset_offered?
           warn_missing("preset", saved["preset_name"])
-          return
+          return account_theme_css
         end
 
         Rails.cache.fetch([ "preset_css", saved["preset_name"], KeystoneUi::Looks::VERSION, ThemeCss::VERSION, own_look? ]) { written(KeystoneUi::Looks::Themes[saved["preset_name"]][:theme]) }
@@ -112,6 +112,10 @@ module KeystoneUi
       def fallback_colours
         warn_missing("template", saved["template_name"])
         account_colours
+      end
+
+      def account_theme_css
+        AppearanceChoice.new(person: @account, account: nil).theme_css unless @account.nil? || colours_choice.preference.owned_by?(@account)
       end
 
       def account_colours

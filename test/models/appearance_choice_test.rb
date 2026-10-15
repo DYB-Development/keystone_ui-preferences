@@ -363,4 +363,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "emerald", colours_for(person, account)[:accent]
   end
+
+  test "a person whose saved preset the catalogue no longer has gets the account's preset theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "preset_name" => "harbor" })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
+  end
 end
