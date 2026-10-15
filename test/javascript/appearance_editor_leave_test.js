@@ -170,3 +170,13 @@ test("following a link after changing the Custom accent, surface or text picker 
 
   assert.equal(leaving.held, true)
 })
+
+test("following a link after picking another Mode holds the visit", () => {
+  const editor = sectionLoadedWith({}, {}, [card("mode", "light", true), card("mode", "dark")])
+  editor.pick("mode", "dark")
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
+})
