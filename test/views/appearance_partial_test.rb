@@ -415,6 +415,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     expected = KeystoneUi::Preferences::ThemeRoles::ROLES.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
 
-    assert_equal expected, labelled_controls(theme_section)
+    assert_equal expected, labelled_controls(theme_section).select { |_label, name| name.start_with?("theme[") }
+  end
+
+  test "the paste box is labelled 'Paste a theme'" do
+    render_section
+
+    assert_equal [ [ "Paste a theme", "pasted_theme" ] ], labelled_controls(theme_section).select { |_label, name| name == "pasted_theme" }
   end
 end
