@@ -402,4 +402,19 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal JSON.parse(File.read(File.expand_path("../fixtures/pinned/cards.json", __dir__))), cards
   end
+
+  def labelled_controls(scope)
+    scope.css("label[for]").filter_map do |label|
+      control = scope.at_css("[id='#{label["for"]}']")
+      [ label.text.strip, control["name"] ] if control
+    end
+  end
+
+  test "each theme setting typed as text is labelled with its setting name" do
+    render_section
+
+    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
+
+    assert_equal expected, labelled_controls(theme_section)
+  end
 end
