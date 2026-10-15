@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 const THEME_FIELD = /^theme\[([^\]]+)\]\[(light|dark)\]$/
-const PROPERTY_FOR_KIND = { colour: "color", length: "width", letter_spacing: "letter-spacing", font_list: "font-family" }
+const PROPERTY_FOR_KIND = { colour: "color", length: "width", letter_spacing: "letter-spacing", font_list: "font-family", weight: "font-weight" }
 
 export default class extends Controller {
   apply({ target: { name, value } }) {

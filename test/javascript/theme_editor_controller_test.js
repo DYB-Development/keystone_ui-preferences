@@ -7,14 +7,16 @@ const ROLES = {
   "popover-foreground": { kind: "colour", variables: ["--ks-color-on-overlay", "--ks-color-on-overlay-muted"] },
   "radius": { kind: "length", variables: ["--ks-radius-control", "--ks-radius-surface"] },
   "letter-spacing": { kind: "letter_spacing", variables: ["--ks-letter-spacing"] },
-  "font-mono": { kind: "font_list", variables: ["--ks-font-mono", "--default-mono-font-family"] }
+  "font-mono": { kind: "font_list", variables: ["--ks-font-mono", "--default-mono-font-family"] },
+  "font-weight-strong": { kind: "weight", variables: ["--ks-font-weight-strong"] }
 }
 
 const DRAWABLE = {
   "color": ["#1f5fbf"],
   "width": ["0.5rem"],
   "letter-spacing": ["-0.02em"],
-  "font-family": ["Menlo, monospace"]
+  "font-family": ["Menlo, monospace"],
+  "font-weight": ["600"]
 }
 
 globalThis.CSS = { supports: (property, value) => (DRAWABLE[property] ?? []).includes(value) }
@@ -93,4 +95,12 @@ test("changing a font sets each of its role's variables on the page's root eleme
   editorOn(root).apply(change("theme[font-mono][light]", "Menlo, monospace"))
 
   assert.deepEqual(root.variables, { "--ks-font-mono": "Menlo, monospace", "--default-mono-font-family": "Menlo, monospace" })
+})
+
+test("changing a font weight sets its variable on the page's root element", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("theme[font-weight-strong][light]", "600"))
+
+  assert.deepEqual(root.variables, { "--ks-font-weight-strong": "600" })
 })
