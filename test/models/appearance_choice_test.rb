@@ -344,4 +344,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     looks.send(:remove_const, :VERSION)
     looks.const_set(:VERSION, released)
   end
+
+  test "a saved preset name the catalogue no longer has writes no theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+
+    assert_nil theme_css_for(person, account)
+  end
 end
