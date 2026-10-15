@@ -8,9 +8,10 @@ module KeystoneUi
       PALETTE_NAME = /\A[a-z][a-z0-9_]*\z/
       WHITE = "#ffffff"
 
-      def initialize(person:, account:)
+      def initialize(person:, account:, own_look: nil)
         @person = person
         @account = account
+        @own_look = own_look
       end
 
       def colours
@@ -84,6 +85,8 @@ module KeystoneUi
       end
 
       def own_look?
+        return @own_look unless @own_look.nil?
+
         @person.present? && person_chooses_look? && KeystoneUi.configuration.looks.key?(saved_look(@person))
       end
 
@@ -115,7 +118,7 @@ module KeystoneUi
       end
 
       def account_theme_css
-        AppearanceChoice.new(person: @account, account: nil).theme_css unless @account.nil? || colours_choice.preference.owned_by?(@account)
+        AppearanceChoice.new(person: @account, account: nil, own_look: own_look?).theme_css unless @account.nil? || colours_choice.preference.owned_by?(@account)
       end
 
       def account_colours
