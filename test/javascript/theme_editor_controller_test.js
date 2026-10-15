@@ -175,3 +175,11 @@ test("a value holding a semicolon or a curly brace is left out of the export, so
 
   assert.equal(editor.exported(), ":root {\n  --radius: 0.5rem;\n}\n\n.dark {\n}\n")
 })
+
+test("the export is handed to keystone_ui's copy button as the text it copies", () => {
+  const editor = editorOn(pageRoot(), { "theme[radius][light]": "0.5rem" })
+
+  editor.connect()
+
+  assert.equal(editor.copied(), ":root {\n  --radius: 0.5rem;\n}\n\n.dark {\n}\n")
+})

@@ -40,7 +40,9 @@ export default class extends Controller {
       const field = this.element.querySelector(`[name="theme[${role}][${side}]"]`)
       return field?.value && !ENDS_DECLARATION.test(field.value) ? [`  --${role}: ${field.value};\n`] : []
     }).join("")
-    this.element.querySelector("[data-theme-export]").value = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
+    const css = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
+    this.element.querySelector("[data-theme-export]").value = css
+    this.element.querySelector("[data-controller~='clipboard']").dataset.clipboardText = css
   }
 
   #set(variable, value) {
