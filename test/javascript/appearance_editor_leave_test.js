@@ -201,3 +201,13 @@ test("following a link after picking another Mode and then the saved Mode again 
 
   assert.equal(leaving.held, false)
 })
+
+test("closing or reloading the page after picking another colour card asks the browser to warn first", () => {
+  const editor = sectionLoadedWith({}, {}, [card("template_name", "default", true), card("template_name", "ocean")])
+  editor.pick("template_name", "ocean")
+  const closing = unload()
+
+  editor.warnBeforeUnload(closing)
+
+  assert.equal(closing.warned, true)
+})
