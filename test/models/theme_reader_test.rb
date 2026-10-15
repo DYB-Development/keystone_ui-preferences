@@ -30,4 +30,10 @@ class ThemeReaderTest < ActiveSupport::TestCase
 
     assert_equal({ "border" => { "light" => "#e5e5e5" } }, reader.values)
   end
+
+  test "a :root block and a .dark block inside an @layer rule are read" do
+    reader = read("@layer base {\n  :root {\n    --ring: #a1a1a1;\n  }\n  .dark {\n    --ring: #737373;\n  }\n}\n")
+
+    assert_equal({ "ring" => { "light" => "#a1a1a1", "dark" => "#737373" } }, reader.values)
+  end
 end
