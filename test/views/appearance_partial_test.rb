@@ -394,4 +394,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "keystone-ui--preferences--theme-settings#selectPreset", KeystoneUi::Looks::Themes[:harbor][:theme] ], [ harbor["data-action"], JSON.parse(harbor["data-theme"].to_s) ]
   end
+
+  test "every template card and preset card hands the template picker script the same values as before the writers were joined" do
+    render_section
+
+    cards = template_options.map { |option| %w[value data-action data-accent-hex data-surface-hex data-text-hex data-theme].to_h { |attribute| [ attribute, option[attribute] ] } }
+
+    assert_equal JSON.parse(File.read(File.expand_path("../fixtures/pinned/cards.json", __dir__))), cards
+  end
 end
