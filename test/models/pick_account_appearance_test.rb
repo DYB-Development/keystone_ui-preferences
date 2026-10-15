@@ -95,4 +95,12 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_nil account_preference("look")
   end
+
+  PASTED_THEME = ":root {\n  --radius: 0.625rem;\n  --primary: oklch(0.205 0 0);\n}\n.dark {\n  --primary: oklch(0.922 0 0);\n}\n"
+
+  test "saving a pasted theme keeps every checked theme setting in it as the account's colours" do
+    pick(template_name: "default", pasted_theme: PASTED_THEME)
+
+    assert_equal({ "theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.625rem" } } }, account_preference("colours").value)
+  end
 end

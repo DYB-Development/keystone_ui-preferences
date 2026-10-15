@@ -15,7 +15,7 @@ module KeystoneUi
 
         return Refusal.new("This app does not let accounts choose their colours.") if colours_sent? && !KeystoneUi::Preferences.configuration.account_colors
 
-        chosen = ChosenColours.new(@values) if colours_sent?
+        chosen = chosen_colours
         return chosen.refusal if chosen&.refusal
 
         keep("colours", (chosen ? { value: chosen.value } : {}).merge(switch(:members_choose)))
@@ -27,6 +27,17 @@ module KeystoneUi
 
       def colours_sent?
         @values.key?(:template_name)
+      end
+
+      def chosen_colours
+        return pasted_theme if @values[:pasted_theme].present?
+
+        ChosenColours.new(@values) if colours_sent?
+      end
+
+      def pasted_theme
+        reader = ThemeReader.new(@values[:pasted_theme])
+        reader.refusal ? reader : CheckedTheme.new(reader.values)
       end
 
       def look_offered?
