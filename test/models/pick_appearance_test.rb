@@ -283,4 +283,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
       "letter-spacing" => "-0.025em", "spacing" => "0.25rem"
     }, saved_value["theme"].except("primary").transform_values { |sides| sides["light"] })
   end
+
+  test "a theme setting typed by hand is saved as the person's theme, leaving out the fields left blank" do
+    pick(theme: { "primary" => { "light" => "#171717", "dark" => "" }, "radius" => { "light" => "" } })
+
+    assert_equal({ "theme" => { "primary" => { "light" => "#171717" } } }, saved_value)
+  end
 end

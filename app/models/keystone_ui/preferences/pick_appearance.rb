@@ -12,10 +12,11 @@ module KeystoneUi
       def call
         return Refusal.new("Choose Light, Dark, System or Custom for the mode.") unless mode_offered?
         return Refusal.new("Choose the app's own look or one of the looks it offers.") unless look_offered?
-        return keep_mode_and_look unless @values.key?(:template_name) || pasting?
+        return keep_mode_and_look unless @values.key?(:template_name) || pasting? || editing?
         return Refusal.new("This app sets the colours for everyone, so this was not saved.") unless KeystoneUi::Preferences.configuration.account_colors
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
         return keep_theme if pasting?
+        return keep_typed_theme if editing?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
 
         chosen = ChosenColours.new(@values)
@@ -41,6 +42,19 @@ module KeystoneUi
 
       def pasting?
         @values[:pasted_theme].present?
+      end
+
+      def editing?
+        typed_theme.any?
+      end
+
+      def typed_theme
+        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.transform_keys(&:to_s).compact_blank ] }.compact_blank
+      end
+
+      def keep_typed_theme
+        preference.update!(value: { "theme" => typed_theme })
+        keep_mode_and_look
       end
 
       def keep_theme
