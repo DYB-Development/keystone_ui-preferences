@@ -11,6 +11,7 @@ export default class extends Controller {
   }
 
   apply({ target: { name, value } }) {
+    this.#writeExport()
     const field = name.match(THEME_FIELD)
     if (!field) return
 

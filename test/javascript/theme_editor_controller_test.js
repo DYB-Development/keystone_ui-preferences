@@ -38,6 +38,7 @@ function editorOn(root, values = {}) {
   const element = { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(ROLES) }, querySelector: selector => parts[selector] ?? null }
   const editor = new ThemeEditorController({ scope: { element } })
   editor.exported = () => parts["[data-theme-export]"].value
+  editor.field = name => parts[`[name="${name}"]`]
   editor.copied = () => parts["[data-controller~='clipboard']"].dataset.clipboardText
   return editor
 }
@@ -146,4 +147,15 @@ test("opening the editor writes each field's light value into a :root block and 
   editor.connect()
 
   assert.equal(editor.exported(), ":root {\n  --primary: #1f5fbf;\n  --radius: 0.5rem;\n}\n\n.dark {\n  --primary: #6aa3f0;\n}\n")
+})
+
+test("changing a field writes its unsaved value into the export", () => {
+  const editor = editorOn(pageRoot(), { "theme[primary][light]": "#1f5fbf" })
+  editor.connect()
+  const field = editor.field("theme[primary][light]")
+  field.value = "#6aa3f0"
+
+  editor.apply({ target: field })
+
+  assert.equal(editor.exported(), ":root {\n  --primary: #6aa3f0;\n}\n\n.dark {\n}\n")
 })

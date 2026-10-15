@@ -49,8 +49,11 @@ function field(name, value, onEvent) {
 
 function editorFormOn(root, values, { chosenPreset = null, savedTheme = {} } = {}) {
   const roles = { primary: { kind: "colour", variables: ["--ks-color-accent"] }, radius: { kind: "length", variables: ["--ks-radius-control"] } }
-  const editor = new ThemeEditorController({ scope: { element: { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(roles) } } } })
+  const exported = { value: "" }
+  const editorElement = { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(roles) } }
+  const editor = new ThemeEditorController({ scope: { element: editorElement } })
   const fields = Object.entries(values).map(([name, value]) => field(name, value, (event) => editor.apply(event)))
+  editorElement.querySelector = (selector) => (selector === "[data-theme-export]" ? exported : fields.find(({ name }) => selector === `[name="${name}"]`) ?? null)
   const element = {
     querySelector(selector) {
       if (selector === "input[name='template_name'][data-theme]:checked") return chosenPreset && { dataset: { theme: JSON.stringify(chosenPreset) } }
