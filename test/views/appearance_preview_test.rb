@@ -90,4 +90,14 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal [ "tab-switcher:change->keystone-ui--preferences--theme-settings#showPanel", [ true, false ] ], [ settings&.[]("data-action"), panels.map { |panel| panel.key?("data-shown") } ]
   end
+
+  def section_style
+    css_select("[data-controller='keystone-ui--preferences--theme-settings'] style").text.squish
+  end
+
+  test "below a wide screen the appearance section draws only the panel of the picked tab" do
+    render_section
+
+    assert_includes section_style, "[data-editor-panel]:not([data-shown]) { display: none; }"
+  end
 end

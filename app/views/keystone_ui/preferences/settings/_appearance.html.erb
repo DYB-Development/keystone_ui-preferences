@@ -47,6 +47,9 @@
 
 <div data-controller="keystone-ui--preferences--theme-settings" data-action="tab-switcher:change->keystone-ui--preferences--theme-settings#showPanel">
   <% if chooses_colours %>
+    <style>
+      [data-editor-panel]:not([data-shown]) { display: none; }
+    </style>
     <%= ui_tab_switcher(tabs: %w[Edit Preview]) do %>
       <div data-editor-panel data-shown><%= editor %></div>
       <div data-editor-panel><%= render partial: "keystone_ui/preferences/settings/theme_preview" %></div>
