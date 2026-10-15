@@ -57,4 +57,10 @@ class ThemeCssTest < ActiveSupport::TestCase
   test "a theme's mono font is written to the mono font variable and to Tailwind's default mono font, which code reads" do
     assert_equal [ "--ks-font-mono: Menlo, monospace;", "--default-mono-font-family: Menlo, monospace;" ], declarations(css_for("font-mono" => { "light" => "Menlo, monospace" }))
   end
+
+  test "a theme's font weights are written to keystone_ui-styles' normal, medium, strong and heading weights" do
+    css = css_for(%w[normal medium strong heading].to_h { |weight| [ "font-weight-#{weight}", { "light" => "500" } ] })
+
+    assert_equal [ "--ks-font-weight-normal: 500;", "--ks-font-weight-medium: 500;", "--ks-font-weight-strong: 500;", "--ks-font-weight-heading: 500;" ], declarations(css)
+  end
 end
