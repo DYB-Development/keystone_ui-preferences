@@ -423,4 +423,24 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "Paste a theme", "pasted_theme" ] ], labelled_controls(theme_section).select { |_label, name| name == "pasted_theme" }
   end
+
+  test "every theme field sits inside the theme editor script, which redraws the page on each change and each keystroke" do
+    render_section
+
+    editor = theme_section.at_css("[data-controller='keystone-ui--preferences--theme-editor']")
+
+    fields = editor ? editor.css("input[name^='theme[']").map { |field| field["name"] } : []
+
+    assert_equal [ "change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply", theme_field_names ], [ editor&.[]("data-action"), fields ]
+  end
+
+  test "the theme editor script is handed each theme setting's kind and variables and the hover variable the theme writer derives from it" do
+    render_section
+
+    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h do |name, role|
+      [ name, { "kind" => role[:kind].to_s, "variables" => role[:variables], "hover" => KeystoneUi::Preferences::ThemeCss::HOVERS[name] }.compact ]
+    end
+
+    assert_equal expected, JSON.parse(theme_section.at_css("[data-controller='keystone-ui--preferences--theme-editor']")["data-theme-roles"].to_s)
+  end
 end
