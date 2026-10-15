@@ -354,4 +354,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal expected, theme_section.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
   end
+
+  test "the theme fields show the values of the person's saved theme" do
+    save_colours("theme" => { "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.5rem" } })
+
+    render_section
+
+    assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+  end
 end

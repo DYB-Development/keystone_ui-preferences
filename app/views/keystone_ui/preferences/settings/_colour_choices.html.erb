@@ -50,7 +50,7 @@
   <% end %>
   <% if local_assigns[:pastes] %>
     <%= ui_form_field(attribute: "pasted_theme", label: "Paste a theme", type: :textarea, hint: "A :root block and a .dark block in shadcn/ui's variable names, as tweakcn and shadcn's theme pages export them.") %>
-    <%= render partial: "keystone_ui/preferences/settings/theme_settings" %>
+    <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { theme: saved["theme"].to_h } %>
   <% end %>
 <% end %>
 
