@@ -63,3 +63,12 @@ test("the visit made after choosing to leave is not held again", () => {
 
   assert.equal(leaving.held, false)
 })
+
+test("following a link with no theme field changed is not held", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, false)
+})
