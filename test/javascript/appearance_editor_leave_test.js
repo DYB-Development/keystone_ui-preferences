@@ -211,3 +211,14 @@ test("closing or reloading the page after picking another colour card asks the b
 
   assert.equal(closing.warned, true)
 })
+
+test("following a link with text in the paste box holds the visit", () => {
+  const paste = { name: "pasted_theme", value: "", type: "textarea" }
+  const editor = sectionLoadedWith({}, {}, [paste])
+  paste.value = ":root { --primary: #1f5fbf; }"
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
+})

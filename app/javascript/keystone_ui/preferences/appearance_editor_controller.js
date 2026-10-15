@@ -185,11 +185,15 @@ export default class extends Controller {
   }
 
   #hasUnsavedChanges() {
-    return !this.#leaveAllowed && (this.#unsavedFields().length > 0 || this.#quickChoicesChanged())
+    return !this.#leaveAllowed && (this.#unsavedFields().length > 0 || this.#quickChoicesChanged() || this.#pasteTyped())
   }
 
   #quickChoicesChanged() {
     return this.#quickChoices().some((choice, place) => choice !== this.#loadedChoices[place])
+  }
+
+  #pasteTyped() {
+    return [...this.element.querySelectorAll("[name='pasted_theme']")].some(({ value }) => value.trim() !== "")
   }
 
   #quickChoices() {
