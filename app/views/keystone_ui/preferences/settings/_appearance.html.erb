@@ -12,33 +12,56 @@
   <%= ui_alert(message: "Your account sets the colours for everyone.") %>
 <% end %>
 
-<%= ui_panel(padding: :lg) do %>
-  <%= form_with(url: submit_url, method: :patch, data: { turbo: false, controller: "keystone-ui--preferences--theme-settings" }) do %>
-    <div style="display: flex; flex-direction: column; gap: 2rem;">
-      <% if chooses_colours %>
-        <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true, presets: true } %>
-      <% end %>
+<% editor = capture do %>
+  <%= ui_panel(padding: :lg) do %>
+    <%= form_with(url: submit_url, method: :patch, data: { turbo: false }) do %>
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <% if chooses_colours %>
+          <%= render partial: "keystone_ui/preferences/settings/colour_choices", locals: { saved: saved, drawn: drawn, pastes: true, presets: true } %>
+        <% end %>
 
-      <% if appearance.person_chooses_look? && KeystoneUi.configuration.looks.any? %>
-        <%= render partial: "keystone_ui/preferences/settings/look_choices", locals: { saved_look: saved_look } %>
-      <% end %>
+        <% if appearance.person_chooses_look? && KeystoneUi.configuration.looks.any? %>
+          <%= render partial: "keystone_ui/preferences/settings/look_choices", locals: { saved_look: saved_look } %>
+        <% end %>
 
-      <%= ui_section(title: "Mode", spacing: :sm) do %>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-          <% KeystoneUi::ThemeChoice::MODES.each do |mode| %>
-            <% next if mode == "custom" && !(chooses_colours || appearance.custom_offered?) %>
-            <%= ui_radio_card(name: "mode", value: mode, label: mode.capitalize, checked: appearance.mode == mode) %>
-          <% end %>
+        <%= ui_section(title: "Mode", spacing: :sm) do %>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            <% KeystoneUi::ThemeChoice::MODES.each do |mode| %>
+              <% next if mode == "custom" && !(chooses_colours || appearance.custom_offered?) %>
+              <%= ui_radio_card(name: "mode", value: mode, label: mode.capitalize, checked: appearance.mode == mode) %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if chooses_colours %>
+          <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved } %>
+        <% end %>
+
+        <div>
+          <%= ui_button(label: "Save", type: :submit) %>
         </div>
-      <% end %>
-
-      <% if chooses_colours %>
-        <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { saved: saved } %>
-      <% end %>
-
-      <div>
-        <%= ui_button(label: "Save", type: :submit) %>
       </div>
-    </div>
+    <% end %>
   <% end %>
 <% end %>
+
+<div data-appearance-editor data-controller="keystone-ui--preferences--theme-settings" data-action="tab-switcher:change->keystone-ui--preferences--theme-settings#showPanel">
+  <% if chooses_colours %>
+    <style>
+      [data-editor-panel]:not([data-shown]) { display: none; }
+      @media (min-width: 64rem) {
+        [data-appearance-editor] .ks-tab-bar { display: none; }
+        [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; }
+        [data-editor-panel]:not([data-shown]) { display: block; }
+      }
+    </style>
+    <%= ui_tab_switcher(tabs: %w[Edit Preview]) do %>
+      <div data-editor-panels>
+        <div data-editor-panel data-shown><%= editor %></div>
+        <div data-editor-panel><%= render partial: "keystone_ui/preferences/settings/theme_preview" %></div>
+      </div>
+    <% end %>
+  <% else %>
+    <%= editor %>
+  <% end %>
+</div>
