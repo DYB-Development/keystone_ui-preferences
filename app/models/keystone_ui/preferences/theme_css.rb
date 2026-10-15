@@ -8,20 +8,36 @@ module KeystoneUi
       SHADOWS = %w[--ks-shadow-surface --ks-shadow-overlay --ks-shadow-menu].freeze
       HOVERS = { "primary" => "--ks-color-accent-hover", "secondary" => "--ks-color-neutral-hover", "destructive" => "--ks-color-danger-hover" }.freeze
 
-      def initialize(theme)
+      OUTRANKING_LOOKS = ":root, html:root[data-look]"
+
+      def initialize(theme, own_look: false)
         @theme = theme
+        @own_look = own_look
       end
 
       def to_s
-        ":root, html:root[data-look] {\n#{lines.join("\n")}\n}"
+        rules = @own_look ? { OUTRANKING_LOOKS => colour_lines, ":root" => shape_lines } : { OUTRANKING_LOOKS => colour_lines + shape_lines }
+        rules.map { |selector, lines| "#{selector} {\n#{lines.join("\n")}\n}" }.join("\n")
       end
 
       private
 
-      def lines
-        @theme.flat_map do |role, sides|
+      def colour_lines
+        lines(@theme.select { |role, _sides| colour?(role) })
+      end
+
+      def shape_lines
+        lines(@theme.reject { |role, _sides| colour?(role) }) + shadow_declarations
+      end
+
+      def colour?(role)
+        ThemeRoles::ROLES.fetch(role)[:kind] == :colour
+      end
+
+      def lines(roles)
+        roles.flat_map do |role, sides|
           ThemeRoles::ROLES.fetch(role)[:variables].flat_map { |variable| declarations(variable, sides) } + hover_declarations(role, sides)
-        end + shadow_declarations
+        end
       end
 
       def shadow_declarations

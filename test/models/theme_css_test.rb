@@ -84,4 +84,10 @@ class ThemeCssTest < ActiveSupport::TestCase
   test "a theme missing any of the six shadow settings writes no shadow" do
     assert_empty declarations(css_for(SHADOW.except("shadow-blur")))
   end
+
+  test "for a person who saved a look of their own, the theme's shape and type go in a rule a look outranks while its colours still outrank the look" do
+    css = KeystoneUi::Preferences::ThemeCss.new({ "primary" => { "light" => "#171717" }, "radius" => { "light" => "0.5rem" } }, own_look: true).to_s
+
+    assert_equal ":root, html:root[data-look] {\n  --ks-color-accent: #171717;\n  --ks-color-accent-hover: color-mix(in oklab, #171717 85%, white);\n}\n:root {\n  --ks-radius-control: 0.5rem;\n  --ks-radius-surface: 0.5rem;\n}", css
+  end
 end
