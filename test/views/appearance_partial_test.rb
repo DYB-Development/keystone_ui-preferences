@@ -572,4 +572,10 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "Copy", "button", "click->clipboard#copy" ] ], buttons
   end
+
+  test "where the browser refuses to copy, the Copy button tells the person to select the export text instead" do
+    render_section
+
+    assert_equal [ "Select the text to copy it" ], theme_settings.css("button[data-controller~=clipboard]").map { |button| button["data-clipboard-error-message-value"] }
+  end
 end

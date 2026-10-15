@@ -37,7 +37,7 @@
   <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
     <%= label_tag "#{id_prefix}-theme-export", "Export", class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
     <%= content_tag :textarea, nil, id: "#{id_prefix}-theme-export", readonly: true, rows: 8, class: Keystone::Ui::TextareaComponent::BASE_CLASSES, data: { theme_export: "" } %>
-    <div><%= ui_copy_button(text: "") %></div>
+    <div><%= ui_copy_button(text: "", error_message: "Select the text to copy it") %></div>
   </div>
   <datalist id="<%= fonts_id %>">
     <% (KeystoneUi::Preferences.configuration.theme_fonts + KeystoneUi::Preferences::CheckedTheme::SYSTEM_FONTS).each do |font| %>
