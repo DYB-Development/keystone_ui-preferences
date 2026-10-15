@@ -370,4 +370,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
   end
+
+  test "a member with no colours of their own gets the account's saved theme rule" do
+    theme = { "primary" => { "light" => "#171717", "dark" => "#fafafa" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "theme" => theme })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme).to_s, theme_css_for(person, account)
+  end
 end
