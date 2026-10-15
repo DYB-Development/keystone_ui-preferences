@@ -60,4 +60,10 @@ class ThemeReaderTest < ActiveSupport::TestCase
 
     assert_equal "The pasted theme is longer than 20,000 characters, so it was not saved.", reader.refusal&.message
   end
+
+  test "a paste with no shadcn colour role in a :root or .dark block is refused with a reason" do
+    reader = read(":root { --radius: 0.5rem; }\n.card { --primary: #171717; }\n")
+
+    assert_equal "The pasted theme has no shadcn colour role in a :root or .dark block, so it was not saved.", reader.refusal&.message
+  end
 end
