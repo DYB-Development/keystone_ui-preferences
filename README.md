@@ -211,7 +211,7 @@ An app that keeps people off their own looks sets `user_looks` to false. The app
 
 ## Account appearance
 
-An admin sets the account's colours and look in a settings_hub section. Who may open it is the app's decision, so register it behind a capability of the app's choosing:
+An admin sets the account's colours and look in a settings_hub section. Who may open it is the app's decision, so register it behind a capability of the app's choosing. settings_hub refuses a capability the app does not define, so use the one the app already uses for its other account sections in place of `:manage_account`:
 
 ```ruby
 SettingsHub.section :account_appearance, area: :account, title: "Appearance",
@@ -242,26 +242,24 @@ A choice made with keystone_ui's theme toggle in that browser still sets light o
 
 ## Moving off keystone_ui-colors
 
-An app that saved colours, modes and looks with keystone_ui-colors keeps them by following these steps in this order. An app that has never installed keystone_ui-preferences adds it to the Gemfile and runs its install generator before step 1.
+An app that saved colours, modes and looks with keystone_ui-colors keeps them by following these steps in this order. An app that has never installed keystone_ui-preferences runs its install generator at step 5 instead of the update generator.
 
-1. Update keystone_ui-preferences.
-2. Run its update generator, which copies the migration below into `db/migrate`.
-3. Remove keystone_ui-colors from the Gemfile and run `bundle install`.
-4. Change every `KeystoneUi::Colors` name the app uses to its replacement. keystone_ui-colors' README lists each name and what replaces it under [Moving to keystone_ui-preferences](https://github.com/DYB-Development/keystone_ui-colors#moving-to-keystone_ui-preferences).
-5. Register the person's appearance section and the account's appearance section, the account's behind `capability: :manage_account`, as [Appearance](#appearance) and [Account appearance](#account-appearance) show.
-6. Call `super` from any `after_settings_change` the app defines.
-7. Run `bin/rails db:migrate`.
+1. Set keystone_ui-preferences to `~> 0.7` and remove keystone_ui-colors from the Gemfile, then run `bundle install`.
+2. Change every `KeystoneUi::Colors` name the app uses to its replacement, and move any settings from a keystone_ui-colors initializer into a keystone_ui-preferences initializer. keystone_ui-colors' README lists each name and what replaces it under [Moving to keystone_ui-preferences](https://github.com/DYB-Development/keystone_ui-colors#moving-to-keystone_ui-preferences).
+3. Register the person's appearance section and the account's appearance section, as [Appearance](#appearance) and [Account appearance](#account-appearance) show. Register the account's behind the capability the app already uses for its other account sections.
+4. Call `super` from any `after_settings_change` the app defines.
+5. Run its update generator, which copies the migration below into `db/migrate`.
+6. Run `bin/rails db:migrate`.
 
 ```bash
-bundle update keystone_ui-preferences
-bin/rails generate keystone_ui:preferences:update
-# remove keystone_ui-colors from the Gemfile
+# set keystone_ui-preferences to ~> 0.7 and remove keystone_ui-colors from the Gemfile
 bundle install
-# change each KeystoneUi::Colors name, register both appearance sections, call super from after_settings_change
+# change each KeystoneUi::Colors name, move the initializer settings, register both appearance sections, call super from after_settings_change
+bin/rails generate keystone_ui:preferences:update
 bin/rails db:migrate
 ```
 
-Boot stops with `KeystoneUi::Preferences::ColorsCheck::Error` while keystone_ui-colors is loaded, and the message names keystone_ui-colors as the gem to remove and the update generator as the step to run first. `bin/rails db:migrate` boots the app, so keystone_ui-colors comes out of the Gemfile before the migration runs, and the generator runs before keystone_ui-colors comes out so the copy migration is in `db/migrate` when it does. An initializer, route, controller or helper that still names `KeystoneUi::Colors`, such as a `KeystoneUi::Colors.configure` block, a route mounting `KeystoneUi::Colors::Engine`, `include KeystoneUi::Colors::CurrentPalette` or `helper KeystoneUi::Colors::PaletteHelper`, also stops the app from booting, so every name is changed before the migration runs.
+Boot stops with `KeystoneUi::Preferences::ColorsCheck::Error` while keystone_ui-colors is loaded, and the message names keystone_ui-colors as the gem to remove. The update generator and `bin/rails db:migrate` both boot the app, so keystone_ui-colors comes out of the Gemfile before either runs. An initializer, route, controller or helper that still names `KeystoneUi::Colors`, such as a `KeystoneUi::Colors.configure` block, a route mounting `KeystoneUi::Colors::Engine`, `include KeystoneUi::Colors::CurrentPalette` or `helper KeystoneUi::Colors::PaletteHelper`, also stops the app from booting, so every name is changed before the generator runs.
 
 The generator copies a migration that reads every row of `keystone_ui_colors_theme_preferences` and writes up to three rows for the same owner:
 
