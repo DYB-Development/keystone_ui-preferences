@@ -325,4 +325,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "preset_name" => "harbor" }, saved_value)
   end
+
+  test "theme fields sent unchanged with a template save the template over the person's saved preset" do
+    pick(template_name: "harbor")
+
+    pick(template_name: "forest", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
 end
