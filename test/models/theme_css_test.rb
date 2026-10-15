@@ -32,4 +32,15 @@ class ThemeCssTest < ActiveSupport::TestCase
 
     assert_equal 1, specificity(selectors.last) <=> specificity(':root[data-look="compact"]')
   end
+
+  test "the accent, neutral and danger hover colours are derived from the theme's primary, secondary and destructive fills" do
+    css = css_for("primary" => { "light" => "#171717", "dark" => "#e5e5e5" }, "secondary" => { "light" => "#f5f5f5" }, "destructive" => { "dark" => "oklch(0.704 0.191 22.216)" })
+
+    assert_equal [
+      "--ks-color-accent-hover: color-mix(in oklab, #171717 85%, white);",
+      "--ks-color-accent-hover-dark: color-mix(in oklab, #e5e5e5 85%, white);",
+      "--ks-color-neutral-hover: color-mix(in oklab, #f5f5f5 85%, white);",
+      "--ks-color-danger-hover-dark: color-mix(in oklab, oklch(0.704 0.191 22.216) 85%, white);"
+    ], declarations(css).grep(/-hover/)
+  end
 end
