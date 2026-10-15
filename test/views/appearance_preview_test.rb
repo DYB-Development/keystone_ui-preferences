@@ -100,4 +100,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_includes section_style, "[data-editor-panel]:not([data-shown]) { display: none; }"
   end
+
+  test "on a wide screen the appearance section draws the editor and the preview side by side with no tabs" do
+    render_section
+
+    assert_includes section_style, "@media (min-width: 64rem) { [data-appearance-editor] .ks-tab-bar { display: none; } [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; } [data-editor-panel]:not([data-shown]) { display: block; } }"
+  end
 end
