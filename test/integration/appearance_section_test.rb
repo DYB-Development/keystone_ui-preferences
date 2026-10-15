@@ -97,4 +97,16 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
       [ "--ks-color-accent: oklch(0.205 0 0);", "--ks-color-accent-dark: oklch(0.922 0 0);", "--ks-radius-control: 0.75rem;", "--ks-radius-surface: 0.75rem;" ]
     ], [ KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value, css_select("head style").text.lines.map(&:strip).grep(/--ks-(color-accent(-dark)?|radius-[a-z]+):/) ]
   end
+
+  test "a person who picks a preset theme in the appearance section has only its name saved and sees the next page set the preset" do
+    get "/settings/appearance"
+    patch "/settings/appearance", params: { template_name: "harbor" }
+    follow_redirect!
+    get "/palette"
+
+    assert_equal [
+      { "preset_name" => "harbor" },
+      [ "--ks-color-accent: #1f5fbf;", "--ks-color-accent-dark: #6aa3f0;", "--ks-radius-control: 0.625rem;", "--ks-radius-surface: 0.625rem;" ]
+    ], [ KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value, css_select("head style").text.lines.map(&:strip).grep(/--ks-(color-accent(-dark)?|radius-[a-z]+):/) ]
+  end
 end

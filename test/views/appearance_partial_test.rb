@@ -23,10 +23,10 @@ class AppearancePartialTest < ActionView::TestCase
     css_select("input[type=radio][name=template_name]")
   end
 
-  test "the appearance section offers Default, the five colour templates and Custom" do
+  test "the appearance section offers Default, the five colour templates, the six preset themes and Custom" do
     render_section
 
-    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "" ], template_options.map { |option| option["value"] }
+    assert_equal [ "default", "ocean", "forest", "twilight", "coral", "arctic", "graphite", "harbor", "fern", "terracotta", "heather", "ledger", "" ], template_options.map { |option| option["value"] }
   end
 
   def selected_template
@@ -143,10 +143,10 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ [ "accent" ], [ "surface" ], [ "text" ] ], targets
   end
 
-  test "the template picker script finds each template's option and the Custom option to highlight" do
+  test "the template picker script finds each template's option, each preset theme's option and the Custom option to highlight" do
     render_section
 
-    assert_equal %w[default ocean forest twilight coral arctic custom], css_select("label[data-keystone-ui--preferences--theme-settings-target=templateLabel]").map { |label| label["data-template"] }
+    assert_equal %w[default ocean forest twilight coral arctic graphite harbor fern terracotta heather ledger custom], css_select("label[data-keystone-ui--preferences--theme-settings-target=templateLabel]").map { |label| label["data-template"] }
   end
 
   test "the template picker script finds the Custom option to select when a colour picker changes" do
@@ -361,5 +361,37 @@ class AppearancePartialTest < ActionView::TestCase
     render_section
 
     assert_equal [ "oklch(0.205 0 0)", "oklch(0.922 0 0)", "0.5rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+  end
+
+  test "each preset theme's card shows its light primary and secondary colours as swatches, as a template's card shows its accent and surface" do
+    render_section
+
+    swatches = css_select("label:has(input[name=template_name][value=harbor]) span[style*=background-color]").map { |swatch| swatch["style"][/background-color: ([^;]+);/, 1] }
+
+    assert_equal [ "#1f5fbf", "#e3ebf6" ], swatches
+  end
+
+  test "the appearance section selects only the preset theme the person saved" do
+    save_colours("preset_name" => "harbor")
+
+    render_section
+
+    assert_equal [ "harbor" ], selected_template
+  end
+
+  test "the theme fields show the values of the preset theme the person saved" do
+    save_colours("preset_name" => "harbor")
+
+    render_section
+
+    assert_equal [ "#1f5fbf", "#6aa3f0", "0.625rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
+  end
+
+  test "picking a preset theme hands the template picker script that preset's theme values to fill the theme fields with" do
+    render_section
+
+    harbor = css_select("input[type=radio][name=template_name][value=harbor]").first
+
+    assert_equal [ "keystone-ui--preferences--theme-settings#selectPreset", KeystoneUi::Looks::Themes[:harbor][:theme] ], [ harbor["data-action"], JSON.parse(harbor["data-theme"].to_s) ]
   end
 end

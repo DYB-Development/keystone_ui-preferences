@@ -8,12 +8,13 @@ module KeystoneUi
       end
 
       def refusal
-        return Refusal.new("Choose Default, one of the colour templates or Custom.") unless template_offered?
+        return Refusal.new("Choose Default, one of the colour templates, one of the preset themes or Custom.") unless template_offered?
 
         Refusal.new("Choose each colour as a six-digit hex value, such as #1d4ed8.") unless colours_offered?
       end
 
       def value
+        return { "preset_name" => @values[:template_name] } if preset?
         return { "template_name" => @values[:template_name] } if @values[:template_name].present?
 
         { "accent" => @values[:accent], "surface" => @values[:surface], "text" => @values[:text] }
@@ -22,7 +23,11 @@ module KeystoneUi
       private
 
       def template_offered?
-        @values[:template_name].blank? || [ AppearanceChoice::DEFAULT_TEMPLATE, *KeystoneUi::Looks::Templates.names.map(&:to_s) ].include?(@values[:template_name])
+        @values[:template_name].blank? || preset? || [ AppearanceChoice::DEFAULT_TEMPLATE, *KeystoneUi::Looks::Templates.names.map(&:to_s) ].include?(@values[:template_name])
+      end
+
+      def preset?
+        KeystoneUi::Looks::Themes.names.map(&:to_s).include?(@values[:template_name].to_s)
       end
 
       def colours_offered?

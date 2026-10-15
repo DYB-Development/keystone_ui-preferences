@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_helper"
+require "minitest/mock"
 
 class AppearanceChoiceTest < ActiveSupport::TestCase
   def person
@@ -311,5 +312,62 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     save_look(person, "rounded")
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(theme, own_look: true).to_s, theme_css_for(person, account)
+  end
+
+  test "a person's saved preset name is written as that preset's theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "harbor" })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
+  end
+
+  test "a preset's written rule is kept in the Rails cache under the preset's name, the keystone_ui-looks version and whether the person saved a look" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "harbor" })
+
+    css = theme_css_for(person, account)
+
+    assert_equal css, Rails.cache.read([ "preset_css", "harbor", KeystoneUi::Looks::VERSION, KeystoneUi::Preferences::ThemeCss::VERSION, false ])
+  end
+
+  test "a preset changed in a later keystone_ui-looks release is drawn with the change for a person who picked it before" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "harbor" })
+    theme_css_for(person, account)
+    changed = KeystoneUi::Looks::Themes[:harbor].merge(theme: KeystoneUi::Looks::Themes[:harbor][:theme].merge("primary" => { "light" => "#123456", "dark" => "#654321" }))
+    looks = KeystoneUi::Looks
+    released = looks::VERSION
+    looks.send(:remove_const, :VERSION)
+    looks.const_set(:VERSION, "#{released}-next")
+
+    css = KeystoneUi::Looks::Themes.stub(:[], changed) { theme_css_for(person, account) }
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(changed[:theme]).to_s, css
+  ensure
+    looks.send(:remove_const, :VERSION)
+    looks.const_set(:VERSION, released)
+  end
+
+  test "a saved preset name the catalogue no longer has writes no theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+
+    assert_nil theme_css_for(person, account)
+  end
+
+  test "a person's saved preset the catalogue no longer has writes one warning naming the person and the preset" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved the preset \"retired\", which keystone_ui-looks does not have" ], warnings_from { theme_css_for(person, account) }
+  end
+
+  test "a person whose saved preset the catalogue no longer has gets the account's colours" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "template_name" => "forest" })
+
+    assert_equal "emerald", colours_for(person, account)[:accent]
+  end
+
+  test "a person whose saved preset the catalogue no longer has gets the account's preset theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "preset_name" => "harbor" })
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(KeystoneUi::Looks::Themes[:harbor][:theme]).to_s, theme_css_for(person, account)
   end
 end

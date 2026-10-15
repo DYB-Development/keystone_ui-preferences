@@ -25,8 +25,17 @@ All notable changes to this project will be documented in this file.
 - The person's Theme section has a disclosure, closed at first, listing every theme setting as its own field, with a light and a dark colour picker for each colour role, filled with the person's saved theme.
 - Changing a theme field and saving keeps the fields as the person's theme, leaving out any field left blank, and checks and refuses each value exactly as a pasted one.
 - The theme fields are saved only when they differ from the saved theme, so a template, the Accent, Surface and Text pickers and a paste save as before.
+- The person's Theme section offers keystone_ui-looks' six preset themes as option cards after the templates, each showing its light primary and secondary colours as swatches.
+- Saving a preset theme keeps only its name, as `{ "preset_name": "harbor" }` under the `colours` key, and every page looks the preset up in keystone_ui-looks, so a preset changed in a later release reaches everyone who picked it.
+- A preset's values are checked as a saved theme's are before they are written, and its written rule is kept in `Rails.cache` under the preset's name and the keystone_ui-looks version.
+- Picking a preset card fills the theme fields with its values through the template picker script, and the fields show a saved preset's values.
+- Theme fields sent holding the picked or the saved preset's values save the picked card, and changing one after picking a preset saves the person's own theme in place of the preset.
+- A saved preset name keystone_ui-looks no longer has draws the account's colours and theme, or the app's defaults when the account has none or its own preset is the missing one, and writes one warning to the log naming the owner and the preset.
+- A template or preset name the catalogue does not have is refused with a message naming the preset themes, and nothing is saved.
+- The template picker script also sets a colour picker's typed colour field when it sets that picker's colour.
 
 ### Changed
+- keystone_ui-looks 0.4.0 or later is required, the first release with preset themes.
 - keystone_ui-styles 0.18.0 or later is required, since each theme role names the `--ks-*` variables it will set.
 - keystone_ui 0.43.0 or later is required, the first release whose colour picker takes a typed `rgb()`, `hsl()` or `oklch()` colour.
 

@@ -29,6 +29,29 @@ export default class extends Controller {
     this.highlightTemplate(label.dataset.template)
   }
 
+  selectPreset(event) {
+    const input = event.currentTarget
+    const theme = JSON.parse(input.dataset.theme)
+
+    Object.entries(theme).forEach(([role, sides]) => {
+      Object.entries(sides).forEach(([side, value]) => this.setThemeField(`theme[${role}][${side}]`, value))
+    })
+
+    this.highlightTemplate(input.closest("[data-template]").dataset.template)
+  }
+
+  setThemeField(name, value) {
+    const field = this.element.querySelector(`[name="${name}"]`)
+    if (!field) return
+
+    const picker = field.closest("[data-controller~='color-picker']")
+    if (picker) {
+      this.setPickerValue(picker, value)
+    } else {
+      field.value = value
+    }
+  }
+
   customColorChanged() {
     if (this.hasCustomRadioTarget) this.customRadioTarget.checked = true
     this.highlightTemplate("custom")
@@ -51,9 +74,11 @@ export default class extends Controller {
     const input = wrapper.querySelector("input[type='hidden']")
     const swatch = wrapper.querySelector("[data-color-picker-target='swatch']")
     const hexLabel = wrapper.querySelector("[data-color-picker-target='hexLabel']")
+    const text = wrapper.querySelector("[data-color-picker-target='text']")
 
     if (input) input.value = hex
     if (swatch) swatch.style.backgroundColor = hex
     if (hexLabel) hexLabel.textContent = hex
+    if (text) text.value = hex
   }
 }

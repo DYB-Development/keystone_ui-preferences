@@ -57,7 +57,7 @@ class PickAppearanceTest < ActiveSupport::TestCase
   end
 
   test "a template that is not in the catalogue is refused with a reason" do
-    assert_equal "Choose Default, one of the colour templates or Custom.", pick(template_name: "jungle").message
+    assert_equal "Choose Default, one of the colour templates, one of the preset themes or Custom.", pick(template_name: "jungle").message
   end
 
   test "a refused template leaves the person's saved colours as they were" do
@@ -312,5 +312,40 @@ class PickAppearanceTest < ActiveSupport::TestCase
     refusal = pick({ theme: { "primary" => { "light" => "#171717" } } }, account_setting_colours)
 
     assert_equal [ "Your account sets the colours for everyone, so this was not saved.", nil ], [ refusal.message, saved_value ]
+  end
+
+  test "saving a preset theme keeps only its name as the person's colours" do
+    pick(template_name: "harbor")
+
+    assert_equal({ "preset_name" => "harbor" }, saved_value)
+  end
+
+  test "a preset saves its name when the theme fields hold that preset's values, as they do once its card is picked" do
+    pick(template_name: "harbor", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "preset_name" => "harbor" }, saved_value)
+  end
+
+  test "theme fields sent unchanged with a template save the template over the person's saved preset" do
+    pick(template_name: "harbor")
+
+    pick(template_name: "forest", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "template_name" => "forest" }, saved_value)
+  end
+
+  test "a preset's theme fields with one changed save the person's own theme in place of the preset" do
+    pick(template_name: "harbor")
+    edited = KeystoneUi::Looks::Themes[:harbor][:theme].merge("radius" => { "light" => "0.25rem" })
+
+    pick(template_name: "harbor", theme: edited)
+
+    assert_equal({ "theme" => edited }, saved_value)
+  end
+
+  test "a preset name the catalogue does not have is refused with the reason naming the preset themes, and nothing is saved" do
+    refusal = pick(template_name: "retired")
+
+    assert_equal [ "Choose Default, one of the colour templates, one of the preset themes or Custom.", nil ], [ refusal.message, saved_value ]
   end
 end

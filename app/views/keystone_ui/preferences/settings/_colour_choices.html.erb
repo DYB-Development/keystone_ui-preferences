@@ -3,6 +3,7 @@
   palette_hex = ->(colour, palette) { colour.to_s.start_with?("#") ? colour.to_s : palette.call(colour)[500] }
   templates = { "default" => { accent: configuration.default_accent, surface: configuration.default_surface, text: configuration.default_text, label: "Default" } }
   KeystoneUi::Looks::Templates.all.each { |name, template| templates[name.to_s] = template }
+  saved_preset = KeystoneUi::Looks::Themes.all.find { |name, _preset| name.to_s == saved["preset_name"] }&.last
 %>
 
 <%= ui_section(title: "Theme", spacing: :sm) do %>
@@ -30,10 +31,31 @@
         <span><%= template[:label] %></span>
       <% end %>
     <% end %>
+    <% if local_assigns[:presets] %>
+      <% KeystoneUi::Looks::Themes.all.each do |name, preset| %>
+        <%= ui_option_card(
+          name: "template_name",
+          value: name.to_s,
+          selected: saved["preset_name"] == name.to_s,
+          input_data: {
+            action: "keystone-ui--preferences--theme-settings#selectPreset",
+            theme: preset[:theme].to_json
+          },
+          label_data: {
+            "keystone-ui--preferences--theme-settings-target": "templateLabel",
+            template: name.to_s
+          }
+        ) do %>
+          <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 9999px; background-color: <%= preset[:theme].dig("primary", "light") %>;"></span>
+          <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 0.25rem; background-color: <%= preset[:theme].dig("secondary", "light") %>;"></span>
+          <span><%= preset[:label] %></span>
+        <% end %>
+      <% end %>
+    <% end %>
     <%= ui_option_card(
       name: "template_name",
       value: "",
-      selected: saved["template_name"].blank? && !saved.key?("theme"),
+      selected: saved["template_name"].blank? && !saved.key?("theme") && !saved.key?("preset_name"),
       input_data: {
         "keystone-ui--preferences--theme-settings-target": "customRadio"
       },
@@ -50,7 +72,7 @@
   <% end %>
   <% if local_assigns[:pastes] %>
     <%= ui_form_field(attribute: "pasted_theme", label: "Paste a theme", type: :textarea, hint: "A :root block and a .dark block in shadcn/ui's variable names, as tweakcn and shadcn's theme pages export them.") %>
-    <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { theme: saved["theme"].to_h } %>
+    <%= render partial: "keystone_ui/preferences/settings/theme_settings", locals: { theme: saved_preset ? saved_preset[:theme] : saved["theme"].to_h } %>
   <% end %>
 <% end %>
 

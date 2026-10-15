@@ -36,7 +36,9 @@ module KeystoneUi
       end
 
       def theme_css
-        return unless configuration.account_colors && saved.key?("theme")
+        return unless configuration.account_colors
+        return preset_css if saved.key?("preset_name")
+        return unless saved.key?("theme")
 
         Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION, own_look? ]) { written_theme }
       end
@@ -48,6 +50,7 @@ module KeystoneUi
         return default_colours if saved["template_name"] == DEFAULT_TEMPLATE
         return template_colours if template_offered?
         return fallback_colours if saved["template_name"].present?
+        return account_colours if saved["preset_name"].present? && !preset_offered?
 
         surface = catalogue_colour("surface", KeystoneUi::Looks::Palettes::SURFACES) || configuration.default_surface
         {
@@ -58,10 +61,25 @@ module KeystoneUi
         }
       end
 
-      def written_theme
-        return unless theme_shaped?(saved["theme"])
+      def preset_css
+        unless preset_offered?
+          warn_missing("preset", saved["preset_name"])
+          return account_theme_css
+        end
 
-        checked = CheckedTheme.new(saved["theme"])
+        Rails.cache.fetch([ "preset_css", saved["preset_name"], KeystoneUi::Looks::VERSION, ThemeCss::VERSION, own_look? ]) { written(KeystoneUi::Looks::Themes[saved["preset_name"]][:theme]) }
+      end
+
+      def preset_offered?
+        KeystoneUi::Looks::Themes.names.map(&:to_s).include?(saved["preset_name"].to_s)
+      end
+
+      def written_theme
+        written(saved["theme"]) if theme_shaped?(saved["theme"])
+      end
+
+      def written(theme)
+        checked = CheckedTheme.new(theme)
         ThemeCss.new(checked.value["theme"], own_look: own_look?).to_s unless checked.refusal
       end
 
@@ -93,6 +111,14 @@ module KeystoneUi
 
       def fallback_colours
         warn_missing("template", saved["template_name"])
+        account_colours
+      end
+
+      def account_theme_css
+        AppearanceChoice.new(person: @account, account: nil).theme_css unless @account.nil? || colours_choice.preference.owned_by?(@account)
+      end
+
+      def account_colours
         return default_colours if @account.nil? || colours_choice.preference.owned_by?(@account)
 
         AppearanceChoice.new(person: @account, account: nil).colours
