@@ -104,3 +104,11 @@ test("changing a font weight sets its variable on the page's root element", () =
 
   assert.deepEqual(root.variables, { "--ks-font-weight-strong": "600" })
 })
+
+test("changing a colour's dark value sets only the dark variables, and the dark hover colour, on the page's root element", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("theme[primary][dark]", "#1f5fbf"))
+
+  assert.deepEqual(root.variables, { "--ks-color-accent-dark": "#1f5fbf", "--ks-color-accent-hover-dark": "color-mix(in oklab, #1f5fbf 85%, white)" })
+})
