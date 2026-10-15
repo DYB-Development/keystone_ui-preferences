@@ -350,4 +350,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_nil theme_css_for(person, account)
   end
+
+  test "a person's saved preset the catalogue no longer has writes one warning naming the person and the preset" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "preset_name" => "retired" })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved the preset \"retired\", which keystone_ui-looks does not have" ], warnings_from { theme_css_for(person, account) }
+  end
 end

@@ -61,9 +61,16 @@ module KeystoneUi
       end
 
       def preset_css
-        return unless KeystoneUi::Looks::Themes.names.map(&:to_s).include?(saved["preset_name"].to_s)
+        unless preset_offered?
+          warn_missing("preset", saved["preset_name"])
+          return
+        end
 
         Rails.cache.fetch([ "preset_css", saved["preset_name"], KeystoneUi::Looks::VERSION, ThemeCss::VERSION, own_look? ]) { written(KeystoneUi::Looks::Themes[saved["preset_name"]][:theme]) }
+      end
+
+      def preset_offered?
+        KeystoneUi::Looks::Themes.names.map(&:to_s).include?(saved["preset_name"].to_s)
       end
 
       def written_theme
