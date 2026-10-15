@@ -19,7 +19,7 @@ class AppearancePreviewTest < ActionView::TestCase
   end
 
   def preview
-    css_select("[data-theme-preview]")
+    css_select("[data-theme-preview] [data-theme='light']")
   end
 
   test "the appearance section's preview shows a keystone_ui card" do
@@ -60,5 +60,13 @@ class AppearancePreviewTest < ActionView::TestCase
     render_section
 
     assert_equal [ "Dashboard", "Customers", "Reports" ], preview.css(".ks-sidebar .#{Keystone::Ui::NavigationComponent::SIDEBAR_TAB_CLASSES}").map(&:text)
+  end
+
+  test "the appearance section's preview draws the same components once on a light side and once on a dark side" do
+    render_section
+
+    sides = css_select("[data-theme-preview] [data-theme]")
+
+    assert_equal [ %w[light dark], 1 ], [ sides.map { |side| side["data-theme"] }, sides.map(&:inner_html).uniq.size ]
   end
 end
