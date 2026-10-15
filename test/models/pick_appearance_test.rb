@@ -289,4 +289,8 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => { "primary" => { "light" => "#171717" } } }, saved_value)
   end
+
+  test "a colour typed by hand that is not hex, rgb(), hsl() or oklch() is refused with the reason a pasted one gets" do
+    assert_equal "The dark --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(theme: { "primary" => { "light" => "#171717", "dark" => "var(--x)" } }).message
+  end
 end
