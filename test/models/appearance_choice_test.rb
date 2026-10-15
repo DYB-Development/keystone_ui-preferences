@@ -414,4 +414,10 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal "emerald", colours_for(person, account)[:accent]
   end
+
+  test "a person's saved theme that is not a set of roles each holding light and dark values writes one warning naming the person and calling the theme malformed" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => "#171717" } })
+
+    assert_equal [ "keystone_ui-preferences: User #{person.id} saved a theme whose malformed setting fails the theme check" ], warnings_from { theme_css_for(person, account) }
+  end
 end

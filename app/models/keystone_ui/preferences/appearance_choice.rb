@@ -79,16 +79,19 @@ module KeystoneUi
 
       def refused_theme_css
         row = colours_choice.preference
-        Rails.logger.warn("keystone_ui-preferences: #{row.owner_type} #{row.owner_id} saved a theme whose --#{refused_setting} setting fails the theme check")
+        Rails.logger.warn("keystone_ui-preferences: #{row.owner_type} #{row.owner_id} saved a theme whose #{refused_setting} setting fails the theme check")
         account_theme_css
       end
 
       def refused_setting
-        @refused_setting ||= CheckedTheme.new(saved["theme"]).failing_setting if theme_shaped?(saved["theme"])
+        return unless saved.key?("theme")
+        return "malformed" unless theme_shaped?(saved["theme"])
+
+        @refused_setting ||= CheckedTheme.new(saved["theme"]).failing_setting&.then { |setting| "--#{setting}" }
       end
 
       def written_theme
-        written(saved["theme"]) if theme_shaped?(saved["theme"])
+        written(saved["theme"])
       end
 
       def written(theme)
