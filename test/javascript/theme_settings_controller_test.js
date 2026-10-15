@@ -147,3 +147,23 @@ test("picking a template card outlines that card and clears the outline from eve
 
   assert.deepEqual(bordersOf(labels), [["border-transparent"], ["border-accent-500"], ["border-transparent"]])
 })
+
+function listeningPicker() {
+  const picker = colourPicker()
+  picker.listeners = {}
+  picker.addEventListener = (type, listener) => { picker.listeners[type] = listener }
+  return picker
+}
+
+test("changing the accent, surface or text picker selects the Custom card and outlines it", () => {
+  const settings = new ThemeSettingsController({ scope: { element: {} } })
+  const surface = listeningPicker()
+  const customRadio = { checked: false }
+  const labels = [cardLabel("forest", "border-accent-500"), cardLabel("custom", "border-transparent")]
+  Object.assign(settings, { hasAccentPickerTarget: true, accentPickerTarget: listeningPicker(), hasSurfacePickerTarget: true, surfacePickerTarget: surface, hasTextPickerTarget: true, textPickerTarget: listeningPicker(), hasCustomRadioTarget: true, customRadioTarget: customRadio, templateLabelTargets: labels })
+  settings.connect()
+
+  surface.listeners.change()
+
+  assert.deepEqual([customRadio.checked, bordersOf(labels)], [true, [["border-transparent"], ["border-accent-500"]]])
+})
