@@ -81,4 +81,13 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal [ "Edit", "Preview" ], css_select("[data-controller='tab-switcher'] [data-tab-switcher-target='tab']").map { |tab| tab.text.strip }
   end
+
+  test "picking a tab hands its place to the theme settings script, which starts with the Edit panel shown" do
+    render_section
+
+    settings = css_select("[data-controller='keystone-ui--preferences--theme-settings']").first
+    panels = css_select("[data-editor-panel]")
+
+    assert_equal [ "tab-switcher:change->keystone-ui--preferences--theme-settings#showPanel", [ true, false ] ], [ settings&.[]("data-action"), panels.map { |panel| panel.key?("data-shown") } ]
+  end
 end
