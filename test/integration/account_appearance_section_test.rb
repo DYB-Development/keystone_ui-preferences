@@ -91,4 +91,12 @@ class AccountAppearanceSectionTest < ActionDispatch::IntegrationTest
 
     assert_equal pasted, css_select("textarea[name=pasted_theme]").first.text.delete_prefix("\n")
   end
+
+  test "an admin whose pasted theme for the account is refused finds no theme field marked, since the paste is what was checked" do
+    ApplicationController.signed_in_user = admin
+
+    patch "/settings/account_appearance", params: { template_name: "default", members_choose: "1", pasted_theme: ":root {\n  --primary: oklch(0.205 0 0);\n}\n@import \"x\";\n", theme: { radius: { light: "big" } } }
+
+    assert_empty css_select("[data-theme-roles] p.ks-error")
+  end
 end
