@@ -69,4 +69,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal [ %w[light dark], 1 ], [ sides.map { |side| side["data-theme"] }, sides.map(&:inner_html).uniq.size ]
   end
+
+  test "the preview's chart series carry no colour of their own, so the chart draws them in the theme's chart colours" do
+    render_section
+
+    assert_equal [ [ [ "data", "label" ], [ "data", "label" ] ] ], chart_series.map { |datasets| datasets.map { |dataset| dataset.keys.sort } }
+  end
 end
