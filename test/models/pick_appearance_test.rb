@@ -212,10 +212,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
     }
   CSS
 
-  test "saving a pasted :root block and .dark block keeps every colour role in them as the person's colours" do
+  test "saving a pasted :root block and .dark block keeps every theme setting in them as the person's colours" do
     pick(template_name: "", pasted_theme: PASTED_THEME)
 
-    assert_equal({ "theme" => { "background" => { "light" => "oklch(1 0 0)", "dark" => "oklch(0.145 0 0)" }, "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } } }, saved_value)
+    assert_equal({ "theme" => { "background" => { "light" => "oklch(1 0 0)", "dark" => "oklch(0.145 0 0)" }, "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" }, "radius" => { "light" => "0.625rem" } } }, saved_value)
   end
 
   test "a pasted theme saves when the save sends no template" do
@@ -240,7 +240,7 @@ class PickAppearanceTest < ActiveSupport::TestCase
     assert_equal "The light --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", pick(pasted_theme: ":root { --primary: var(--x); }").message
   end
 
-  test "a saved pasted theme holds nothing but checked colours under theme role names" do
+  test "a saved pasted theme holds nothing but checked values under theme role names" do
     pick(pasted_theme: <<~CSS)
       /* exported theme */
       :root {
@@ -253,9 +253,34 @@ class PickAppearanceTest < ActiveSupport::TestCase
     CSS
 
     unchecked = saved_value.except("theme").keys + saved_value["theme"].flat_map do |name, sides|
-      [ (name unless KeystoneUi::Preferences::ThemeRoles.names.include?(name)) ] + sides.map { |side, colour| "#{name} #{side}" unless %w[light dark].include?(side) && colour.match?(KeystoneUi::Preferences::CheckedTheme::COLOUR) }
+      [ (name unless KeystoneUi::Preferences::ThemeRoles.names.include?(name)) ] + sides.map { |side, value| "#{name} #{side}" unless %w[light dark].include?(side) && value.match?(KeystoneUi::Preferences::CheckedTheme::PATTERNS.fetch(KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name)[:kind])) }
     end.compact
 
     assert_empty unchecked
+  end
+
+  test "saving a pasted theme also keeps its radius, spacing, shadow settings, sans and mono fonts and letter spacing" do
+    pick(pasted_theme: <<~CSS)
+      :root {
+        --primary: oklch(0.205 0 0);
+        --font-sans: Inter, sans-serif;
+        --font-mono: Menlo, monospace;
+        --radius: 0.5rem;
+        --shadow-color: oklch(0 0 0);
+        --shadow-opacity: 0.1;
+        --shadow-blur: 3px;
+        --shadow-spread: 0px;
+        --shadow-offset-x: 0;
+        --shadow-offset-y: 1px;
+        --letter-spacing: -0.025em;
+        --spacing: 0.25rem;
+      }
+    CSS
+
+    assert_equal({
+      "font-sans" => "sans-serif", "font-mono" => "Menlo, monospace", "radius" => "0.5rem",
+      "shadow-color" => "oklch(0 0 0)", "shadow-opacity" => "0.1", "shadow-blur" => "3px", "shadow-spread" => "0px", "shadow-offset-x" => "0", "shadow-offset-y" => "1px",
+      "letter-spacing" => "-0.025em", "spacing" => "0.25rem"
+    }, saved_value["theme"].except("primary").transform_values { |sides| sides["light"] })
   end
 end

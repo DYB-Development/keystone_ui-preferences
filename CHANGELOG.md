@@ -14,6 +14,14 @@ All notable changes to this project will be documented in this file.
 - A role with no dark value keeps today's dark colour, and the accent, neutral and danger hover colours are derived from `primary`, `secondary` and `destructive` with `color-mix`.
 - A saved theme is checked again before it is written, and a theme holding a colour that fails the check, or that is not a set of roles each holding light and dark colours, is not written.
 - The written theme rule is kept in `Rails.cache` under the colours row's versioned cache key and the writer's version.
+- A pasted theme also keeps shadcn's `--radius`, `--spacing`, `--letter-spacing`, `--font-sans`, `--font-serif`, `--font-mono` and the six `--shadow-*` settings, plus `border-width`, `font-heading` and four `font-weight-*` settings, each from the `:root` block only.
+- A shape or type value is saved only when it matches its kind, a length as a number followed by `px`, `rem` or `em` or zero, a font list as comma-separated plain font names, a font weight as a whole hundred from 100 to 900, and a shadow opacity as a number from 0 to 1, and is otherwise refused with a message naming the setting.
+- The new `theme_fonts` setting, empty by default, lists the fonts the app serves that a theme may name, beside a fixed list of system fonts.
+- A font a theme names that is neither in `theme_fonts` nor a system font is dropped from its list, a list left with no font is refused, and no font is ever loaded from another site.
+- Every page sets a saved theme's corner radius, spacing, border width, letter spacing, body, heading and mono fonts, font weights and one shadow on surfaces, overlays and menus onto keystone_ui-styles' variables.
+- A theme's mono font is also written to Tailwind's `--default-mono-font-family`, which keystone_ui-styles draws code with.
+- For a person who saved a look of their own, the look's shape and type win over the theme's while the theme's colours still win over the look's.
+- The cached theme rule's key includes whether the person saved a look of their own, and the writer's version is now 2.
 
 ### Changed
 - keystone_ui-styles 0.18.0 or later is required, since each theme role names the `--ks-*` variables it will set.

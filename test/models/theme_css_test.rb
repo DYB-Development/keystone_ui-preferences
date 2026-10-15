@@ -43,4 +43,51 @@ class ThemeCssTest < ActiveSupport::TestCase
       "--ks-color-danger-hover-dark: color-mix(in oklab, oklch(0.704 0.191 22.216) 85%, white);"
     ], declarations(css).grep(/-hover/)
   end
+
+  test "a theme's radius is written to the corner radius of controls and of surfaces" do
+    assert_equal [ "--ks-radius-control: 0.5rem;", "--ks-radius-surface: 0.5rem;" ], declarations(css_for("radius" => { "light" => "0.5rem" }))
+  end
+
+  test "a theme's spacing, letter spacing and sans font are written to keystone_ui-styles' spacing, letter spacing and body font" do
+    css = css_for("spacing" => { "light" => "0.25rem" }, "letter-spacing" => { "light" => "-0.025em" }, "font-sans" => { "light" => "\"Segoe UI\", sans-serif" })
+
+    assert_equal [ "--ks-spacing: 0.25rem;", "--ks-letter-spacing: -0.025em;", "--ks-font-body: \"Segoe UI\", sans-serif;" ], declarations(css)
+  end
+
+  test "a theme's mono font is written to the mono font variable and to Tailwind's default mono font, which code reads" do
+    assert_equal [ "--ks-font-mono: Menlo, monospace;", "--default-mono-font-family: Menlo, monospace;" ], declarations(css_for("font-mono" => { "light" => "Menlo, monospace" }))
+  end
+
+  test "a theme's font weights are written to keystone_ui-styles' normal, medium, strong and heading weights" do
+    css = css_for(%w[normal medium strong heading].to_h { |weight| [ "font-weight-#{weight}", { "light" => "500" } ] })
+
+    assert_equal [ "--ks-font-weight-normal: 500;", "--ks-font-weight-medium: 500;", "--ks-font-weight-strong: 500;", "--ks-font-weight-heading: 500;" ], declarations(css)
+  end
+
+  test "a theme's border width and heading font are written to keystone_ui-styles' border width and heading font" do
+    css = css_for("border-width" => { "light" => "2px" }, "font-heading" => { "light" => "Georgia, serif" })
+
+    assert_equal [ "--ks-border-width: 2px;", "--ks-font-heading: Georgia, serif;" ], declarations(css)
+  end
+
+  SHADOW = {
+    "shadow-color" => { "light" => "oklch(0 0 0)" }, "shadow-opacity" => { "light" => "0.1" }, "shadow-blur" => { "light" => "3px" },
+    "shadow-spread" => { "light" => "-1px" }, "shadow-offset-x" => { "light" => "0" }, "shadow-offset-y" => { "light" => "1px" }
+  }.freeze
+
+  test "a theme's six shadow settings are written as one shadow on surfaces, overlays and menus" do
+    shadow = "0 1px 3px -1px color-mix(in srgb, oklch(0 0 0) calc(0.1 * 100%), transparent)"
+
+    assert_equal [ "--ks-shadow-surface: #{shadow};", "--ks-shadow-overlay: #{shadow};", "--ks-shadow-menu: #{shadow};" ], declarations(css_for(SHADOW))
+  end
+
+  test "a theme missing any of the six shadow settings writes no shadow" do
+    assert_empty declarations(css_for(SHADOW.except("shadow-blur")))
+  end
+
+  test "for a person who saved a look of their own, the theme's shape and type go in a rule a look outranks while its colours still outrank the look" do
+    css = KeystoneUi::Preferences::ThemeCss.new({ "primary" => { "light" => "#171717" }, "radius" => { "light" => "0.5rem" } }, own_look: true).to_s
+
+    assert_equal ":root, html:root[data-look] {\n  --ks-color-accent: #171717;\n  --ks-color-accent-hover: color-mix(in oklab, #171717 85%, white);\n}\n:root {\n  --ks-radius-control: 0.5rem;\n  --ks-radius-surface: 0.5rem;\n}", css
+  end
 end

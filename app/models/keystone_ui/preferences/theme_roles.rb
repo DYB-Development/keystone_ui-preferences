@@ -35,7 +35,25 @@ module KeystoneUi
         "sidebar-accent" => { kind: :colour, variables: %w[--ks-color-nav-hover] },
         "sidebar-accent-foreground" => { kind: :colour, variables: %w[--ks-color-nav-text-hover] },
         "sidebar-border" => { kind: :colour, variables: %w[--ks-color-nav-border] },
-        "sidebar-ring" => { kind: :colour, variables: [] }
+        "sidebar-ring" => { kind: :colour, variables: [] },
+        "radius" => { kind: :length, variables: %w[--ks-radius-control --ks-radius-surface] },
+        "spacing" => { kind: :length, variables: %w[--ks-spacing] },
+        "border-width" => { kind: :length, variables: %w[--ks-border-width] },
+        "letter-spacing" => { kind: :letter_spacing, variables: %w[--ks-letter-spacing] },
+        "font-sans" => { kind: :font_list, variables: %w[--ks-font-body] },
+        "font-serif" => { kind: :font_list, variables: [] },
+        "font-mono" => { kind: :font_list, variables: %w[--ks-font-mono --default-mono-font-family] },
+        "font-heading" => { kind: :font_list, variables: %w[--ks-font-heading] },
+        "font-weight-normal" => { kind: :weight, variables: %w[--ks-font-weight-normal] },
+        "font-weight-medium" => { kind: :weight, variables: %w[--ks-font-weight-medium] },
+        "font-weight-strong" => { kind: :weight, variables: %w[--ks-font-weight-strong] },
+        "font-weight-heading" => { kind: :weight, variables: %w[--ks-font-weight-heading] },
+        "shadow-color" => { kind: :shadow_colour, variables: [] },
+        "shadow-opacity" => { kind: :opacity, variables: [] },
+        "shadow-blur" => { kind: :length, variables: [] },
+        "shadow-spread" => { kind: :signed_length, variables: [] },
+        "shadow-offset-x" => { kind: :signed_length, variables: [] },
+        "shadow-offset-y" => { kind: :signed_length, variables: [] }
       }.freeze
 
       def self.names

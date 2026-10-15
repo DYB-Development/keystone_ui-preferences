@@ -38,7 +38,7 @@ module KeystoneUi
       def theme_css
         return unless configuration.account_colors && saved.key?("theme")
 
-        Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION ]) { written_theme }
+        Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION, own_look? ]) { written_theme }
       end
 
       private
@@ -62,7 +62,11 @@ module KeystoneUi
         return unless theme_shaped?(saved["theme"])
 
         checked = CheckedTheme.new(saved["theme"])
-        ThemeCss.new(checked.value["theme"]).to_s unless checked.refusal
+        ThemeCss.new(checked.value["theme"], own_look: own_look?).to_s unless checked.refusal
+      end
+
+      def own_look?
+        @person.present? && person_chooses_look? && KeystoneUi.configuration.looks.key?(saved_look(@person))
       end
 
       def theme_shaped?(theme)

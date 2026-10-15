@@ -28,4 +28,8 @@ class ConfigurationTest < ActiveSupport::TestCase
   test "an app that configures nothing lets each account choose its look" do
     assert KeystoneUi::Preferences::Configuration.new.account_looks
   end
+
+  test "an app that configures nothing offers a theme no fonts of its own" do
+    assert_equal [], KeystoneUi::Preferences::Configuration.new.theme_fonts
+  end
 end
