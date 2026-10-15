@@ -52,6 +52,10 @@ export default class extends Controller {
     }
   }
 
+  showPanel({ detail: { index } }) {
+    this.element.querySelectorAll("[data-editor-panel]").forEach((panel, place) => panel.toggleAttribute("data-shown", place === index))
+  }
+
   customColorChanged() {
     if (this.hasCustomRadioTarget) this.customRadioTarget.checked = true
     this.highlightTemplate("custom")
