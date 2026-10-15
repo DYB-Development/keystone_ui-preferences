@@ -26,7 +26,7 @@
             <% [ "Dashboard", "Customers", "Reports" ].each_with_index do |label, index| %>
               <a href="#" class="<%= [ Keystone::Ui::NavigationComponent::SIDEBAR_TAB_CLASSES, (Keystone::Ui::NavigationComponent::ACTIVE_CLASS if index.zero?) ].compact.join(" ") %>"><%= label %></a>
             <% end %>
-        </nav>
+          </nav>
         </div>
       <% end %>
     </div>

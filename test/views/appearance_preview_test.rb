@@ -106,4 +106,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_includes section_style, "@media (min-width: 64rem) { [data-appearance-editor] .ks-tab-bar { display: none; } [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; } [data-editor-panel]:not([data-shown]) { display: block; } }"
   end
+
+  test "the preview names no font of its own and loads nothing from another site, so it draws in the theme's fonts" do
+    render_section
+
+    assert_empty css_select("[data-theme-preview]").to_html.scan(%r{https?://|//[a-z]|@import|url\(|font-family|<link|<script})
+  end
 end
