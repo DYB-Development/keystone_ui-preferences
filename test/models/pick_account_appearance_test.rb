@@ -137,4 +137,12 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "preset_name" => "harbor" }, account_preference("colours").value)
   end
+
+  test "theme fields sent unchanged with a template save the template over the account's saved preset" do
+    pick(template_name: "harbor")
+
+    pick(template_name: "forest", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
+  end
 end

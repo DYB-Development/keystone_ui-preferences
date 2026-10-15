@@ -41,7 +41,7 @@ module KeystoneUi
       end
 
       def editing?
-        typed_theme.any? && [ saved_colours["theme"], preset_theme(@values[:template_name]) ].exclude?(typed_theme)
+        typed_theme.any? && [ saved_colours["theme"], preset_theme(saved_colours["preset_name"]), preset_theme(@values[:template_name]) ].exclude?(typed_theme)
       end
 
       def preset_theme(name)
