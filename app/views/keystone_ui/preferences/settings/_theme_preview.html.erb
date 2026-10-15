@@ -18,4 +18,9 @@
         series: [ { name: "This year", data: [ 12, 19, 15, 24, 22, 30 ] }, { name: "Last year", data: [ 10, 14, 13, 17, 19, 21 ] } ],
         height: :sm
       ) %>
+  <nav class="ks-sidebar" aria-label="Sample navigation">
+    <% [ "Dashboard", "Customers", "Reports" ].each_with_index do |label, index| %>
+      <a href="#" class="<%= [ Keystone::Ui::NavigationComponent::SIDEBAR_TAB_CLASSES, (Keystone::Ui::NavigationComponent::ACTIVE_CLASS if index.zero?) ].compact.join(" ") %>"><%= label %></a>
+    <% end %>
+  </nav>
 </div>

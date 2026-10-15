@@ -55,4 +55,10 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal [ [ "This year", "Last year" ] ], chart_series.map { |datasets| datasets.map { |dataset| dataset["label"] } }
   end
+
+  test "the appearance section's preview shows a navigation list drawn as keystone_ui's sidebar" do
+    render_section
+
+    assert_equal [ "Dashboard", "Customers", "Reports" ], preview.css(".ks-sidebar .#{Keystone::Ui::NavigationComponent::SIDEBAR_TAB_CLASSES}").map(&:text)
+  end
 end
