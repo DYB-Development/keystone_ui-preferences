@@ -246,3 +246,14 @@ test("following a link after turning off a Members choose switch holds the visit
 
   assert.equal(leaving.held, true)
 })
+
+test("following a link after turning on the Members choose their own look switch holds the visit", () => {
+  const members = switchOf("members_choose_look", false)
+  const editor = sectionLoadedWith({}, {}, [{ name: "members_choose_look", value: "0", type: "hidden" }, members])
+  members.checked = true
+  const leaving = visit()
+
+  editor.confirmLeave(leaving)
+
+  assert.equal(leaving.held, true)
+})

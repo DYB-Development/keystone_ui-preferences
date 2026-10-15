@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 const THEME_FIELD = /^theme\[([^\]]+)\]\[(light|dark)\]$/
 const ENDS_DECLARATION = /[;{}]/
-const QUICK_CHOICES = "[name='template_name'], [name='accent'], [name='surface'], [name='text'], [name='mode'], [name='look'], [name='members_choose']"
+const QUICK_CHOICES = "[name='template_name'], [name='accent'], [name='surface'], [name='text'], [name='mode'], [name='look'], [name='members_choose'], [name='members_choose_look']"
 const PROPERTY_FOR_KIND = { colour: "color", length: "width", letter_spacing: "letter-spacing", font_list: "font-family", weight: "font-weight" }
 
 export default class extends Controller {
