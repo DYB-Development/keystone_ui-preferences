@@ -73,7 +73,7 @@
     <% id_prefix = local_assigns.fetch(:id_prefix, "appearance") %>
     <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
       <%= label_tag "#{id_prefix}-pasted-theme", "Paste a theme", class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
-      <%= text_area_tag "pasted_theme", nil, id: "#{id_prefix}-pasted-theme", rows: 3, class: Keystone::Ui::TextareaComponent::BASE_CLASSES %>
+      <%= text_area_tag "pasted_theme", local_assigns[:sent_paste], id: "#{id_prefix}-pasted-theme", rows: 3, class: Keystone::Ui::TextareaComponent::BASE_CLASSES %>
       <p class="<%= Keystone::Ui::FormFieldComponent::HINT_CLASSES %>">A :root block and a .dark block in shadcn/ui's variable names, as tweakcn and shadcn's theme pages export them.</p>
     </div>
   <% end %>
