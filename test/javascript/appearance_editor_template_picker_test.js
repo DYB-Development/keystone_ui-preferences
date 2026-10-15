@@ -1,7 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import ThemeSettingsController from "../../app/javascript/keystone_ui/preferences/theme_settings_controller.js"
-import ThemeEditorController from "../../app/javascript/keystone_ui/preferences/theme_editor_controller.js"
+import AppearanceEditorController from "../../app/javascript/keystone_ui/preferences/appearance_editor_controller.js"
 
 function panel() {
   const attributes = new Set()
@@ -13,7 +12,7 @@ function panel() {
 
 function settingsHolding(panels) {
   const element = { querySelectorAll: (selector) => (selector === "[data-editor-panel]" ? panels : []) }
-  return new ThemeSettingsController({ scope: { element } })
+  return new AppearanceEditorController({ scope: { element } })
 }
 
 test("picking a tab shows the panel in that tab's place and hides the others", () => {
@@ -49,21 +48,18 @@ function field(name, value, onEvent) {
 
 function editorFormOn(root, values, { chosenPreset = null, savedTheme = {} } = {}) {
   const roles = { primary: { kind: "colour", variables: ["--ks-color-accent"] }, radius: { kind: "length", variables: ["--ks-radius-control"] } }
-  const exported = { value: "" }
-  const copyButton = { dataset: {} }
-  const editorElement = { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(roles) } }
-  const editor = new ThemeEditorController({ scope: { element: editorElement } })
-  const fields = Object.entries(values).map(([name, value]) => field(name, value, (event) => editor.apply(event)))
-  editorElement.querySelector = (selector) => ({ "[data-theme-export]": exported, "[data-controller~='clipboard']": copyButton })[selector] ?? fields.find(({ name }) => selector === `[name="${name}"]`) ?? null
+  const parts = { "[data-theme-roles]": { dataset: { themeRoles: JSON.stringify(roles) } }, "[data-theme-export]": { value: "" }, "[data-controller~='clipboard']": { dataset: {} } }
   const element = {
+    ownerDocument: { documentElement: root },
     querySelector(selector) {
       if (selector === "input[name='template_name'][data-theme]:checked") return chosenPreset && { dataset: { theme: JSON.stringify(chosenPreset) } }
       if (selector === "[data-saved-theme]") return { dataset: { savedTheme: JSON.stringify(savedTheme) } }
-      return fields.find(({ name }) => selector === `[name="${name}"]`) ?? null
+      return parts[selector] ?? fields.find(({ name }) => selector === `[name="${name}"]`) ?? null
     },
     querySelectorAll: (selector) => (selector === "[name^='theme[']" ? fields : [])
   }
-  const settings = new ThemeSettingsController({ scope: { element } })
+  const settings = new AppearanceEditorController({ scope: { element } })
+  const fields = Object.entries(values).map(([name, value]) => field(name, value, (event) => settings.apply(event)))
   settings.templateLabelTargets = []
   return { fields, settings }
 }
@@ -119,7 +115,7 @@ function templateCard(accentHex, surfaceHex, textHex) {
 }
 
 test("picking a template card fills the accent, surface and text pickers with that template's colours", () => {
-  const settings = new ThemeSettingsController({ scope: { element: {} } })
+  const settings = new AppearanceEditorController({ scope: { element: {} } })
   const pickers = [colourPicker(), colourPicker(), colourPicker()]
   Object.assign(settings, { accentPickerTarget: pickers[0], surfacePickerTarget: pickers[1], textPickerTarget: pickers[2], templateLabelTargets: [] })
 
@@ -139,7 +135,7 @@ function bordersOf(labels) {
 }
 
 test("picking a template card outlines that card and clears the outline from every other card", () => {
-  const settings = new ThemeSettingsController({ scope: { element: {} } })
+  const settings = new AppearanceEditorController({ scope: { element: {} } })
   const labels = [cardLabel("default", "border-accent-500"), cardLabel("forest", "border-transparent"), cardLabel("custom", "border-transparent")]
   Object.assign(settings, { accentPickerTarget: colourPicker(), surfacePickerTarget: colourPicker(), textPickerTarget: colourPicker(), templateLabelTargets: labels })
 
@@ -156,7 +152,7 @@ function listeningPicker() {
 }
 
 test("changing the accent, surface or text picker selects the Custom card and outlines it", () => {
-  const settings = new ThemeSettingsController({ scope: { element: {} } })
+  const settings = new AppearanceEditorController({ scope: { element: { querySelector: () => null } } })
   const surface = listeningPicker()
   const customRadio = { checked: false }
   const labels = [cardLabel("forest", "border-accent-500"), cardLabel("custom", "border-transparent")]
@@ -176,7 +172,7 @@ test("picking a preset card fills a colour field's picker, swatch, hex label and
   const picker = colourPicker()
   const primary = pickedField("theme[primary][light]", picker)
   const element = { querySelector: (selector) => (selector === `[name="${primary.name}"]` ? primary : null) }
-  const settings = new ThemeSettingsController({ scope: { element } })
+  const settings = new AppearanceEditorController({ scope: { element } })
   settings.templateLabelTargets = []
 
   settings.selectPreset(presetCard({ primary: { light: "#1f5fbf" } }))
@@ -186,7 +182,7 @@ test("picking a preset card fills a colour field's picker, swatch, hex label and
 
 test("picking a preset card outlines that card and clears the outline from every other card", () => {
   const labels = [cardLabel("default", "border-accent-500"), cardLabel("harbor", "border-transparent")]
-  const settings = new ThemeSettingsController({ scope: { element: { querySelector: () => null } } })
+  const settings = new AppearanceEditorController({ scope: { element: { querySelector: () => null } } })
   settings.templateLabelTargets = labels
 
   settings.selectPreset(presetCard({ primary: { light: "#1f5fbf" } }))
