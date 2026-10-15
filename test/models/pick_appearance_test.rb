@@ -198,4 +198,23 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_nil saved_look
   end
+
+  PASTED_THEME = <<~CSS
+    :root {
+      --radius: 0.625rem;
+      --background: oklch(1 0 0);
+      --primary: oklch(0.205 0 0);
+    }
+
+    .dark {
+      --background: oklch(0.145 0 0);
+      --primary: oklch(0.922 0 0);
+    }
+  CSS
+
+  test "saving a pasted :root block and .dark block keeps every colour role in them as the person's colours" do
+    pick(template_name: "", pasted_theme: PASTED_THEME)
+
+    assert_equal({ "theme" => { "background" => { "light" => "oklch(1 0 0)", "dark" => "oklch(0.145 0 0)" }, "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } } }, saved_value)
+  end
 end

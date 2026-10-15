@@ -15,6 +15,7 @@ module KeystoneUi
         return keep_mode_and_look unless @values.key?(:template_name)
         return Refusal.new("This app sets the colours for everyone, so this was not saved.") unless KeystoneUi::Preferences.configuration.account_colors
         return Refusal.new("Your account sets the colours for everyone, so this was not saved.") unless members_choose?
+        return keep_theme if pasting?
         return use_default if @values[:template_name] == AppearanceChoice::DEFAULT_TEMPLATE
 
         chosen = ChosenColours.new(@values)
@@ -36,6 +37,15 @@ module KeystoneUi
 
       def members_choose?
         LayoutChoice.new(person: @person, account: @account, component_key: "colours").members_choose?
+      end
+
+      def pasting?
+        @values[:pasted_theme].present?
+      end
+
+      def keep_theme
+        preference.update!(value: CheckedTheme.new(ThemeReader.new(@values[:pasted_theme]).values).value)
+        keep_mode_and_look
       end
 
       def use_default
