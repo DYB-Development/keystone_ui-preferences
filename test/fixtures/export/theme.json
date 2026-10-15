@@ -1,0 +1,8 @@
+{
+  "primary": { "light": "oklch(0.205 0 0)", "dark": "oklch(0.922 0 0)" },
+  "popover-foreground": { "light": "#1f5fbf", "dark": "#6aa3f0" },
+  "radius": { "light": "0.5rem" },
+  "letter-spacing": { "light": "-0.02em" },
+  "font-mono": { "light": "Menlo, monospace" },
+  "font-weight-strong": { "light": "600" }
+}

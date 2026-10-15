@@ -1,5 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
+import { readFileSync } from "node:fs"
 import ThemeEditorController from "../../app/javascript/keystone_ui/preferences/theme_editor_controller.js"
 
 const ROLES = {
@@ -32,9 +33,15 @@ function pageRoot() {
   }
 }
 
-function editorOn(root) {
-  const element = { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(ROLES) } }
-  return new ThemeEditorController({ scope: { element } })
+function editorOn(root, values = {}) {
+  const fields = Object.fromEntries(Object.entries(values).map(([name, value]) => [`[name="${name}"]`, { name, value }]))
+  const parts = { ...fields, "[data-theme-export]": { value: "" }, "[data-controller~='clipboard']": { dataset: {} } }
+  const element = { ownerDocument: { documentElement: root }, dataset: { themeRoles: JSON.stringify(ROLES) }, querySelector: selector => parts[selector] ?? null }
+  const editor = new ThemeEditorController({ scope: { element } })
+  editor.exported = () => parts["[data-theme-export]"].value
+  editor.field = name => parts[`[name="${name}"]`]
+  editor.copied = () => parts["[data-controller~='clipboard']"].dataset.clipboardText
+  return editor
 }
 
 function change(name, value) {
@@ -133,4 +140,58 @@ test("emptying a field removes the variables the editor set for its role and sid
   editor.apply(change("theme[primary][light]", ""))
 
   assert.deepEqual(root.variables, { "--ks-color-accent-dark": "#1f5fbf", "--ks-color-accent-hover-dark": "color-mix(in oklab, #1f5fbf 85%, white)" })
+})
+
+test("opening the editor writes each field's light value into a :root block and each dark value into a .dark block, in shadcn names", () => {
+  const editor = editorOn(pageRoot(), { "theme[primary][light]": "#1f5fbf", "theme[primary][dark]": "#6aa3f0", "theme[radius][light]": "0.5rem" })
+
+  editor.connect()
+
+  assert.equal(editor.exported(), ":root {\n  --primary: #1f5fbf;\n  --radius: 0.5rem;\n}\n\n.dark {\n  --primary: #6aa3f0;\n}\n")
+})
+
+test("changing a field writes its unsaved value into the export", () => {
+  const editor = editorOn(pageRoot(), { "theme[primary][light]": "#1f5fbf" })
+  editor.connect()
+  const field = editor.field("theme[primary][light]")
+  field.value = "#6aa3f0"
+
+  editor.apply({ target: field })
+
+  assert.equal(editor.exported(), ":root {\n  --primary: #6aa3f0;\n}\n\n.dark {\n}\n")
+})
+
+test("an empty field is left out of the export", () => {
+  const editor = editorOn(pageRoot(), { "theme[primary][light]": "#1f5fbf", "theme[primary][dark]": "", "theme[radius][light]": "" })
+
+  editor.connect()
+
+  assert.equal(editor.exported(), ":root {\n  --primary: #1f5fbf;\n}\n\n.dark {\n}\n")
+})
+
+test("a value holding a semicolon or a curly brace is left out of the export, so it cannot end its block or add a setting", () => {
+  const editor = editorOn(pageRoot(), { "theme[primary][light]": "#1f5fbf; --radius: 9rem", "theme[primary][dark]": "#000} .x {", "theme[radius][light]": "0.5rem" })
+
+  editor.connect()
+
+  assert.equal(editor.exported(), ":root {\n  --radius: 0.5rem;\n}\n\n.dark {\n}\n")
+})
+
+test("the export is handed to keystone_ui's copy button as the text it copies", () => {
+  const editor = editorOn(pageRoot(), { "theme[radius][light]": "0.5rem" })
+
+  editor.connect()
+
+  assert.equal(editor.copied(), ":root {\n  --radius: 0.5rem;\n}\n\n.dark {\n}\n")
+})
+
+test("the theme the round trip test pastes back is the export of its fields, written in the editor's roles order", () => {
+  const exportFixture = name => readFileSync(new URL(`../fixtures/export/${name}`, import.meta.url), "utf8")
+  const theme = JSON.parse(exportFixture("theme.json"))
+  const fields = Object.fromEntries(Object.entries(theme).flatMap(([role, sides]) => Object.entries(sides).map(([side, value]) => [`theme[${role}][${side}]`, value])))
+  const editor = editorOn(pageRoot(), fields)
+
+  editor.connect()
+
+  assert.equal(editor.exported(), exportFixture("theme.css"))
 })

@@ -138,4 +138,12 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
       { "theme" => { "primary" => { "light" => "oklch(0.205 0 0)" }, "radius" => { "light" => "0.5rem" } } }
     ], [ response.body.include?("The --radius value is not a number followed by px, rem or em, or zero, so it was not saved."), KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value ]
   end
+
+  test "a person who pastes back an exported theme and saves it keeps every value the export held" do
+    export = File.expand_path("../fixtures/export", __dir__)
+
+    patch "/settings/appearance", params: { pasted_theme: File.read(File.join(export, "theme.css")) }
+
+    assert_equal({ "theme" => JSON.parse(File.read(File.join(export, "theme.json"))) }, KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value)
+  end
 end

@@ -528,7 +528,7 @@ class AppearancePartialTest < ActionView::TestCase
 
     expected = roles_in_group_order.reject { |_name, role| %i[colour shadow_colour].include?(role[:kind]) }.map { |name, _role| [ "--#{name}", "theme[#{name}][light]" ] }
 
-    assert_equal expected, labelled_controls(theme_settings).select { |_label, name| name.start_with?("theme[") }
+    assert_equal expected, labelled_controls(theme_settings).select { |_label, name| name.to_s.start_with?("theme[") }
   end
 
   test "the paste box is labelled 'Paste a theme'" do
@@ -555,5 +555,27 @@ class AppearancePartialTest < ActionView::TestCase
     end
 
     assert_equal expected, JSON.parse(theme_settings["data-theme-roles"].to_s)
+  end
+
+  test "the theme editor writes its export into a read-only text area labelled Export that has no name, so Save does not send it" do
+    render_section
+
+    exports = theme_settings.css("textarea[data-theme-export]").map { |area| [ theme_settings.at_css("label[for='#{area["id"]}']")&.text&.strip, area.key?("readonly"), area["name"] ] }
+
+    assert_equal [ [ "Export", true, nil ] ], exports
+  end
+
+  test "the theme editor's Copy button copies through keystone_ui's clipboard script without submitting the form" do
+    render_section
+
+    buttons = theme_settings.css("button[data-controller~=clipboard]").map { |button| [ button.text.strip, button["type"], button["data-action"] ] }
+
+    assert_equal [ [ "Copy", "button", "click->clipboard#copy" ] ], buttons
+  end
+
+  test "where the browser refuses to copy, the Copy button tells the person to select the export text instead" do
+    render_section
+
+    assert_equal [ "Select the text to copy it" ], theme_settings.css("button[data-controller~=clipboard]").map { |button| button["data-clipboard-error-message-value"] }
   end
 end
