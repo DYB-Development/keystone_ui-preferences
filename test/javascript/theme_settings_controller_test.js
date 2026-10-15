@@ -167,3 +167,19 @@ test("changing the accent, surface or text picker selects the Custom card and ou
 
   assert.deepEqual([customRadio.checked, bordersOf(labels)], [true, [["border-transparent"], ["border-accent-500"]]])
 })
+
+function pickedField(name, picker) {
+  return { name, value: "", closest: (selector) => (selector === "[data-controller~='color-picker']" ? picker : null), dispatchEvent() {} }
+}
+
+test("picking a preset card fills a colour field's picker, swatch, hex label and text box with the preset's colour", () => {
+  const picker = colourPicker()
+  const primary = pickedField("theme[primary][light]", picker)
+  const element = { querySelector: (selector) => (selector === `[name="${primary.name}"]` ? primary : null) }
+  const settings = new ThemeSettingsController({ scope: { element } })
+  settings.templateLabelTargets = []
+
+  settings.selectPreset(presetCard({ primary: { light: "#1f5fbf" } }))
+
+  assert.deepEqual(picker.shown(), ["#1f5fbf", "#1f5fbf", "#1f5fbf", "#1f5fbf"])
+})
