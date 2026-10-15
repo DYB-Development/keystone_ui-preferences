@@ -209,4 +209,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "button", "keystone-ui--preferences--theme-settings#reset" ] ], reset_buttons
   end
+
+  test "the account's section has no Reset button when the app turns off account colours" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    assert_empty reset_buttons
+  end
 end
