@@ -47,4 +47,10 @@ class ThemeCssTest < ActiveSupport::TestCase
   test "a theme's radius is written to the corner radius of controls and of surfaces" do
     assert_equal [ "--ks-radius-control: 0.5rem;", "--ks-radius-surface: 0.5rem;" ], declarations(css_for("radius" => { "light" => "0.5rem" }))
   end
+
+  test "a theme's spacing, letter spacing and sans font are written to keystone_ui-styles' spacing, letter spacing and body font" do
+    css = css_for("spacing" => { "light" => "0.25rem" }, "letter-spacing" => { "light" => "-0.025em" }, "font-sans" => { "light" => "\"Segoe UI\", sans-serif" })
+
+    assert_equal [ "--ks-spacing: 0.25rem;", "--ks-letter-spacing: -0.025em;", "--ks-font-body: \"Segoe UI\", sans-serif;" ], declarations(css)
+  end
 end
