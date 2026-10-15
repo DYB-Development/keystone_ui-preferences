@@ -99,3 +99,31 @@ test("reset with no preset chosen draws the saved theme on the page, removing wh
 
   assert.deepEqual(root.variables, { "--ks-color-accent": "#1f5fbf", "--ks-color-accent-dark": "#8ab4f8" })
 })
+
+function colourPicker() {
+  const parts = {
+    "input[type='hidden']": { value: "" },
+    "[data-color-picker-target='swatch']": { style: {} },
+    "[data-color-picker-target='hexLabel']": { textContent: "" },
+    "[data-color-picker-target='text']": { value: "" }
+  }
+  return {
+    parts,
+    querySelector: (selector) => parts[selector] ?? null,
+    shown: () => [parts["input[type='hidden']"].value, parts["[data-color-picker-target='swatch']"].style.backgroundColor, parts["[data-color-picker-target='hexLabel']"].textContent, parts["[data-color-picker-target='text']"].value]
+  }
+}
+
+function templateCard(accentHex, surfaceHex, textHex) {
+  return { currentTarget: { dataset: { accentHex, surfaceHex, textHex }, closest: () => ({ dataset: { template: "forest" } }) } }
+}
+
+test("picking a template card fills the accent, surface and text pickers with that template's colours", () => {
+  const settings = new ThemeSettingsController({ scope: { element: {} } })
+  const pickers = [colourPicker(), colourPicker(), colourPicker()]
+  Object.assign(settings, { accentPickerTarget: pickers[0], surfacePickerTarget: pickers[1], textPickerTarget: pickers[2], templateLabelTargets: [] })
+
+  settings.selectTemplate(templateCard("#10b981", "#78716c", "#064e3b"))
+
+  assert.deepEqual(pickers.map((picker) => picker.shown()), [["#10b981", "#10b981", "#10b981", "#10b981"], ["#78716c", "#78716c", "#78716c", "#78716c"], ["#064e3b", "#064e3b", "#064e3b", "#064e3b"]])
+})
