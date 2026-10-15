@@ -80,4 +80,11 @@ class PinnedStyleTagTest < ActionDispatch::IntegrationTest
 
     assert_equal pinned("theme"), style_tag
   end
+
+  test "a saved theme writes the same style tag as before the writers were joined for a person who saved a look of their own" do
+    save_colours({ "theme" => THEME })
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "look", value: { "look" => "rounded" })
+
+    assert_equal pinned("theme_own_look"), style_tag
+  end
 end
