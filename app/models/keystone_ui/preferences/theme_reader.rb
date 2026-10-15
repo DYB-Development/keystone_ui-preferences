@@ -3,7 +3,7 @@
 module KeystoneUi
   module Preferences
     class ThemeReader
-      BLOCK = /(?:\A|[\s};])(:root|\.dark)\s*\{([^{}]*)\}/
+      BLOCK = %r{(?:\A|(?<=[\};])|(?<=\*/))\s*(:root|\.dark)\s*\{([^\{\}]*)\}}
       DECLARATION = /--([a-z0-9-]+)\s*:\s*([^;]*)/
       SIDES = { ":root" => "light", ".dark" => "dark" }.freeze
 
