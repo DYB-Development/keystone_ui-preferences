@@ -578,4 +578,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "Select the text to copy it" ], theme_settings.css("button[data-controller~=clipboard]").map { |button| button["data-clipboard-error-message-value"] }
   end
+
+  test "the appearance section shows the saved theme, not theme values carried in the address, when the page is opened" do
+    save_colours("theme" => { "radius" => { "light" => "0.5rem" } })
+
+    render partial: "keystone_ui/preferences/settings/appearance", locals: { person: person, account: nil, submit_url: "/settings/appearance", selection: { theme: { "radius" => { "light" => "9rem" } } } }
+
+    assert_equal "0.5rem", css_select("input[name='theme[radius][light]']").first["value"]
+  end
 end
