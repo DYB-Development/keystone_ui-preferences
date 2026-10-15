@@ -5,7 +5,7 @@ const THEME_FIELD = /^theme\[([^\]]+)\]\[(light|dark)\]$/
 export default class extends Controller {
   apply({ target: { name, value } }) {
     const field = name.match(THEME_FIELD)
-    if (!field) return
+    if (!field || !CSS.supports("color", value)) return
 
     const [, role] = field
     const roles = JSON.parse(this.element.dataset.themeRoles)

@@ -7,6 +7,12 @@ const ROLES = {
   "popover-foreground": { kind: "colour", variables: ["--ks-color-on-overlay", "--ks-color-on-overlay-muted"] }
 }
 
+const DRAWABLE = {
+  "color": ["#1f5fbf"]
+}
+
+globalThis.CSS = { supports: (property, value) => (DRAWABLE[property] ?? []).includes(value) }
+
 function pageRoot() {
   const variables = {}
   return {
@@ -39,6 +45,14 @@ test("changing a field that is not a theme setting sets nothing on the page's ro
   const root = pageRoot()
 
   editorOn(root).apply(change("", "#1f5fbf"))
+
+  assert.deepEqual(root.variables, {})
+})
+
+test("changing a colour to one the browser cannot draw leaves the page's root element as it was", () => {
+  const root = pageRoot()
+
+  editorOn(root).apply(change("theme[popover-foreground][light]", "not a colour"))
 
   assert.deepEqual(root.variables, {})
 })
