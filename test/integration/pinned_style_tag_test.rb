@@ -34,4 +34,10 @@ class PinnedStyleTagTest < ActionDispatch::IntegrationTest
 
     assert_equal pinned("template_forest"), style_tag
   end
+
+  test "saved custom colours write the same style tag as before the writers were joined" do
+    save_colours({ "accent" => "#e11d48", "surface" => "stone", "text" => "#1c1917" })
+
+    assert_equal pinned("custom_colours"), style_tag
+  end
 end
