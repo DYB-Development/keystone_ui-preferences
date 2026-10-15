@@ -217,4 +217,10 @@ class PickAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "theme" => { "background" => { "light" => "oklch(1 0 0)", "dark" => "oklch(0.145 0 0)" }, "primary" => { "light" => "oklch(0.205 0 0)", "dark" => "oklch(0.922 0 0)" } } }, saved_value)
   end
+
+  test "a pasted theme saves when the save sends no template" do
+    pick(pasted_theme: ":root { --ring: #a1a1a1; }")
+
+    assert_equal({ "theme" => { "ring" => { "light" => "#a1a1a1" } } }, saved_value)
+  end
 end
