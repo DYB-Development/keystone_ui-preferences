@@ -139,6 +139,20 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
     ], [ response.body.include?("The --radius value is not a number followed by px, rem or em, or zero, so it was not saved."), KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours").value ]
   end
 
+  test "a person whose typed theme is refused is told why, sees what they typed in the theme fields, and has nothing saved" do
+    patch "/settings/appearance", params: { theme: { primary: { light: "#123456", dark: "#abcdef" }, radius: { light: "big" } } }
+
+    assert_equal [
+      true,
+      { "theme[primary][light]" => "#123456", "theme[primary][dark]" => "#abcdef", "theme[radius][light]" => "big" },
+      nil
+    ], [
+      response.body.include?("The --radius value is not a number followed by px, rem or em, or zero, so it was not saved."),
+      css_select("form input[name='theme[primary][light]'], form input[name='theme[primary][dark]'], form input[name='theme[radius][light]']").to_h { |field| [ field["name"], field["value"] ] },
+      KeystoneUi::Preferences::ComponentPreference.find_by(owner: person, component_key: "colours")
+    ]
+  end
+
   test "a person who pastes back an exported theme and saves it keeps every value the export held" do
     export = File.expand_path("../fixtures/export", __dir__)
 
