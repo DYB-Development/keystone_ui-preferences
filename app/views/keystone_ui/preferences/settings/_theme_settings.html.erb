@@ -1,28 +1,33 @@
 <% saved_preset = KeystoneUi::Looks::Themes.all.find { |name, _preset| name.to_s == saved["preset_name"] }&.last %>
 <% theme = saved_preset ? saved_preset[:theme] : saved["theme"].to_h %>
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
-<div data-controller="keystone-ui--preferences--theme-editor" data-action="change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply" data-theme-roles="<%= roles.to_json %>">
+<div data-controller="keystone-ui--preferences--theme-editor" data-action="change->keystone-ui--preferences--theme-editor#apply input->keystone-ui--preferences--theme-editor#apply" data-theme-roles="<%= roles.to_json %>" style="display: flex; flex-direction: column; gap: 2rem;">
   <% KeystoneUi::Preferences::ThemeRoles::GROUPS.each do |group, sets| %>
-  <%= ui_section(title: group, spacing: :sm) do %>
-  <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-    <% sets.values.flatten.each do |name| %>
-      <% role = KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name) %>
-      <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
-        <% field_name = "theme[#{name}][#{side}]" %>
-        <% value = theme.dig(name, side).to_s %>
-        <% label = role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}" %>
-        <% if %i[colour shadow_colour].include?(role[:kind]) %>
-          <%= ui_color_picker(name: field_name, value: value, label: label) %>
-        <% else %>
-          <% field_id = "#{local_assigns.fetch(:id_prefix, "appearance")}-#{field_name.parameterize}" %>
-          <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
-            <%= label_tag field_id, label, class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
-            <%= text_field_tag field_name, value, id: field_id, class: Keystone::Ui::InputComponent::BASE_CLASSES %>
+    <%= ui_section(title: group, spacing: :sm) do %>
+      <% sets.each do |set, names| %>
+        <fieldset style="border: 0; padding: 0; margin: 0; min-width: 0;">
+          <legend class="<%= Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>"><%= set %></legend>
+          <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+            <% names.each do |name| %>
+              <% role = KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name) %>
+              <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
+                <% field_name = "theme[#{name}][#{side}]" %>
+                <% value = theme.dig(name, side).to_s %>
+                <% label = role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}" %>
+                <% if %i[colour shadow_colour].include?(role[:kind]) %>
+                  <%= ui_color_picker(name: field_name, value: value, label: label) %>
+                <% else %>
+                  <% field_id = "#{local_assigns.fetch(:id_prefix, "appearance")}-#{field_name.parameterize}" %>
+                  <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
+                    <%= label_tag field_id, label, class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
+                    <%= text_field_tag field_name, value, id: field_id, class: Keystone::Ui::InputComponent::BASE_CLASSES %>
+                  </div>
+                <% end %>
+              <% end %>
+            <% end %>
           </div>
-        <% end %>
+        </fieldset>
       <% end %>
     <% end %>
-  </div>
-  <% end %>
   <% end %>
 </div>

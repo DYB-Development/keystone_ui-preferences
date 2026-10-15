@@ -363,6 +363,34 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal %w[Colors Typography Other], theme_settings.css("h2").map { |title| title.text.strip }
   end
 
+  def theme_group(title)
+    theme_settings.css("h2").find { |heading| heading.text.strip == title }.ancestors(".ks-section-sm").first
+  end
+
+  def settings_by_set(group)
+    theme_group(group).css("fieldset").map { |set| [ set.at_css("legend").text.strip, set.css("input[name^='theme[']").map { |field| field["name"][/\Atheme\[([^\]]+)\]/, 1] }.uniq ] }
+  end
+
+  test "Colors lists each colour role beside its foreground, set by set" do
+    render_section
+
+    expected = [
+      [ "Page", %w[background foreground] ],
+      [ "Primary", %w[primary primary-foreground] ],
+      [ "Secondary", %w[secondary secondary-foreground] ],
+      [ "Accent", %w[accent accent-foreground] ],
+      [ "Muted", %w[muted muted-foreground] ],
+      [ "Card", %w[card card-foreground] ],
+      [ "Popover", %w[popover popover-foreground] ],
+      [ "Destructive", %w[destructive destructive-foreground] ],
+      [ "Border, input and ring", %w[border input ring] ],
+      [ "Chart", %w[chart-1 chart-2 chart-3 chart-4 chart-5] ],
+      [ "Sidebar", %w[sidebar sidebar-foreground sidebar-primary sidebar-primary-foreground sidebar-accent sidebar-accent-foreground sidebar-border sidebar-ring] ]
+    ]
+
+    assert_equal expected, settings_by_set("Colors")
+  end
+
   test "the theme settings are shown with no closed disclosure around them" do
     render_section
 
