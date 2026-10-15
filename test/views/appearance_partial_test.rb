@@ -346,4 +346,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ [ "theme[background][light]", nil ] ], theme_section.css("details").map { |disclosure| [ disclosure.at_css("input[name^='theme[']")&.[]("name"), disclosure["open"] ] }
   end
+
+  test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do
+    render_section
+
+    expected = KeystoneUi::Preferences::ThemeRoles::ROLES.flat_map { |name, role| { colour: %w[light dark], shadow_colour: %w[light] }.fetch(role[:kind], []).map { |side| "theme[#{name}][#{side}]" } }
+
+    assert_equal expected, theme_section.css("[data-controller=color-picker]:has(input[data-color-picker-target=text]) input[type=hidden]").map { |field| field["name"] }
+  end
 end

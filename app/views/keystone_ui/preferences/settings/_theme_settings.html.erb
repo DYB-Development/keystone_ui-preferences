@@ -3,7 +3,13 @@
   <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
     <% KeystoneUi::Preferences::ThemeRoles::ROLES.each do |name, role| %>
       <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
-        <%= ui_form_field(attribute: "theme[#{name}][#{side}]", label: role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}") %>
+        <% field_name = "theme[#{name}][#{side}]" %>
+        <% label = role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}" %>
+        <% if %i[colour shadow_colour].include?(role[:kind]) %>
+          <%= ui_color_picker(name: field_name, value: "", label: label) %>
+        <% else %>
+          <%= ui_form_field(attribute: field_name, label: label) %>
+        <% end %>
       <% end %>
     <% end %>
   </div>
