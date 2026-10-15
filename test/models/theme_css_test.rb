@@ -80,4 +80,8 @@ class ThemeCssTest < ActiveSupport::TestCase
 
     assert_equal [ "--ks-shadow-surface: #{shadow};", "--ks-shadow-overlay: #{shadow};", "--ks-shadow-menu: #{shadow};" ], declarations(css_for(SHADOW))
   end
+
+  test "a theme missing any of the six shadow settings writes no shadow" do
+    assert_empty declarations(css_for(SHADOW.except("shadow-blur")))
+  end
 end

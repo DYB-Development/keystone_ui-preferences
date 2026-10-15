@@ -25,9 +25,9 @@ module KeystoneUi
       end
 
       def shadow_declarations
-        return [] if @theme.slice(*SHADOW_SETTINGS).empty?
-
         x, y, blur, spread, colour, opacity = SHADOW_SETTINGS.map { |setting| @theme.dig(setting, "light") }
+        return [] unless x && y && blur && spread && colour && opacity
+
         SHADOWS.map { |variable| "  #{variable}: #{x} #{y} #{blur} #{spread} color-mix(in srgb, #{colour} calc(#{opacity} * 100%), transparent);" }
       end
 
