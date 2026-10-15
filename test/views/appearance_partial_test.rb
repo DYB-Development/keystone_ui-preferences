@@ -386,4 +386,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "#1f5fbf", "#6aa3f0", "0.625rem" ], [ "theme[primary][light]", "theme[primary][dark]", "theme[radius][light]" ].map { |field| theme_section.at_css("input[name='#{field}']")["value"] }
   end
+
+  test "picking a preset theme hands the template picker script that preset's theme values to fill the theme fields with" do
+    render_section
+
+    harbor = css_select("input[type=radio][name=template_name][value=harbor]").first
+
+    assert_equal [ "keystone-ui--preferences--theme-settings#selectPreset", KeystoneUi::Looks::Themes[:harbor][:theme] ], [ harbor["data-action"], JSON.parse(harbor["data-theme"].to_s) ]
+  end
 end

@@ -33,7 +33,15 @@
     <% end %>
     <% if local_assigns[:presets] %>
       <% KeystoneUi::Looks::Themes.all.each do |name, preset| %>
-        <%= ui_option_card(name: "template_name", value: name.to_s, selected: saved["preset_name"] == name.to_s) do %>
+        <%= ui_option_card(
+          name: "template_name",
+          value: name.to_s,
+          selected: saved["preset_name"] == name.to_s,
+          input_data: {
+            action: "keystone-ui--preferences--theme-settings#selectPreset",
+            theme: preset[:theme].to_json
+          }
+        ) do %>
           <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 9999px; background-color: <%= preset[:theme].dig("primary", "light") %>;"></span>
           <span style="display: inline-block; width: 1rem; height: 1rem; border-radius: 0.25rem; background-color: <%= preset[:theme].dig("secondary", "light") %>;"></span>
           <span><%= preset[:label] %></span>
