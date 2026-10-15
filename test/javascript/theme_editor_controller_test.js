@@ -167,3 +167,11 @@ test("an empty field is left out of the export", () => {
 
   assert.equal(editor.exported(), ":root {\n  --primary: #1f5fbf;\n}\n\n.dark {\n}\n")
 })
+
+test("a value holding a semicolon or a curly brace is left out of the export, so it cannot end its block or add a setting", () => {
+  const editor = editorOn(pageRoot(), { "theme[primary][light]": "#1f5fbf; --radius: 9rem", "theme[primary][dark]": "#000} .x {", "theme[radius][light]": "0.5rem" })
+
+  editor.connect()
+
+  assert.equal(editor.exported(), ":root {\n  --radius: 0.5rem;\n}\n\n.dark {\n}\n")
+})

@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 const THEME_FIELD = /^theme\[([^\]]+)\]\[(light|dark)\]$/
+const ENDS_DECLARATION = /[;{}]/
 const PROPERTY_FOR_KIND = { colour: "color", length: "width", letter_spacing: "letter-spacing", font_list: "font-family", weight: "font-weight" }
 
 export default class extends Controller {
@@ -37,7 +38,7 @@ export default class extends Controller {
     const roles = Object.keys(JSON.parse(this.element.dataset.themeRoles))
     const block = side => roles.flatMap(role => {
       const field = this.element.querySelector(`[name="theme[${role}][${side}]"]`)
-      return field?.value ? [`  --${role}: ${field.value};\n`] : []
+      return field?.value && !ENDS_DECLARATION.test(field.value) ? [`  --${role}: ${field.value};\n`] : []
     }).join("")
     this.element.querySelector("[data-theme-export]").value = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
   }
