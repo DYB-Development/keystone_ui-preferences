@@ -14,6 +14,15 @@
         <div data-editor-panel><%= render partial: "keystone_ui/preferences/settings/theme_preview" %></div>
       </div>
     <% end %>
+    <div data-leave-question>
+      <%= ui_modal(title: "Leave without saving?", size: :sm) do %>
+        <p>Your theme changes are not saved yet.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
+          <%= ui_button(label: "Leave without saving", variant: :danger, type: :button, data: { action: "keystone-ui--preferences--appearance-editor#leave" }) %>
+          <%= ui_button(label: "Stay", variant: :secondary, type: :button, data: { action: "modal#close" }) %>
+        </div>
+      <% end %>
+    </div>
   <% else %>
     <%= editor %>
   <% end %>

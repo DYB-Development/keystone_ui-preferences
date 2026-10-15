@@ -99,6 +99,15 @@ class AppearancePreviewTest < ActionView::TestCase
     assert_equal [ "submit->keystone-ui--preferences--appearance-editor#save", "turbo:before-visit@document->keystone-ui--preferences--appearance-editor#confirmLeave", "beforeunload@window->keystone-ui--preferences--appearance-editor#warnBeforeUnload" ], actions.drop(1)
   end
 
+  test "the appearance section holds a hidden question on the page offering to leave without saving or to stay" do
+    render_section
+
+    question = css_select("[data-appearance-editor] [data-leave-question] [data-modal-target='backdrop'].hidden")
+    choices = question.css("button").filter_map { |button| [ button.text.strip, button["data-action"] ] unless button["aria-label"] == "Close" }
+
+    assert_equal [ [ "Leave without saving", "keystone-ui--preferences--appearance-editor#leave" ], [ "Stay", "modal#close" ] ], choices
+  end
+
   def section_style
     css_select("[data-controller='keystone-ui--preferences--appearance-editor'] style").text.squish
   end
