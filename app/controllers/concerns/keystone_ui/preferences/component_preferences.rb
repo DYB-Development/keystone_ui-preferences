@@ -29,8 +29,8 @@ module KeystoneUi
       end
 
       def keystone_palette_style_tag
-        colours = keystone_appearance_choice.colours
-        helpers.content_tag(:style, PaletteCss.new(**colours).to_s)
+        choice = keystone_appearance_choice
+        helpers.content_tag(:style, [ PaletteCss.new(**choice.colours).to_s, choice.theme_css ].compact.join("\n"))
       end
 
       def keystone_theme_mode
