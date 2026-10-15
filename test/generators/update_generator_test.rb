@@ -22,10 +22,6 @@ class KeystoneUi::Preferences::Generators::UpdateGeneratorTest < ActiveSupport::
     assert_includes migration, %(remove_index :keystone_ui_preferences_component_preferences, %i[owner_type owner_id], name: "index_keystone_ui_preferences_component_preferences_on_owner", if_exists: true)
   end
 
-  test "copies the template picker script into the app's Stimulus controllers" do
-    assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_settings_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js")
-  end
-
   test "leaves an app's own edited copy of the template picker script as it is" do
     script = "#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js"
     File.write(script, "// edited by the app")
@@ -37,10 +33,6 @@ class KeystoneUi::Preferences::Generators::UpdateGeneratorTest < ActiveSupport::
 
   test "copies a migration that copies keystone_ui-colors' saved colours, mode and look" do
     assert_includes File.read(Dir.glob("#{destination}/db/migrate/*_copy_keystone_ui_colors_theme_preferences.rb").first.to_s), "class CopyKeystoneUiColorsThemePreferences"
-  end
-
-  test "copies the theme editor script into the app's Stimulus controllers" do
-    assert_equal File.read(File.expand_path("../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__)), File.read("#{destination}/app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js")
   end
 
   test "leaves an app's own edited copy of the theme editor script as it is" do
@@ -63,6 +55,10 @@ class KeystoneUi::Preferences::Generators::UpdateGeneratorTest < ActiveSupport::
     Rails::Generators.invoke("keystone_ui:preferences:update", [], destination_root: destination, quiet: true)
 
     assert_equal "// edited by the app", File.read(script)
+  end
+
+  test "copies one script for the Appearance sections and no other into an app that has none" do
+    assert_equal [ "appearance_editor_controller.js" ], Dir.children("#{destination}/app/javascript/controllers/keystone_ui/preferences")
   end
 
   private

@@ -11,7 +11,7 @@ module KeystoneUi
 
         source_root File.expand_path("templates", __dir__)
 
-        desc "Updates KeystoneUi::Preferences: copies migrations added since it was installed and the template picker and theme editor scripts when the app has none."
+        desc "Updates KeystoneUi::Preferences: copies migrations added since it was installed and the appearance editor script when the app has none."
 
         def copy_remove_extra_owner_index_migration
           migration_template(
@@ -25,20 +25,6 @@ module KeystoneUi
             "copy_keystone_ui_colors_theme_preferences.rb.erb",
             "db/migrate/copy_keystone_ui_colors_theme_preferences.rb"
           )
-        end
-
-        def copy_template_picker_script
-          copy = "app/javascript/controllers/keystone_ui/preferences/theme_settings_controller.js"
-          return if File.exist?(File.join(destination_root, copy))
-
-          create_file copy, File.read(File.expand_path("../../../../../app/javascript/keystone_ui/preferences/theme_settings_controller.js", __dir__))
-        end
-
-        def copy_theme_editor_script
-          copy = "app/javascript/controllers/keystone_ui/preferences/theme_editor_controller.js"
-          return if File.exist?(File.join(destination_root, copy))
-
-          create_file copy, File.read(File.expand_path("../../../../../app/javascript/keystone_ui/preferences/theme_editor_controller.js", __dir__))
         end
 
         def copy_appearance_editor_script
