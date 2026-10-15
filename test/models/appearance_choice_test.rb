@@ -258,12 +258,12 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     assert_nil theme_css_for(person, account)
   end
 
-  test "a saved theme's written rule is kept in the Rails cache under the colours row's versioned cache key" do
+  test "a saved theme's written rule is kept in the Rails cache under the colours row's versioned cache key and whether the person saved a look" do
     row = KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => { "primary" => { "light" => "#171717" } } })
 
     css = theme_css_for(person, account)
 
-    assert_equal css, Rails.cache.read([ row.cache_key_with_version, "theme_css", KeystoneUi::Preferences::ThemeCss::VERSION ])
+    assert_equal css, Rails.cache.read([ row.cache_key_with_version, "theme_css", KeystoneUi::Preferences::ThemeCss::VERSION, false ])
   end
 
   test "a saved theme that is not a set of roles each holding light and dark colours is not written" do
@@ -299,6 +299,15 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
     theme = { "primary" => { "light" => "#171717" }, "radius" => { "light" => "0.5rem" } }
     KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => theme })
     save_look(account, "sharp")
+    save_look(person, "rounded")
+
+    assert_equal KeystoneUi::Preferences::ThemeCss.new(theme, own_look: true).to_s, theme_css_for(person, account)
+  end
+
+  test "a theme rule written before the person saved a look of their own is written again once they have" do
+    theme = { "primary" => { "light" => "#171717" }, "radius" => { "light" => "0.5rem" } }
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: person, component_key: "colours", value: { "theme" => theme })
+    theme_css_for(person, account)
     save_look(person, "rounded")
 
     assert_equal KeystoneUi::Preferences::ThemeCss.new(theme, own_look: true).to_s, theme_css_for(person, account)

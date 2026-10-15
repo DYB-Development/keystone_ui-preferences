@@ -38,7 +38,7 @@ module KeystoneUi
       def theme_css
         return unless configuration.account_colors && saved.key?("theme")
 
-        Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION ]) { written_theme }
+        Rails.cache.fetch([ colours_choice.preference.cache_key_with_version, "theme_css", ThemeCss::VERSION, own_look? ]) { written_theme }
       end
 
       private
