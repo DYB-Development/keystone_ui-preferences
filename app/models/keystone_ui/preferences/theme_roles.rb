@@ -41,7 +41,7 @@ module KeystoneUi
         "letter-spacing" => { kind: :letter_spacing, variables: %w[--ks-letter-spacing] },
         "font-sans" => { kind: :font_list, variables: %w[--ks-font-body] },
         "font-serif" => { kind: :font_list, variables: [] },
-        "font-mono" => { kind: :font_list, variables: [] },
+        "font-mono" => { kind: :font_list, variables: %w[--ks-font-mono --default-mono-font-family] },
         "font-weight-normal" => { kind: :weight, variables: [] },
         "font-weight-medium" => { kind: :weight, variables: [] },
         "font-weight-strong" => { kind: :weight, variables: [] },

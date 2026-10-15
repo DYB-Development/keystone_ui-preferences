@@ -53,4 +53,8 @@ class ThemeCssTest < ActiveSupport::TestCase
 
     assert_equal [ "--ks-spacing: 0.25rem;", "--ks-letter-spacing: -0.025em;", "--ks-font-body: \"Segoe UI\", sans-serif;" ], declarations(css)
   end
+
+  test "a theme's mono font is written to the mono font variable and to Tailwind's default mono font, which code reads" do
+    assert_equal [ "--ks-font-mono: Menlo, monospace;", "--default-mono-font-family: Menlo, monospace;" ], declarations(css_for("font-mono" => { "light" => "Menlo, monospace" }))
+  end
 end
