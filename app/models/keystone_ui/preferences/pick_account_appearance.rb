@@ -26,7 +26,7 @@ module KeystoneUi
       private
 
       def colours_sent?
-        @values.key?(:template_name) || pasting?
+        @values.key?(:template_name) || pasting? || editing?
       end
 
       def pasting?
@@ -35,8 +35,17 @@ module KeystoneUi
 
       def chosen_colours
         return pasted_theme if pasting?
+        return CheckedTheme.new(typed_theme) if editing?
 
         ChosenColours.new(@values) if colours_sent?
+      end
+
+      def editing?
+        typed_theme.any?
+      end
+
+      def typed_theme
+        @typed_theme ||= @values[:theme].to_h.to_h { |name, sides| [ name.to_s, sides.to_h.to_h { |side, value| [ side.to_s, value.to_s.strip ] }.compact_blank ] }.compact_blank
       end
 
       def pasted_theme

@@ -117,4 +117,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
   end
+
+  test "a theme setting typed by hand is saved as the account's theme, leaving out the fields left blank" do
+    pick(template_name: "default", theme: { "primary" => { "light" => "#171717", "dark" => "" }, "radius" => { "light" => "" } })
+
+    assert_equal({ "theme" => { "primary" => { "light" => "#171717" } } }, account_preference("colours").value)
+  end
 end
