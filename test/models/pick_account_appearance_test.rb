@@ -131,4 +131,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
   end
+
+  test "a preset saves its name as the account's colours when the theme fields hold that preset's values, as they do once its card is picked" do
+    pick(template_name: "harbor", theme: KeystoneUi::Looks::Themes[:harbor][:theme])
+
+    assert_equal({ "preset_name" => "harbor" }, account_preference("colours").value)
+  end
 end
