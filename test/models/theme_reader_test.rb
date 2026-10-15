@@ -42,4 +42,10 @@ class ThemeReaderTest < ActiveSupport::TestCase
 
     assert_equal "The pasted theme contains url( or @import, so it was not saved.", reader.refusal&.message
   end
+
+  test "a paste containing @import anywhere is refused with a reason" do
+    reader = read("@import \"https://example.com/theme.css\";\n:root { --primary: #171717; }\n")
+
+    assert_equal "The pasted theme contains url( or @import, so it was not saved.", reader.refusal&.message
+  end
 end
