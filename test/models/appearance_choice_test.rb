@@ -427,4 +427,11 @@ class AppearanceChoiceTest < ActiveSupport::TestCase
 
     assert_equal [ { accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, nil ], [ choice.colours, choice.theme_css ]
   end
+
+  test "a member of an account whose own saved theme fails the theme check gets the app's default colours and no theme rule" do
+    KeystoneUi::Preferences::ComponentPreference.create!(owner: account, component_key: "colours", value: { "theme" => { "radius" => { "light" => "1 lightyear" } } })
+    choice = KeystoneUi::Preferences::AppearanceChoice.new(person: person, account: account)
+
+    assert_equal [ { accent: "blue", surface: "zinc", background: "#ffffff", text: "#18181b" }, nil ], [ choice.colours, choice.theme_css ]
+  end
 end
