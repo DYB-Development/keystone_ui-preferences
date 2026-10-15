@@ -24,4 +24,10 @@ class ThemeSettingsPartialTest < ActionView::TestCase
 
     assert_equal [ "The --radius value is not a number followed by px, rem or em, or zero, so it was not saved." ], css_select(".ks-form-field:has(> input[name='theme[radius][light]']) + p.ks-error").map { |error| error.text.strip }
   end
+
+  test "a sent colour the theme check refuses reaches no style attribute on the section" do
+    render_settings(sent_theme: { "primary" => { "light" => "red; background:url(x)" } })
+
+    assert_empty css_select("[style]").map { |element| element["style"] }.grep(/url\(x\)/)
+  end
 end
