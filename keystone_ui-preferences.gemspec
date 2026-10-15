@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "keystone_ui", ">= 0.47.0"
   spec.add_dependency "keystone_ui-looks", ">= 0.4.0"
-  spec.add_dependency "keystone_ui-styles", ">= 0.18.0"
+  spec.add_dependency "keystone_ui-styles", ">= 0.23.0"
   spec.add_dependency "railties", ">= 7.0"
   spec.add_dependency "activerecord", ">= 7.0"
   spec.add_dependency "activesupport", ">= 7.0"
