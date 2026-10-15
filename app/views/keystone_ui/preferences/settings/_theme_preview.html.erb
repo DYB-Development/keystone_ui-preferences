@@ -13,4 +13,9 @@
         items: [ { customer: "Northwind Traders", region: "North", total: "$12,400" }, { customer: "Harbor Supply", region: "South", total: "$8,950" }, { customer: "Fern & Co", region: "North", total: "$4,120" } ],
         columns: [ { customer: "Customer" }, { region: "Region" }, { total: "Total" } ]
       ) %>
+  <%= ui_line_chart(
+        labels: %w[Jan Feb Mar Apr May Jun],
+        series: [ { name: "This year", data: [ 12, 19, 15, 24, 22, 30 ] }, { name: "Last year", data: [ 10, 14, 13, 17, 19, 21 ] } ],
+        height: :sm
+      ) %>
 </div>

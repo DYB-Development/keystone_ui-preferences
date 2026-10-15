@@ -45,4 +45,14 @@ class AppearancePreviewTest < ActionView::TestCase
 
     assert_equal [ "Customer", "Region", "Total" ], preview.css(".ks-table thead th").map { |cell| cell.text.strip }
   end
+
+  def chart_series
+    preview.css("[data-controller='line-chart']").map { |chart| JSON.parse(chart["data-line-chart-data-value"])["datasets"] }
+  end
+
+  test "the appearance section's preview shows a keystone_ui line chart of two sample series" do
+    render_section
+
+    assert_equal [ [ "This year", "Last year" ] ], chart_series.map { |datasets| datasets.map { |dataset| dataset["label"] } }
+  end
 end
