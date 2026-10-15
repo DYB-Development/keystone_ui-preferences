@@ -99,3 +99,12 @@ test("closing or reloading the page after changing a theme field asks the browse
 
   assert.equal(closing.warned, true)
 })
+
+test("closing or reloading the page with no theme field changed is not warned about", () => {
+  const editor = sectionLoadedWith({ "theme[primary][light]": "#000000" })
+  const closing = unload()
+
+  editor.warnBeforeUnload(closing)
+
+  assert.equal(closing.warned, false)
+})
