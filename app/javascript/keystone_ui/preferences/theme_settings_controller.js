@@ -50,6 +50,7 @@ export default class extends Controller {
     } else {
       field.value = value
     }
+    field.dispatchEvent(new Event("change", { bubbles: true }))
   }
 
   showPanel({ detail: { index } }) {
