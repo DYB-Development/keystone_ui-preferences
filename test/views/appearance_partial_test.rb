@@ -370,4 +370,12 @@ class AppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "#1f5fbf", "#e3ebf6" ], swatches
   end
+
+  test "the appearance section selects only the preset theme the person saved" do
+    save_colours("preset_name" => "harbor")
+
+    render_section
+
+    assert_equal [ "harbor" ], selected_template
+  end
 end
