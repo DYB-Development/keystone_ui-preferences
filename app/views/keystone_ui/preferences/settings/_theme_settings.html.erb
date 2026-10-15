@@ -9,7 +9,11 @@
         <% if %i[colour shadow_colour].include?(role[:kind]) %>
           <%= ui_color_picker(name: field_name, value: value, label: label) %>
         <% else %>
-          <%= ui_form_field(attribute: field_name, label: label, value: value) %>
+          <% field_id = "#{local_assigns.fetch(:id_prefix, "appearance")}-#{field_name.parameterize}" %>
+          <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
+            <%= label_tag field_id, label, class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
+            <%= text_field_tag field_name, value, id: field_id, class: Keystone::Ui::InputComponent::BASE_CLASSES %>
+          </div>
         <% end %>
       <% end %>
     <% end %>

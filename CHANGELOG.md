@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- The paste box in the person's and the account's Appearance sections is tied to its "Paste a theme" label, so it can be found by that label and screen readers announce it.
+- Each theme setting typed as text, such as `--radius` or `--font-sans`, is tied to its label.
+- The account's Appearance fields carry ids apart from the person's, so the two sections can share a page.
+
 ## [0.8.0] - 2026-10-15
 
 ### Added

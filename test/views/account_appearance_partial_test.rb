@@ -167,4 +167,12 @@ class AccountAppearancePartialTest < ActionView::TestCase
 
     assert_equal [ "The account's current choice is its own theme." ], css_select(".ks-hint").map { |hint| hint.text.strip }.grep(/current choice/)
   end
+
+  test "the account's section and the person's section give no two fields the same id when shown on one page" do
+    page = render(partial: "keystone_ui/preferences/settings/appearance", locals: { person: admin, account: account, submit_url: "/settings/appearance" }) + render_section
+
+    ids = Nokogiri::HTML5.fragment(page).css("[id]").map { |element| element["id"] }
+
+    assert_empty ids.select { |id| ids.count(id) > 1 }.uniq
+  end
 end
