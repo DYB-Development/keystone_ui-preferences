@@ -23,4 +23,10 @@ class CheckedThemeTest < ActiveSupport::TestCase
 
     assert_equal "The dark --primary colour is not hex, rgb(), hsl() or oklch() written with plain numbers, so it was not saved.", checked.refusal&.message
   end
+
+  test "a colour containing a semicolon, a brace, an angle bracket or a comment is refused" do
+    colours = [ "#ffffff;", "oklch(0.5 0 0)}", "#fff</style>", "{", "#ffffff /* x */" ]
+
+    assert_equal [ true ] * colours.size, colours.map { |colour| check("ring" => { "light" => colour }).refusal.is_a?(KeystoneUi::Preferences::Refusal) }
+  end
 end
