@@ -25,15 +25,15 @@ module KeystoneUi
       end
 
       def editing?
-        typed.any? && [ saved["theme"], preset_theme(saved["preset_name"]), preset_theme(@values[:template_name]) ].exclude?(typed)
+        typed.any? && [ saved["theme"], *preset_themes ].exclude?(typed)
+      end
+
+      def preset_themes
+        KeystoneUi::Looks::Themes.names.map { |name| KeystoneUi::Looks::Themes[name][:theme] }
       end
 
       def saved
         @saved ||= @saved_colours.call
-      end
-
-      def preset_theme(name)
-        KeystoneUi::Looks::Themes[name][:theme] if KeystoneUi::Looks::Themes.names.map(&:to_s).include?(name.to_s)
       end
 
       def typed

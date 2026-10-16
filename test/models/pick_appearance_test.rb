@@ -334,6 +334,12 @@ class PickAppearanceTest < ActiveSupport::TestCase
     assert_equal({ "template_name" => "forest" }, saved_value)
   end
 
+  test "a template picked after a preset card that was never saved saves the template over the preset's theme fields" do
+    pick(template_name: "ocean", theme: KeystoneUi::Looks::Themes[:graphite][:theme])
+
+    assert_equal({ "template_name" => "ocean" }, saved_value)
+  end
+
   test "a preset's theme fields with one changed save the person's own theme in place of the preset" do
     pick(template_name: "harbor")
     edited = KeystoneUi::Looks::Themes[:harbor][:theme].merge("radius" => { "light" => "0.25rem" })
