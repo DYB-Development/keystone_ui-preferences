@@ -4,6 +4,8 @@ const THEME_FIELD = /^theme\[([^\]]+)\]\[(light|dark)\]$/
 const ENDS_DECLARATION = /[;{}]/
 const QUICK_CHOICES = "[name='template_name'], [name='accent'], [name='surface'], [name='text'], [name='mode'], [name='look'], [name='members_choose'], [name='members_choose_look']"
 const PROPERTY_FOR_KIND = { colour: "color", length: "width", letter_spacing: "letter-spacing", font_list: "font-family", weight: "font-weight" }
+const SHADOW_SETTINGS = ["shadow-offset-x", "shadow-offset-y", "shadow-blur", "shadow-spread", "shadow-color", "shadow-opacity"]
+const SHADOWS = ["--ks-shadow-surface", "--ks-shadow-overlay", "--ks-shadow-menu"]
 
 export default class extends Controller {
   static targets = ["accentPicker", "surfacePicker", "textPicker", "customRadio", "templateLabel"]
@@ -52,6 +54,8 @@ export default class extends Controller {
     if (!field) return
 
     const [, role, side] = field
+    if (SHADOW_SETTINGS.includes(role)) return this.#drawShadow()
+
     const { kind, variables, hover } = this.#roles()[role]
     const suffix = side === "dark" ? "-dark" : ""
     if (value === "") {
@@ -166,6 +170,17 @@ export default class extends Controller {
     const css = `:root {\n${block("light")}}\n\n.dark {\n${block("dark")}}\n`
     exported.value = css
     this.element.querySelector("[data-controller~='clipboard']").dataset.clipboardText = css
+  }
+
+  #drawShadow() {
+    const settings = SHADOW_SETTINGS.map(setting => this.element.querySelector(`[name="theme[${setting}][light]"]`)?.value)
+    const [x, y, blur, spread, colour, opacity] = settings
+    const shadow = `${x} ${y} ${blur} ${spread} color-mix(in srgb, ${colour} calc(${opacity} * 100%), transparent)`
+    if (settings.every(Boolean) && CSS.supports("box-shadow", shadow)) {
+      SHADOWS.forEach(variable => this.#set(variable, shadow))
+    } else {
+      SHADOWS.forEach(variable => this.#remove(variable))
+    }
   }
 
   #drawUnsavedFields() {
