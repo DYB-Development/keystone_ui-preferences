@@ -8,10 +8,8 @@
         [data-editor-panels] { display: grid; gap: 1.5rem; }
         [data-editor-panel]:not([data-shown]) { display: block; }
       }
-      @media (min-width: 64rem) {
-        [data-appearance-editor] .ks-tab-bar { display: none; }
-        [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; }
-        [data-editor-panel]:not([data-shown]) { display: block; }
+      @container (min-width: 56rem) {
+        [data-editor-panels] { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; }
       }
     </style>
     <div data-editor-space>
