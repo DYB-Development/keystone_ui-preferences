@@ -25,6 +25,12 @@ class ThemeSettingsPartialTest < ActionView::TestCase
     assert_equal [ "The --radius value is not a number followed by px, rem or em, or zero, so it was not saved." ], css_select(".ks-form-field:has(> input[name='theme[radius][light]']) + p.ks-error").map { |error| error.text.strip }
   end
 
+  test "only the group holding the setting the theme check refuses is open, so its refusal shows" do
+    render_settings(sent_theme: { "primary" => { "light" => "#123456" }, "radius" => { "light" => "big" } })
+
+    assert_equal [ "Other" ], css_select("details[open] h2").map { |title| title.text.strip }
+  end
+
   test "a sent colour the theme check refuses reaches no style attribute on the section" do
     render_settings(sent_theme: { "primary" => { "light" => "red; background:url(x)" } })
 

@@ -7,7 +7,7 @@
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
 <div data-action="change->keystone-ui--preferences--appearance-editor#apply input->keystone-ui--preferences--appearance-editor#apply" data-theme-roles="<%= roles.to_json %>" data-saved-theme="<%= theme.to_json %>" style="display: flex; flex-direction: column; gap: 2rem;">
   <% KeystoneUi::Preferences::ThemeRoles::GROUPS.each do |group, sets| %>
-    <%= ui_disclosure do |disclosure| %>
+    <%= ui_disclosure(open: sets.values.flatten.include?(check.failing_setting)) do |disclosure| %>
       <% disclosure.with_summary do %><h2 class="<%= Keystone::Ui::SectionComponent::TITLE_CLASSES %>"><%= group %></h2><% end %>
       <div style="display: flex; flex-direction: column; gap: 1.5rem; padding-top: 1rem;">
       <% sets.each do |set, names| %>
