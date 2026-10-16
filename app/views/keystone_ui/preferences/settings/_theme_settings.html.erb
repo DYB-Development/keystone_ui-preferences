@@ -16,7 +16,12 @@
           <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
             <% names.each do |name| %>
               <% role = KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name) %>
-              <% if role[:kind] == :colour %><div role="group" aria-label="--<%= name %>" style="display: flex; flex-wrap: wrap; gap: 1rem;"><% end %>
+              <% if role[:kind] == :colour %>
+                <% name_id = "#{id_prefix}-theme-#{name}-name" %>
+                <div role="group" aria-labelledby="<%= name_id %>" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <span id="<%= name_id %>" class="<%= Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>">--<%= name %></span>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+              <% end %>
               <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
                 <% field_name = "theme[#{name}][#{side}]" %>
                 <% value = shown.dig(name, side).to_s %>
@@ -31,6 +36,7 @@
                   </div>
                 <% end %>
               <% end %>
+              <% if role[:kind] == :colour %></div><% end %>
               <% if name == check.failing_setting %>
                 <p class="<%= Keystone::Ui::FormFieldComponent::ERROR_CLASSES %>"><%= check.refusal.message %></p>
               <% end %>

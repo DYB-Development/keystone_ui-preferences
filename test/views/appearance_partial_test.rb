@@ -391,10 +391,10 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, settings_by_set("Colors")
   end
 
-  test "each colour in Colors has its light value and its dark value side by side" do
+  test "each colour in Colors has its light value and its dark value side by side under the role's name, which names the pair" do
     render_section
 
-    rows = theme_group("Colors").css("[role=group]").map { |row| [ row["aria-label"], row.css("input[type=hidden][name^='theme[']").map { |field| field["name"] } ] }
+    rows = theme_group("Colors").css("[role=group]").map { |row| [ row.at_css("[id='#{row["aria-labelledby"]}']")&.text&.strip, row.css("input[type=hidden][name^='theme[']").map { |field| field["name"] } ] }
 
     expected = KeystoneUi::Preferences::ThemeRoles::GROUPS["Colors"].values.flatten.map { |name| [ "--#{name}", [ "theme[#{name}][light]", "theme[#{name}][dark]" ] ] }
 
