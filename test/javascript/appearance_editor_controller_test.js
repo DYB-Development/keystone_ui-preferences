@@ -17,7 +17,8 @@ const DRAWABLE = {
   "width": ["0.5rem"],
   "letter-spacing": ["-0.02em"],
   "font-family": ["Menlo, monospace"],
-  "font-weight": ["600"]
+  "font-weight": ["600"],
+  "box-shadow": ["0 1px 3px 0 color-mix(in srgb, #000000 calc(0.1 * 100%), transparent)"]
 }
 
 globalThis.CSS = { supports: (property, value) => (DRAWABLE[property] ?? []).includes(value) }
@@ -119,6 +120,18 @@ test("changing a colour's dark value sets only the dark variables, and the dark 
   editorOn(root).apply(change("theme[primary][dark]", "#1f5fbf"))
 
   assert.deepEqual(root.variables, { "--ks-color-accent-dark": "#1f5fbf", "--ks-color-accent-hover-dark": "color-mix(in oklab, #1f5fbf 85%, white)" })
+})
+
+test("emptying one of the six shadow settings removes the shadow the editor set, as the theme writer writes none without all six", () => {
+  const root = pageRoot()
+  const editor = editorOn(root, { "theme[shadow-offset-x][light]": "0", "theme[shadow-offset-y][light]": "1px", "theme[shadow-blur][light]": "3px", "theme[shadow-spread][light]": "0", "theme[shadow-color][light]": "#000000", "theme[shadow-opacity][light]": "0.1" })
+  editor.connect()
+  const field = editor.field("theme[shadow-blur][light]")
+  field.value = ""
+
+  editor.apply({ target: field })
+
+  assert.deepEqual(root.variables, {})
 })
 
 test("leaving the theme fields removes every variable the editor set, so the next page is drawn in the saved theme", () => {
