@@ -3,6 +3,11 @@
     <style>
       [data-editor-panel]:not([data-shown]) { display: none; }
       [data-editor-space] { container-type: inline-size; }
+      @container (min-width: 32rem) {
+        [data-editor-space] .ks-tab-bar { display: none; }
+        [data-editor-panels] { display: grid; gap: 1.5rem; }
+        [data-editor-panel]:not([data-shown]) { display: block; }
+      }
       @media (min-width: 64rem) {
         [data-appearance-editor] .ks-tab-bar { display: none; }
         [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; }
