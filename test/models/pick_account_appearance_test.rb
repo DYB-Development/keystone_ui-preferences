@@ -145,4 +145,10 @@ class PickAccountAppearanceTest < ActiveSupport::TestCase
 
     assert_equal({ "template_name" => "forest" }, account_preference("colours").value)
   end
+
+  test "Custom colours picked after a preset card that was never saved save the colours over the preset's theme fields" do
+    pick(template_name: "", accent: "#e11d48", surface: "#f5e6c8", text: "#3b2f1e", theme: KeystoneUi::Looks::Themes[:graphite][:theme])
+
+    assert_equal({ "accent" => "#e11d48", "surface" => "#f5e6c8", "text" => "#3b2f1e" }, account_preference("colours").value)
+  end
 end
