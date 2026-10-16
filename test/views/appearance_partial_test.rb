@@ -401,6 +401,14 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, rows
   end
 
+  test "each colour in Colors labels its two pickers Light and Dark" do
+    render_section
+
+    labels = theme_group("Colors").css(".ks-color-picker-label").map { |label| label.text.strip }
+
+    assert_equal %w[Light Dark] * KeystoneUi::Preferences::ThemeRoles::GROUPS["Colors"].values.flatten.size, labels
+  end
+
   test "Typography offers the four fonts, the four font weights and the letter spacing" do
     render_section
 

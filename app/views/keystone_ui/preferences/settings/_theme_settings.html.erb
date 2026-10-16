@@ -20,7 +20,7 @@
               <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
                 <% field_name = "theme[#{name}][#{side}]" %>
                 <% value = shown.dig(name, side).to_s %>
-                <% label = role[:kind] == :colour ? "--#{name}, #{side}" : "--#{name}" %>
+                <% label = role[:kind] == :colour ? side.capitalize : "--#{name}" %>
                 <% if %i[colour shadow_colour].include?(role[:kind]) && (value.empty? || value.match?(KeystoneUi::Preferences::CheckedTheme::COLOUR)) %>
                   <%= ui_color_picker(name: field_name, value: value, label: label) %>
                 <% else %>
