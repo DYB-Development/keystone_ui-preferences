@@ -364,7 +364,7 @@ class AppearancePartialTest < ActionView::TestCase
   end
 
   def theme_group(title)
-    theme_settings.css("h2").find { |heading| heading.text.strip == title }.ancestors(".ks-section-sm").first
+    theme_settings.css("h2").find { |heading| heading.text.strip == title }.ancestors("details").first
   end
 
   def settings_by_set(group)
@@ -391,14 +391,22 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, settings_by_set("Colors")
   end
 
-  test "each colour in Colors has its light value and its dark value side by side" do
+  test "each colour in Colors has its light value and its dark value side by side under the role's name, which names the pair" do
     render_section
 
-    rows = theme_group("Colors").css("[role=group]").map { |row| [ row["aria-label"], row.css("input[type=hidden][name^='theme[']").map { |field| field["name"] } ] }
+    rows = theme_group("Colors").css("[role=group]").map { |row| [ row.at_css("[id='#{row["aria-labelledby"]}']")&.text&.strip, row.css("input[type=hidden][name^='theme[']").map { |field| field["name"] } ] }
 
     expected = KeystoneUi::Preferences::ThemeRoles::GROUPS["Colors"].values.flatten.map { |name| [ "--#{name}", [ "theme[#{name}][light]", "theme[#{name}][dark]" ] ] }
 
     assert_equal expected, rows
+  end
+
+  test "each colour in Colors labels its two pickers Light and Dark" do
+    render_section
+
+    labels = theme_group("Colors").css(".ks-color-picker-label").map { |label| label.text.strip }
+
+    assert_equal %w[Light Dark] * KeystoneUi::Preferences::ThemeRoles::GROUPS["Colors"].values.flatten.size, labels
   end
 
   test "Typography offers the four fonts, the four font weights and the letter spacing" do
@@ -439,10 +447,10 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ expected ] * 4, suggestions
   end
 
-  test "the theme settings are shown with no closed disclosure around them" do
+  test "every theme setting is folded inside a closed group when the section opens" do
     render_section
 
-    assert_empty css_select("details:not([open]) input[name^='theme[']")
+    assert_equal theme_field_names, css_select("details:not([open]) input[name^='theme[']").map { |field| field["name"] }
   end
 
   test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do

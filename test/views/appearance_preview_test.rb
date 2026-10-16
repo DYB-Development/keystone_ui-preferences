@@ -131,10 +131,22 @@ class AppearancePreviewTest < ActionView::TestCase
     assert_includes section_style, "[data-editor-panel]:not([data-shown]) { display: none; }"
   end
 
-  test "on a wide screen the appearance section draws the editor and the preview side by side with no tabs" do
+  test "the appearance section's tabs and panels sit in a wrapper that measures the width the section is given rather than the window" do
     render_section
 
-    assert_includes section_style, "@media (min-width: 64rem) { [data-appearance-editor] .ks-tab-bar { display: none; } [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; } [data-editor-panel]:not([data-shown]) { display: block; } }"
+    assert_equal [ 1, true ], [ css_select("[data-editor-space] [data-controller='tab-switcher'] [data-editor-panels]").size, section_style.include?("[data-editor-space] { container-type: inline-size; }") ]
+  end
+
+  test "in a section at least 32rem wide the appearance section shows the editor and the preview one under the other, no wider than the section, with no tabs" do
+    render_section
+
+    assert_includes section_style, "@container (min-width: 32rem) { [data-editor-space] .ks-tab-bar { display: none; } [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; } [data-editor-panel]:not([data-shown]) { display: block; } }"
+  end
+
+  test "in a section at least 56rem wide the appearance section draws the editor and the preview side by side" do
+    render_section
+
+    assert_includes section_style, "@container (min-width: 56rem) { [data-editor-panels] { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; } }"
   end
 
   test "the preview names no font of its own and loads nothing from another site, so it draws in the theme's fonts" do

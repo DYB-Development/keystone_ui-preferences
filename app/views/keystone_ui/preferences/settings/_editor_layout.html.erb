@@ -2,18 +2,24 @@
   <% if previews %>
     <style>
       [data-editor-panel]:not([data-shown]) { display: none; }
-      @media (min-width: 64rem) {
-        [data-appearance-editor] .ks-tab-bar { display: none; }
-        [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1.5rem; align-items: start; }
+      [data-editor-space] { container-type: inline-size; }
+      @container (min-width: 32rem) {
+        [data-editor-space] .ks-tab-bar { display: none; }
+        [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
         [data-editor-panel]:not([data-shown]) { display: block; }
       }
+      @container (min-width: 56rem) {
+        [data-editor-panels] { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; }
+      }
     </style>
-    <%= ui_tab_switcher(tabs: %w[Edit Preview]) do %>
-      <div data-editor-panels>
-        <div data-editor-panel data-shown><%= editor %></div>
-        <div data-editor-panel><%= render partial: "keystone_ui/preferences/settings/theme_preview" %></div>
-      </div>
-    <% end %>
+    <div data-editor-space>
+      <%= ui_tab_switcher(tabs: %w[Edit Preview]) do %>
+        <div data-editor-panels>
+          <div data-editor-panel data-shown><%= editor %></div>
+          <div data-editor-panel><%= render partial: "keystone_ui/preferences/settings/theme_preview" %></div>
+        </div>
+      <% end %>
+    </div>
   <% else %>
     <%= editor %>
   <% end %>

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- The theme editor's Colors, Typography and Other groups in the person's and the account's Appearance sections are keystone_ui disclosures that are closed when the section opens, so Save and Reset are reached without scrolling past every field, in place of the open groups 0.9.0 showed with no closed disclosure around them.
+- A group holding a setting refused on Save opens, so the refusal shows under that setting.
+- Each colour role shows its name once with its light and dark pickers side by side under it, labelled Light and Dark, in place of a full label such as `--card-foreground, dark` on each picker.
+- The name of each colour role labels its pair of pickers for a screen reader in place of a separate `aria-label`.
+- The editor and the preview are laid out by the width the section is given, not the window's, so in a half-width settings column the preview sits under the fields instead of being squeezed beside them.
+- The preview sits beside the fields where the section is 56rem wide or wider, under them from 32rem, and under Edit and Preview tabs below 32rem, in place of side by side on a window 64rem wide or wider and tabs below it.
+
 ### Fixed
 - Picking a colour template card or changing a Custom accent, surface or text picker after a preset card in the person's or the account's Appearance section puts every theme field back to the saved theme, so Save keeps the template or the Custom colours instead of the preset.
 - The same picks remove every variable the theme editor script set on the page's root element, so the page shows the saved theme again, and an app that copied the script before this release replaces its copy with the gem's.

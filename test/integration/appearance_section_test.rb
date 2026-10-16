@@ -113,7 +113,7 @@ class AppearanceSectionTest < ActionDispatch::IntegrationTest
   test "a person who opens the grouped editor, changes the radius under Other and saves has it checked and kept" do
     patch "/settings/appearance", params: { pasted_theme: ":root {\n  --primary: oklch(0.205 0 0);\n  --radius: 0.5rem;\n}\n.dark {\n  --primary: oklch(0.922 0 0);\n}\n" }
     get "/settings/appearance"
-    groups = css_select("[data-theme-roles] h2").to_h { |title| [ title.text.strip, title.ancestors(".ks-section-sm").first ] }
+    groups = css_select("[data-theme-roles] h2").to_h { |title| [ title.text.strip, title.ancestors("details").first ] }
     radius = groups.fetch("Other").at_css("input[name='theme[radius][light]']")["name"]
     fields = css_select("form input[name^='theme[']").map { |field| [ field["name"], field["name"] == radius ? "0.75rem" : field["value"].to_s ] }
 
