@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- Picking a colour template card or changing a Custom accent, surface or text picker after a preset card in the person's or the account's Appearance section puts every theme field back to the saved theme, so Save keeps the template or the Custom colours instead of the preset.
+- The same picks remove every variable the theme editor script set on the page's root element, so the page shows the saved theme again, and an app that copied the script before this release replaces its copy with the gem's.
+- A template or Custom colours saved with theme fields that hold any preset's values are saved over those fields, so the pick is kept even by a copy of the script from before this release.
+
 ## [0.9.0] - 2026-10-15
 
 ### Added

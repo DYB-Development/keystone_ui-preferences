@@ -44,8 +44,7 @@ export default class extends Controller {
   }
 
   disconnect() {
-    this.#setVariables.forEach(variable => this.#rootStyle().removeProperty(variable))
-    this.#setVariables.clear()
+    this.#removeSetVariables()
   }
 
   apply({ target: { name, value } }) {
@@ -86,6 +85,7 @@ export default class extends Controller {
     this.setPickerValue(this.accentPickerTarget, accentHex)
     this.setPickerValue(this.surfacePickerTarget, surfaceHex)
     this.setPickerValue(this.textPickerTarget, textHex)
+    this.#restoreSavedTheme()
 
     this.highlightTemplate(label.dataset.template)
   }
@@ -103,12 +103,7 @@ export default class extends Controller {
 
   reset() {
     const preset = this.element.querySelector("input[name='template_name'][data-theme]:checked")
-    const theme = JSON.parse(preset ? preset.dataset.theme : this.element.querySelector("[data-saved-theme]").dataset.savedTheme)
-
-    this.element.querySelectorAll("[name^='theme[']").forEach(({ name }) => {
-      const [, role, side] = name.match(THEME_FIELD)
-      this.setThemeField(name, theme[role]?.[side] ?? "")
-    })
+    this.#fillThemeFields(preset ? JSON.parse(preset.dataset.theme) : this.#savedTheme())
   }
 
   setThemeField(name, value) {
@@ -130,6 +125,7 @@ export default class extends Controller {
 
   customColorChanged() {
     if (this.hasCustomRadioTarget) this.customRadioTarget.checked = true
+    this.#restoreSavedTheme()
     this.highlightTemplate("custom")
   }
 
@@ -156,6 +152,23 @@ export default class extends Controller {
     if (swatch) swatch.style.backgroundColor = hex
     if (hexLabel) hexLabel.textContent = hex
     if (text) text.value = hex
+  }
+
+  #restoreSavedTheme() {
+    this.#fillThemeFields(this.#savedTheme())
+    this.#removeSetVariables()
+  }
+
+  #removeSetVariables() {
+    this.#setVariables.forEach(variable => this.#rootStyle().removeProperty(variable))
+    this.#setVariables.clear()
+  }
+
+  #fillThemeFields(theme) {
+    this.element.querySelectorAll("[name^='theme[']").forEach(({ name }) => {
+      const [, role, side] = name.match(THEME_FIELD)
+      this.setThemeField(name, theme[role]?.[side] ?? "")
+    })
   }
 
   #writeExport() {
