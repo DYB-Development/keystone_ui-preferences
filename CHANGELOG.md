@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-15
+
 ### Added
 - Each change to a theme field in the person's and the account's Appearance sections is drawn on the whole page before saving, by setting that setting's `--ks-*` variables on the page's root element.
 - The theme editor script reads which variables each setting sets from the theme roles list, written into the section, so the browser sets the variables the palette style tag writes.
