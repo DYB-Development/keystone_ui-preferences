@@ -364,7 +364,7 @@ class AppearancePartialTest < ActionView::TestCase
   end
 
   def theme_group(title)
-    theme_settings.css("h2").find { |heading| heading.text.strip == title }.ancestors(".ks-section-sm").first
+    theme_settings.css("h2").find { |heading| heading.text.strip == title }.ancestors("details").first
   end
 
   def settings_by_set(group)
@@ -439,10 +439,10 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal [ expected ] * 4, suggestions
   end
 
-  test "the theme settings are shown with no closed disclosure around them" do
+  test "every theme setting is folded inside a closed group when the section opens" do
     render_section
 
-    assert_empty css_select("details:not([open]) input[name^='theme[']")
+    assert_equal theme_field_names, css_select("details:not([open]) input[name^='theme[']").map { |field| field["name"] }
   end
 
   test "the Theme section edits each colour role and the shadow colour with a colour picker that takes a typed colour" do

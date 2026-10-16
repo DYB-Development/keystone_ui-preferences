@@ -7,7 +7,9 @@
 <% roles = KeystoneUi::Preferences::ThemeRoles::ROLES.to_h { |name, role| [ name, role.merge(hover: KeystoneUi::Preferences::ThemeCss::HOVERS[name]).compact ] } %>
 <div data-action="change->keystone-ui--preferences--appearance-editor#apply input->keystone-ui--preferences--appearance-editor#apply" data-theme-roles="<%= roles.to_json %>" data-saved-theme="<%= theme.to_json %>" style="display: flex; flex-direction: column; gap: 2rem;">
   <% KeystoneUi::Preferences::ThemeRoles::GROUPS.each do |group, sets| %>
-    <%= ui_section(title: group, spacing: :sm) do %>
+    <%= ui_disclosure do |disclosure| %>
+      <% disclosure.with_summary do %><h2 class="<%= Keystone::Ui::SectionComponent::TITLE_CLASSES %>"><%= group %></h2><% end %>
+      <div style="display: flex; flex-direction: column; gap: 1.5rem; padding-top: 1rem;">
       <% sets.each do |set, names| %>
         <fieldset style="border: 0; padding: 0; margin: 0; min-width: 0;">
           <legend class="<%= Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>"><%= set %></legend>
@@ -37,6 +39,7 @@
           </div>
         </fieldset>
       <% end %>
+      </div>
     <% end %>
   <% end %>
   <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
