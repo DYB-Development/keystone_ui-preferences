@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-16
+
 ### Changed
 - The theme editor's Colors, Typography and Other groups in the person's and the account's Appearance sections are keystone_ui disclosures that are closed when the section opens, so Save and Reset are reached without scrolling past every field, in place of the open groups 0.9.0 showed with no closed disclosure around them.
 - A group holding a setting refused on Save opens, so the refusal shows under that setting.
