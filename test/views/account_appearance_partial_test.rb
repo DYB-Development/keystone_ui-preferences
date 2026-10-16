@@ -135,6 +135,17 @@ class AccountAppearancePartialTest < ActionView::TestCase
     assert_empty switch_on?("members_choose")
   end
 
+  test "the account's section offering only a look holds its Look choices, its Members switch and the question on leaving without saving inside the appearance editor" do
+    KeystoneUi::Preferences.configure { |config| config.account_colors = false }
+
+    render_section
+
+    editor = css_select("[data-controller='keystone-ui--preferences--appearance-editor']")
+    held = [ editor.css("input[type=radio][name=look]").any?, editor.css("input[type=checkbox][name=members_choose_look]").size, editor.css("[data-leave-question] [data-modal-target='backdrop']").size ]
+
+    assert_equal [ true, 1, 1 ], held
+  end
+
   test "the account's section offers nothing to save when the app turns off account colours and account looks" do
     KeystoneUi::Preferences.configure do |config|
       config.account_colors = false

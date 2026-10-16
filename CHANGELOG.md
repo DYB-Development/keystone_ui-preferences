@@ -26,6 +26,12 @@ All notable changes to this project will be documented in this file.
 - Following a link out of the person's or the account's Appearance section after changing a theme field holds the Turbo visit and asks on the page, through keystone_ui's modal, whether to leave without saving or to stay.
 - Closing or reloading the page after changing a theme field asks the browser to show its own leave-page warning.
 - Leaving with no theme field changed, after resetting to the saved theme, or by saving asks nothing.
+- A picked colour card, a changed Custom accent, surface or text picker, a picked Mode and a picked Look also ask before leaving without saving, in the person's and the account's Appearance sections.
+- Picking a colour card, Mode or Look and then picking the saved one again asks nothing on leaving.
+- Text in the paste box asks before leaving without saving, and a paste box that is empty or holds only spaces asks nothing.
+- Changing either Members choose switch in the account's Appearance section asks before leaving without saving, and changing it back asks nothing.
+- The question on leaving shows in an Appearance section that offers no colours, so a changed Mode or Look asks there too.
+- The question on leaving says the changes are not saved yet, in place of the theme changes, since a colour card, Mode, Look, the paste box or a Members switch also raises it.
 
 ### Changed
 - The gem requires keystone_ui-styles 0.23.0 or later, so the preview's light side stays light and a dark value changes only the dark side while the page itself is drawn dark.
