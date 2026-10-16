@@ -557,6 +557,12 @@ class AppearancePartialTest < ActionView::TestCase
     assert_equal expected, JSON.parse(theme_settings["data-theme-roles"].to_s)
   end
 
+  test "the theme editor script is handed the theme settings the editor script's drawing test reads" do
+    render_section
+
+    assert_equal JSON.parse(File.read(File.expand_path("../fixtures/drawn/presets.json", __dir__)))["roles"], JSON.parse(theme_settings["data-theme-roles"].to_s)
+  end
+
   test "the theme editor writes its export into a read-only text area labelled Export that has no name, so Save does not send it" do
     render_section
 

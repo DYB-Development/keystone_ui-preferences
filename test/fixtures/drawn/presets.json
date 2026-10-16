@@ -1,4 +1,297 @@
 {
+  "roles": {
+    "background": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-page"
+      ]
+    },
+    "foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-on-page"
+      ]
+    },
+    "card": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-surface"
+      ]
+    },
+    "card-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-on-surface"
+      ]
+    },
+    "popover": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-overlay"
+      ]
+    },
+    "popover-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-on-overlay",
+        "--ks-color-on-overlay-muted"
+      ]
+    },
+    "primary": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-accent"
+      ],
+      "hover": "--ks-color-accent-hover"
+    },
+    "primary-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-on-accent"
+      ]
+    },
+    "secondary": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-neutral"
+      ],
+      "hover": "--ks-color-neutral-hover"
+    },
+    "secondary-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-on-neutral"
+      ]
+    },
+    "muted": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-fill-muted"
+      ]
+    },
+    "muted-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-text-muted"
+      ]
+    },
+    "accent": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-hover"
+      ]
+    },
+    "accent-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-on-hover",
+        "--ks-color-on-hover-muted"
+      ]
+    },
+    "destructive": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-danger"
+      ],
+      "hover": "--ks-color-danger-hover"
+    },
+    "destructive-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-on-danger"
+      ]
+    },
+    "border": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-border"
+      ]
+    },
+    "input": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-border-control"
+      ]
+    },
+    "ring": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-focus"
+      ]
+    },
+    "chart-1": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-chart-1"
+      ]
+    },
+    "chart-2": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-chart-2"
+      ]
+    },
+    "chart-3": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-chart-3"
+      ]
+    },
+    "chart-4": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-chart-4"
+      ]
+    },
+    "chart-5": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-chart-5"
+      ]
+    },
+    "sidebar": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-nav"
+      ]
+    },
+    "sidebar-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-nav-link",
+        "--ks-color-nav-text"
+      ]
+    },
+    "sidebar-primary": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-nav-indicator",
+        "--ks-color-nav-active"
+      ]
+    },
+    "sidebar-primary-foreground": {
+      "kind": "colour",
+      "variables": []
+    },
+    "sidebar-accent": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-nav-hover"
+      ]
+    },
+    "sidebar-accent-foreground": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-nav-text-hover"
+      ]
+    },
+    "sidebar-border": {
+      "kind": "colour",
+      "variables": [
+        "--ks-color-nav-border"
+      ]
+    },
+    "sidebar-ring": {
+      "kind": "colour",
+      "variables": []
+    },
+    "radius": {
+      "kind": "length",
+      "variables": [
+        "--ks-radius-control",
+        "--ks-radius-surface"
+      ]
+    },
+    "spacing": {
+      "kind": "length",
+      "variables": [
+        "--ks-spacing"
+      ]
+    },
+    "border-width": {
+      "kind": "length",
+      "variables": [
+        "--ks-border-width"
+      ]
+    },
+    "letter-spacing": {
+      "kind": "letter_spacing",
+      "variables": [
+        "--ks-letter-spacing"
+      ]
+    },
+    "font-sans": {
+      "kind": "font_list",
+      "variables": [
+        "--ks-font-body"
+      ]
+    },
+    "font-serif": {
+      "kind": "font_list",
+      "variables": []
+    },
+    "font-mono": {
+      "kind": "font_list",
+      "variables": [
+        "--ks-font-mono",
+        "--default-mono-font-family"
+      ]
+    },
+    "font-heading": {
+      "kind": "font_list",
+      "variables": [
+        "--ks-font-heading"
+      ]
+    },
+    "font-weight-normal": {
+      "kind": "weight",
+      "variables": [
+        "--ks-font-weight-normal"
+      ]
+    },
+    "font-weight-medium": {
+      "kind": "weight",
+      "variables": [
+        "--ks-font-weight-medium"
+      ]
+    },
+    "font-weight-strong": {
+      "kind": "weight",
+      "variables": [
+        "--ks-font-weight-strong"
+      ]
+    },
+    "font-weight-heading": {
+      "kind": "weight",
+      "variables": [
+        "--ks-font-weight-heading"
+      ]
+    },
+    "shadow-color": {
+      "kind": "shadow_colour",
+      "variables": []
+    },
+    "shadow-opacity": {
+      "kind": "opacity",
+      "variables": []
+    },
+    "shadow-blur": {
+      "kind": "length",
+      "variables": []
+    },
+    "shadow-spread": {
+      "kind": "signed_length",
+      "variables": []
+    },
+    "shadow-offset-x": {
+      "kind": "signed_length",
+      "variables": []
+    },
+    "shadow-offset-y": {
+      "kind": "signed_length",
+      "variables": []
+    }
+  },
   "presets": {
     "graphite": {
       "theme": {
