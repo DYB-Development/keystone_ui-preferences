@@ -225,3 +225,13 @@ test("changing a Custom picker after a preset card puts every theme field back t
 
   assert.deepEqual(fields.map(({ value }) => value), ["#1f5fbf", "#8ab4f8", ""])
 })
+
+test("changing a Custom picker after a preset card removes every variable the editor set on the page's root element", () => {
+  const root = pageRoot()
+  const { settings } = editorFormOn(root, { "theme[primary][light]": "#1f5fbf", "theme[primary][dark]": "#8ab4f8", "theme[radius][light]": "" }, { savedTheme: { primary: { light: "#1f5fbf", dark: "#8ab4f8" } } })
+  settings.selectPreset(presetCard({ primary: { light: "#ff0000", dark: "#ff0000" }, radius: { light: "2rem" } }))
+
+  settings.customColorChanged()
+
+  assert.deepEqual(root.variables, {})
+})
