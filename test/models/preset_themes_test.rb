@@ -12,4 +12,13 @@ class PresetThemesTest < ActiveSupport::TestCase
 
     assert_empty problems.reject { |_name, found| found.empty? }
   end
+
+  test "every preset theme in keystone_ui-looks and the variables the theme writer writes for it are the ones the editor script's drawing test reads" do
+    written = KeystoneUi::Looks::Themes.all.to_h do |name, preset|
+      css = KeystoneUi::Preferences::ThemeCss.new(preset[:theme]).to_s
+      [ name.to_s, { "theme" => preset[:theme], "variables" => css.scan(/^  (--[\w-]+): (.*);$/).to_h } ]
+    end
+
+    assert_equal written, JSON.parse(File.read(File.expand_path("../fixtures/drawn/presets.json", __dir__)))["presets"]
+  end
 end
