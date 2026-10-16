@@ -206,3 +206,13 @@ test("picking a template card after a preset card puts every theme field back to
 
   assert.deepEqual(fields.map(({ value }) => value), ["#1f5fbf", "#8ab4f8", ""])
 })
+
+test("picking a template card after a preset card removes every variable the editor set on the page's root element", () => {
+  const root = pageRoot()
+  const { settings } = editorFormOn(root, { "theme[primary][light]": "#1f5fbf", "theme[primary][dark]": "#8ab4f8", "theme[radius][light]": "" }, { savedTheme: { primary: { light: "#1f5fbf", dark: "#8ab4f8" } } })
+  withPickers(settings).selectPreset(presetCard({ primary: { light: "#ff0000", dark: "#ff0000" }, radius: { light: "2rem" } }))
+
+  settings.selectTemplate(templateCard("#10b981", "#78716c", "#064e3b"))
+
+  assert.deepEqual(root.variables, {})
+})
