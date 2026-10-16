@@ -5,7 +5,7 @@
       [data-editor-space] { container-type: inline-size; }
       @container (min-width: 32rem) {
         [data-editor-space] .ks-tab-bar { display: none; }
-        [data-editor-panels] { display: grid; gap: 1.5rem; }
+        [data-editor-panels] { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
         [data-editor-panel]:not([data-shown]) { display: block; }
       }
       @container (min-width: 56rem) {
