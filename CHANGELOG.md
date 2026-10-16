@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-15
+
 ### Added
 - Each change to a theme field in the person's and the account's Appearance sections is drawn on the whole page before saving, by setting that setting's `--ks-*` variables on the page's root element.
 - The theme editor script reads which variables each setting sets from the theme roles list, written into the section, so the browser sets the variables the palette style tag writes.
 - A changed `primary`, `secondary` or `destructive` colour also sets the hover colour the style tag derives from it.
 - A changed dark value sets only the `-dark` variables, so it shows only where the page is drawn dark.
-- Colours, corner radius, spacing, border width, letter spacing, fonts and font weights are drawn before saving, and the shadow settings show only after Save.
+- Colours, corner radius, spacing, border width, letter spacing, fonts, font weights and the shadow are drawn before saving, with the shadow drawn only once all six shadow settings hold a value.
 - A value the browser cannot draw leaves the page as it was, and is still sent to the theme check on Save.
 - Leaving the section without saving removes every variable the script set, so the next page is drawn in the saved theme.
 - The install generator copies the theme editor script, and the update generator copies it when the app has none.
