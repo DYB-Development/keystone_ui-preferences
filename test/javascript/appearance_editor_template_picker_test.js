@@ -216,3 +216,12 @@ test("picking a template card after a preset card removes every variable the edi
 
   assert.deepEqual(root.variables, {})
 })
+
+test("changing a Custom picker after a preset card puts every theme field back to the saved theme", () => {
+  const { fields, settings } = editorFormOn(pageRoot(), { "theme[primary][light]": "#1f5fbf", "theme[primary][dark]": "#8ab4f8", "theme[radius][light]": "" }, { savedTheme: { primary: { light: "#1f5fbf", dark: "#8ab4f8" } } })
+  settings.selectPreset(presetCard({ primary: { light: "#ff0000", dark: "#ff0000" }, radius: { light: "2rem" } }))
+
+  settings.customColorChanged()
+
+  assert.deepEqual(fields.map(({ value }) => value), ["#1f5fbf", "#8ab4f8", ""])
+})

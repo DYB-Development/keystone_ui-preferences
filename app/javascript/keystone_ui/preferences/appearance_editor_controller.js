@@ -125,6 +125,7 @@ export default class extends Controller {
 
   customColorChanged() {
     if (this.hasCustomRadioTarget) this.customRadioTarget.checked = true
+    this.#fillThemeFields(this.#savedTheme())
     this.highlightTemplate("custom")
   }
 
