@@ -110,12 +110,16 @@ function colourPicker() {
   }
 }
 
+function emptyForm() {
+  return { querySelector: () => null, querySelectorAll: () => [] }
+}
+
 function templateCard(accentHex, surfaceHex, textHex) {
   return { currentTarget: { dataset: { accentHex, surfaceHex, textHex }, closest: () => ({ dataset: { template: "forest" } }) } }
 }
 
 test("picking a template card fills the accent, surface and text pickers with that template's colours", () => {
-  const settings = new AppearanceEditorController({ scope: { element: {} } })
+  const settings = new AppearanceEditorController({ scope: { element: emptyForm() } })
   const pickers = [colourPicker(), colourPicker(), colourPicker()]
   Object.assign(settings, { accentPickerTarget: pickers[0], surfacePickerTarget: pickers[1], textPickerTarget: pickers[2], templateLabelTargets: [] })
 
@@ -135,7 +139,7 @@ function bordersOf(labels) {
 }
 
 test("picking a template card outlines that card and clears the outline from every other card", () => {
-  const settings = new AppearanceEditorController({ scope: { element: {} } })
+  const settings = new AppearanceEditorController({ scope: { element: emptyForm() } })
   const labels = [cardLabel("default", "border-accent-500"), cardLabel("forest", "border-transparent"), cardLabel("custom", "border-transparent")]
   Object.assign(settings, { accentPickerTarget: colourPicker(), surfacePickerTarget: colourPicker(), textPickerTarget: colourPicker(), templateLabelTargets: labels })
 
@@ -188,4 +192,17 @@ test("picking a preset card outlines that card and clears the outline from every
   settings.selectPreset(presetCard({ primary: { light: "#1f5fbf" } }))
 
   assert.deepEqual(bordersOf(labels), [["border-transparent"], ["border-accent-500"]])
+})
+
+function withPickers(settings) {
+  return Object.assign(settings, { accentPickerTarget: colourPicker(), surfacePickerTarget: colourPicker(), textPickerTarget: colourPicker() })
+}
+
+test("picking a template card after a preset card puts every theme field back to the saved theme", () => {
+  const { fields, settings } = editorFormOn(pageRoot(), { "theme[primary][light]": "#1f5fbf", "theme[primary][dark]": "#8ab4f8", "theme[radius][light]": "" }, { savedTheme: { primary: { light: "#1f5fbf", dark: "#8ab4f8" } } })
+  withPickers(settings).selectPreset(presetCard({ primary: { light: "#ff0000", dark: "#ff0000" }, radius: { light: "2rem" } }))
+
+  settings.selectTemplate(templateCard("#10b981", "#78716c", "#064e3b"))
+
+  assert.deepEqual(fields.map(({ value }) => value), ["#1f5fbf", "#8ab4f8", ""])
 })
