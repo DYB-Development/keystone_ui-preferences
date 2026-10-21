@@ -16,31 +16,38 @@
           <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
             <% names.each do |name| %>
               <% role = KeystoneUi::Preferences::ThemeRoles::ROLES.fetch(name) %>
+              <% fields = capture do %>
+                <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
+                  <% field_name = "theme[#{name}][#{side}]" %>
+                  <% value = shown.dig(name, side).to_s %>
+                  <% label = role[:kind] == :colour ? side.capitalize : "--#{name}" %>
+                  <% if %i[colour shadow_colour].include?(role[:kind]) && (value.empty? || value.match?(KeystoneUi::Preferences::CheckedTheme::COLOUR)) %>
+                    <%= ui_color_picker(name: field_name, value: value, label: label) %>
+                  <% else %>
+                    <% field_id = "#{id_prefix}-#{field_name.parameterize}" %>
+                    <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
+                      <%= label_tag field_id, label, class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
+                      <%= text_field_tag field_name, value, id: field_id, class: Keystone::Ui::InputComponent::BASE_CLASSES, list: (fonts_id if role[:kind] == :font_list) %>
+                    </div>
+                  <% end %>
+                <% end %>
+              <% end %>
+              <% refusal = capture do %>
+                <% if name == check.failing_setting %>
+                  <p class="<%= Keystone::Ui::FormFieldComponent::ERROR_CLASSES %>"><%= check.refusal.message %></p>
+                <% end %>
+              <% end %>
               <% if role[:kind] == :colour %>
                 <% name_id = "#{id_prefix}-theme-#{name}-name" %>
                 <div role="group" aria-labelledby="<%= name_id %>" style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <span id="<%= name_id %>" class="<%= Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>">--<%= name %></span>
-                <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+                  <span id="<%= name_id %>" class="<%= Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>">--<%= name %></span>
+                  <div style="display: flex; flex-wrap: wrap; gap: 1rem;"><%= fields %></div>
+                  <%= refusal %>
+                </div>
+              <% else %>
+                <%= fields %>
+                <%= refusal %>
               <% end %>
-              <% (role[:kind] == :colour ? %w[light dark] : %w[light]).each do |side| %>
-                <% field_name = "theme[#{name}][#{side}]" %>
-                <% value = shown.dig(name, side).to_s %>
-                <% label = role[:kind] == :colour ? side.capitalize : "--#{name}" %>
-                <% if %i[colour shadow_colour].include?(role[:kind]) && (value.empty? || value.match?(KeystoneUi::Preferences::CheckedTheme::COLOUR)) %>
-                  <%= ui_color_picker(name: field_name, value: value, label: label) %>
-                <% else %>
-                  <% field_id = "#{id_prefix}-#{field_name.parameterize}" %>
-                  <div class="<%= Keystone::Ui::FormFieldComponent::WRAPPER_CLASSES %>">
-                    <%= label_tag field_id, label, class: Keystone::Ui::FormFieldComponent::LABEL_CLASSES %>
-                    <%= text_field_tag field_name, value, id: field_id, class: Keystone::Ui::InputComponent::BASE_CLASSES, list: (fonts_id if role[:kind] == :font_list) %>
-                  </div>
-                <% end %>
-              <% end %>
-              <% if role[:kind] == :colour %></div><% end %>
-              <% if name == check.failing_setting %>
-                <p class="<%= Keystone::Ui::FormFieldComponent::ERROR_CLASSES %>"><%= check.refusal.message %></p>
-              <% end %>
-              <% if role[:kind] == :colour %></div><% end %>
             <% end %>
           </div>
         </fieldset>

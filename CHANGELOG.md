@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-10-21
+
+### Fixed
+- The person's and the account's Appearance sections render in an app that compiles ERB templates with Herb, the Rails 8.2 default, where the theme settings template was refused for closing each colour role's group outside the block that opened it.
+
 ## [0.10.0] - 2026-10-16
 
 ### Changed
