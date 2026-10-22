@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html <%= keystone_theme_attributes %>>
 <head><title>Dummy</title><%= keystone_palette_style_tag %></head>
-<body>
+<body data-theme-preference-value="<%= keystone_theme_mode %>">
 <%= yield %>
 </body>
 </html>

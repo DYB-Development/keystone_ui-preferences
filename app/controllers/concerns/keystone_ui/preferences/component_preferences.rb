@@ -34,7 +34,7 @@ module KeystoneUi
       end
 
       def keystone_theme_mode
-        keystone_appearance_choice.mode
+        KeystoneUi::ThemeChoice.new(cookies[KeystoneUi::ThemeChoice::COOKIE], supplied: keystone_appearance_choice.mode).mode
       end
 
       def keystone_look

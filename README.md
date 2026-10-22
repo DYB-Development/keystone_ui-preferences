@@ -224,7 +224,7 @@ The gem gives keystone_ui the mode through keystone_ui's theme mode supplier, so
 <html <%= keystone_theme_attributes %>>
 ```
 
-A visitor who is not signed in gets `default_mode`. A choice made with keystone_ui's theme toggle is kept in a cookie and wins over the saved mode in that browser. Saving in the appearance section clears that cookie, so the saved mode shows on the next page. The clearing runs in settings_hub's `after_settings_change` hook, which the `ComponentPreferences` concern defines, so an app that defines its own `after_settings_change` calls `super` from it.
+A visitor who is not signed in gets `default_mode`. A choice made with keystone_ui's theme toggle is kept in a cookie and wins over the saved mode in that browser. `keystone_theme_mode` returns the same choice, so a layout that marks its page dark from it follows the toggle too. Saving in the appearance section clears that cookie, so the saved mode shows on the next page. The clearing runs in settings_hub's `after_settings_change` hook, which the `ComponentPreferences` concern defines, so an app that defines its own `after_settings_change` calls `super` from it.
 
 ## Look
 
