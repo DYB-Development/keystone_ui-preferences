@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-10-21
+
 ### Fixed
 - `keystone_theme_mode` returns the mode picked with keystone_ui's theme toggle in that browser before the saved mode, as `keystone_theme_attributes` already did, so a layout that marks its page dark from it follows the toggle.
 
